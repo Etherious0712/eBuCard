@@ -1,0 +1,17 @@
+name: ebucard_server
+description: eBuCard API and public web-card server (Dart Frog).
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.11.0
+
+dependencies:
+  dart_frog: ^1.1.0
+  ebucard_models:
+    path: ../packages/ebucard_models
+
+dev_dependencies:
+  dart_frog_lint: ^0.1.0
+  mocktail: ^1.0.0
+  test: ^1.0.0
