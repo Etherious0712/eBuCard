@@ -1,0 +1,23 @@
+{
+  "@@locale": "en",
+  "appTitle": "eBuCard",
+  "navMyCards": "My Cards",
+  "navExchange": "Exchange",
+  "navInbox": "Inbox",
+  "newCard": "New card",
+  "editCard": "Edit card",
+  "myCardsEmpty": "You have no cards yet. Create your first business card.",
+  "inboxEmpty": "Cards you receive will appear here.",
+  "sendSection": "Share my card",
+  "receiveSection": "Receive a card",
+  "sendByNfc": "Tap phones (NFC)",
+  "sendByNfcHint": "Hold the other phone against the back of yours",
+  "showQr": "Show QR code",
+  "receiveByNfc": "Read by NFC",
+  "scanQr": "Scan QR code",
+  "signIn": "Sign in",
+  "signInWithEmail": "Continue with email",
+  "signInWithApple": "Sign in with Apple",
+  "signInWithGoogle": "Sign in with Google",
+  "comingSoon": "Coming soon"
+}
