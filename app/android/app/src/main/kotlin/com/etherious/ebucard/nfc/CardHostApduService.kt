@@ -4,22 +4,37 @@ import android.nfc.cardemulation.HostApduService
 import android.os.Bundle
 
 /**
- * Emulates an NFC Forum Type 4 tag so another phone can read this user's card
- * as an NDEF message (card URL record + compact vCard record).
+ * Lets another phone read this user's card by holding the phones together.
  *
- * Scaffold only: every command is answered with "file not found" until the
- * Type 4 tag state machine (SELECT AID, SELECT CC/NDEF file, READ BINARY) and
- * the Flutter platform channel that supplies the NDEF bytes are implemented.
- * See docs/DESIGN.md §4.
+ * Android routes APDUs for the NDEF Tag Application AID (`apduservice.xml`)
+ * here. The phone then behaves like an NFC Type 4 tag ([Type4Tag]) holding
+ * the card's NDEF message. It only answers while the Flutter app is on the
+ * "Tap phones (NFC)" screen, i.e. while [CardShareState.ndefMessage] is set.
  */
 class CardHostApduService : HostApduService() {
 
-    override fun processCommandApdu(commandApdu: ByteArray, extras: Bundle?): ByteArray =
-        STATUS_FILE_NOT_FOUND
+    /** Tag state for the current tap; reset when the reader leaves. */
+    private var tag: Type4Tag? = null
 
-    override fun onDeactivated(reason: Int) = Unit
+    /** The message [tag] was built from, to notice a card switch mid-session. */
+    private var tagMessage: ByteArray? = null
 
-    private companion object {
-        val STATUS_FILE_NOT_FOUND = byteArrayOf(0x6A, 0x82.toByte())
+    override fun processCommandApdu(commandApdu: ByteArray, extras: Bundle?): ByteArray {
+        val message = CardShareState.ndefMessage ?: return Type4Tag.SW_FILE_NOT_FOUND
+        val current = tag
+        val active = if (current != null && tagMessage === message) {
+            current
+        } else {
+            Type4Tag(message).also {
+                tag = it
+                tagMessage = message
+            }
+        }
+        return active.process(commandApdu)
+    }
+
+    override fun onDeactivated(reason: Int) {
+        tag = null
+        tagMessage = null
     }
 }

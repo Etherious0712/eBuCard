@@ -47,3 +47,8 @@ kotlin {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    // Plain JVM unit tests for the NFC tag emulator (src/test): ./gradlew test
+    testImplementation("junit:junit:4.13.2")
+}
