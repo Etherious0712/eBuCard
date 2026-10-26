@@ -1,0 +1,11 @@
+name: ebucard_models
+description: Shared eBuCard domain models and vCard / share-payload encoding used by the app and the server.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.11.0
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.6

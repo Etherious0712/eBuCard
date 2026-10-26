@@ -1,0 +1,23 @@
+{
+  "@@locale": "zh_Hans",
+  "appTitle": "eBuCard",
+  "navMyCards": "我的名片",
+  "navExchange": "交换",
+  "navInbox": "收件箱",
+  "newCard": "新建名片",
+  "editCard": "编辑名片",
+  "myCardsEmpty": "你还没有名片，立即创建你的第一张电子名片。",
+  "inboxEmpty": "你收到的名片会显示在这里。",
+  "sendSection": "分享我的名片",
+  "receiveSection": "接收名片",
+  "sendByNfc": "手机触碰 (NFC)",
+  "sendByNfcHint": "将对方手机贴近你手机的背面",
+  "showQr": "显示二维码",
+  "receiveByNfc": "通过 NFC 读取",
+  "scanQr": "扫描二维码",
+  "signIn": "登录",
+  "signInWithEmail": "使用邮箱继续",
+  "signInWithApple": "通过 Apple 登录",
+  "signInWithGoogle": "通过 Google 登录",
+  "comingSoon": "即将推出"
+}
