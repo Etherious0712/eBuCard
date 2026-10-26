@@ -93,7 +93,9 @@ void main() {
 
     test('QR uses URL online and vCard offline or when unsynced', () {
       expect(payload.qrText(card), 'https://card.example.com/c/abc123');
-      expect(payload.qrText(card, offline: true), startsWith('BEGIN:VCARD'));
+      final offline = payload.qrText(card, offline: true);
+      expect(offline, startsWith('BEGIN:VCARD'));
+      expect(offline, contains('ADR'), reason: 'QR carries the full vCard');
       final unsynced = BusinessCard.fromJson({
         ...card.toJson(),
         'shareSlug': null,

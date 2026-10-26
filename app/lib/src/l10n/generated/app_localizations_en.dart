@@ -222,4 +222,103 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get socialOther => 'Other';
+
+  @override
+  String get showQrTitle => 'My QR code';
+
+  @override
+  String get showQrHint =>
+      'Ask the other person to scan this with eBuCard or their phone\'s camera.';
+
+  @override
+  String get showQrNoCards =>
+      'Create a card first, then you can share it here.';
+
+  @override
+  String get createCard => 'Create card';
+
+  @override
+  String get qrTooLarge =>
+      'This card has too much information for one QR code. Remove some fields and try again.';
+
+  @override
+  String get showingCard => 'Card to share';
+
+  @override
+  String get setAsDefault => 'Set as default card';
+
+  @override
+  String get isDefaultCard => 'Default card';
+
+  @override
+  String get defaultCardSet => 'Default card updated';
+
+  @override
+  String get scanHint => 'Point the camera at an eBuCard or contact QR code.';
+
+  @override
+  String get notACard => 'This QR code isn\'t a business card.';
+
+  @override
+  String get cameraError =>
+      'Can\'t use the camera. Allow eBuCard to use the camera in Settings.';
+
+  @override
+  String get duplicateTitle => 'Already in your Inbox';
+
+  @override
+  String duplicateMessage(String name) {
+    return '$name is already in your Inbox. Update the saved card, or keep both?';
+  }
+
+  @override
+  String get update => 'Update';
+
+  @override
+  String get keepBoth => 'Keep both';
+
+  @override
+  String get cardReceived => 'Card added to your Inbox';
+
+  @override
+  String get cardUpdated => 'Card updated';
+
+  @override
+  String get searchInbox => 'Search name, company or email';
+
+  @override
+  String get inboxNoMatches => 'No matching cards';
+
+  @override
+  String receivedOn(String date) {
+    return 'Received $date';
+  }
+
+  @override
+  String get note => 'Private note';
+
+  @override
+  String get noteHint => 'Only you can see this, e.g. where you met';
+
+  @override
+  String get saveNote => 'Save note';
+
+  @override
+  String get noteSaved => 'Note saved';
+
+  @override
+  String get saveToContacts => 'Save to Contacts';
+
+  @override
+  String get contactsError => 'Couldn\'t open Contacts.';
+
+  @override
+  String get cantOpenLink => 'No app on this phone can open this.';
+
+  @override
+  String get deleteReceivedTitle => 'Remove this card from your Inbox?';
+
+  @override
+  String get deleteReceivedMessage =>
+      'It is only removed from eBuCard, not from your phone\'s Contacts.';
 }

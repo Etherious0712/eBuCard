@@ -5,9 +5,15 @@
 /// * `card_validation.dart`: rules a card must meet before saving.
 /// * `vcard_encoder.dart`: card → vCard 3.0 text for Contacts apps.
 /// * `share_payload.dart`: what goes into a QR code or NFC tag.
+/// * `contact_decoder.dart`: scanned vCard / MECARD text → card.
+/// * `received_card.dart`: a card in the user's Inbox.
+/// * `contact_matching.dart`: is this scanned card someone already saved?
 library;
 
 export 'src/business_card.dart';
 export 'src/card_validation.dart';
+export 'src/contact_decoder.dart';
+export 'src/contact_matching.dart';
+export 'src/received_card.dart';
 export 'src/share_payload.dart';
 export 'src/vcard_encoder.dart';

@@ -1,7 +1,8 @@
 // Feature: exchange. Lists the send/receive options this phone supports.
-// The buttons are disabled until QR (PR B) and NFC (PR C) are built.
+// QR is available on every phone; NFC arrives in PR C.
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/exchange_capabilities.dart';
 import '../../l10n/generated/app_localizations.dart';
@@ -27,36 +28,37 @@ class ExchangeScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         children: [
           Text(l10n.sendSection, style: Theme.of(context).textTheme.titleSmall),
+          ListTile(
+            leading: const Icon(Icons.qr_code_2),
+            title: Text(l10n.showQr),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.go('/exchange/show-qr'),
+          ),
           if (caps.send.contains(SendMethod.nfcHce))
             ListTile(
               leading: const Icon(Icons.nfc),
               title: Text(l10n.sendByNfc),
-              subtitle: Text(l10n.sendByNfcHint),
+              subtitle: Text(l10n.comingSoon),
               enabled: false,
             ),
-          ListTile(
-            leading: const Icon(Icons.qr_code_2),
-            title: Text(l10n.showQr),
-            enabled: false,
-          ),
           const Divider(),
           Text(
             l10n.receiveSection,
             style: Theme.of(context).textTheme.titleSmall,
           ),
+          ListTile(
+            leading: const Icon(Icons.qr_code_scanner),
+            title: Text(l10n.scanQr),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.go('/exchange/scan'),
+          ),
           if (caps.receive.contains(ReceiveMethod.nfcRead))
             ListTile(
               leading: const Icon(Icons.contactless_outlined),
               title: Text(l10n.receiveByNfc),
+              subtitle: Text(l10n.comingSoon),
               enabled: false,
             ),
-          ListTile(
-            leading: const Icon(Icons.qr_code_scanner),
-            title: Text(l10n.scanQr),
-            enabled: false,
-          ),
-          const SizedBox(height: 16),
-          Text(l10n.comingSoon, textAlign: TextAlign.center),
         ],
       ),
     );
