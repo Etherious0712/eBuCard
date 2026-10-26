@@ -4,10 +4,16 @@ import '../l10n/generated/app_localizations.dart';
 
 /// Body used by screens that are scaffolded but not yet implemented.
 class PlaceholderBody extends StatelessWidget {
-  const PlaceholderBody({super.key, required this.icon, required this.message});
+  const PlaceholderBody({
+    super.key,
+    required this.icon,
+    required this.message,
+    this.comingSoon = true,
+  });
 
   final IconData icon;
   final String message;
+  final bool comingSoon;
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +31,13 @@ class PlaceholderBody extends StatelessWidget {
               textAlign: TextAlign.center,
               style: theme.textTheme.titleMedium,
             ),
-            const SizedBox(height: 8),
-            Text(
-              AppLocalizations.of(context).comingSoon,
-              style: theme.textTheme.bodySmall,
-            ),
+            if (comingSoon) ...[
+              const SizedBox(height: 8),
+              Text(
+                AppLocalizations.of(context).comingSoon,
+                style: theme.textTheme.bodySmall,
+              ),
+            ],
           ],
         ),
       ),

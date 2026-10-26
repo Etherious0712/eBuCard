@@ -11,7 +11,7 @@ import 'features/inbox/inbox_screen.dart';
 import 'home_shell.dart';
 import 'l10n/generated/app_localizations.dart';
 
-final _router = GoRouter(
+GoRouter _buildRouter() => GoRouter(
   initialLocation: '/cards',
   routes: [
     GoRoute(path: '/sign-in', builder: (_, _) => const SignInScreen()),
@@ -51,8 +51,21 @@ final _router = GoRouter(
   ],
 );
 
-class EBuCardApp extends StatelessWidget {
+class EBuCardApp extends StatefulWidget {
   const EBuCardApp({super.key});
+
+  @override
+  State<EBuCardApp> createState() => _EBuCardAppState();
+}
+
+class _EBuCardAppState extends State<EBuCardApp> {
+  final _router = _buildRouter();
+
+  @override
+  void dispose() {
+    _router.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

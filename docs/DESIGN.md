@@ -1,6 +1,6 @@
 # eBuCard: Design Document
 
-Status: **Draft for review** · Scope: architecture and scaffold (PR 1)
+Status: **Living document** · Last updated with the MVP card editor (PR A)
 
 ## 1. Goal
 
@@ -26,6 +26,12 @@ eBuCard is an electronic business card service. Business people and anyone else 
 | Received cards | Stored on the device **and** synced to the user's account |
 | App identity | Display name `eBuCard`, package / bundle ID `com.etherious.ebucard` |
 | UI languages | English, Traditional Chinese (zh-Hant), Simplified Chinese (zh-Hans) |
+| Minimum OS | Android 7.0 (API 24), iOS 15. iOS 13 was requested, but current Flutter is built for iOS 15+ |
+| State management | Riverpod |
+| Required card fields | Full name, plus at least one phone number or email address. A blank card name becomes "My card" |
+| Card images | Profile photo and logo from the photo library or camera, cropped to a square, max 1024 px JPEG |
+| MVP exchange payload | **Full vCard without images**. No server exists yet, so the card URL is added in the sync phase |
+| Save to Contacts | Hand the vCard to the system add-contact screen (no Contacts permission) |
 
 ## 3. Platform constraints (why the exchange works this way)
 
@@ -59,12 +65,12 @@ Capability matrix as implemented in `app/lib/src/core/exchange_capabilities.dart
 
 ### 4.3 QR code
 * Default: the card URL (short, so the code is easy to scan).
-* "Offline QR" option, or when the card has not been synced yet: a compact vCard.
+* "Offline QR" option, or when the card has not been synced yet: a vCard. **MVP:** the full vCard without images (§2); full vCards make denser QR codes, which may be harder to scan from a distance.
 * The receiver scans with the in-app scanner. The phone's own camera app also works: a URL opens the app or web card, and a vCard offers to add the contact.
 
 ### 4.4 vCard
 * **vCard 3.0** (RFC 2426): the version Android and iOS Contacts import most reliably. Lines are folded at 75 octets and are UTF-8 safe for CJK names.
-* *Full* vCard: all fields. The photo and logo are referenced by URL, never embedded.
+* *Full* vCard: all fields. The photo and logo are referenced by `http(s)` URL, never embedded. Local `file:` images (before sync) are left out.
 * *Compact* vCard: name, title, company, first phone, first email, card URL.
 * Implemented in `packages/ebucard_models/lib/src/vcard_encoder.dart` (tested).
 
@@ -93,7 +99,7 @@ The app and server share `ebucard_models`, so the JSON format and the vCard enco
 
 **ReceivedCard**: `id`, `owner_user_id`, `source_card_id` (nullable, set when received by URL), `snapshot` (card JSON at time of receipt), `received_via` (`nfc` | `qr` | `link`), `received_at`, `note`, `tags[]`, `updated_at`, `deleted_at` (tombstone for sync).
 
-**Local storage**: SQLite on the device holds own cards and received cards, so the app works offline. **Sync**: each record carries `updated_at` and a tombstone. The client pushes local changes and pulls changes since the last sync cursor. Conflicts resolve as last-writer-wins per record.
+**Local storage**: SQLite on the device (drift) holds own cards and received cards, so the app works offline. Own cards live in the `own_cards` table as the card's JSON (same format as the API) plus `sort_order` and `updated_at`. Images are files in the app's documents folder (`card_images/`), referenced by `file:` URI until sync uploads them. **Sync**: each record carries `updated_at` and a tombstone. The client pushes local changes and pulls changes since the last sync cursor. Conflicts resolve as last-writer-wins per record.
 
 ## 7. API outline (`/v1`, JSON, Bearer access token)
 
@@ -136,8 +142,11 @@ ARB files in `app/lib/src/l10n/`. Devices often report Chinese without a script 
 
 ## 11. Roadmap
 
-1. **PR 1 (this one):** design doc and scaffold.
-2. **MVP:** card editor (multiple cards, photo/logo), local storage, QR share and scan, NFC read, Android HCE send, save to phone Contacts.
+1. **PR 1 (done):** design doc and scaffold.
+2. **MVP**, split into three PRs:
+   * **PR A:** card editor (multiple cards, photo/logo with square crop, validation) and local storage.
+   * **PR B:** QR share and scan, Inbox of received cards, save to phone Contacts.
+   * **PR C:** NFC: Android HCE send, NFC read on both platforms.
 3. **Accounts & sync:** auth endpoints, PostgreSQL schema and migrations, card and inbox sync, share links.
 4. **Web card & app links:** `/c/{slug}` HTML page, `.vcf` download, App Links / Universal Links.
 5. **Release:** store listings, privacy policy, account deletion, analytics/crash reporting (to be decided).
@@ -158,9 +167,8 @@ ARB files in `app/lib/src/l10n/`. Devices often report Chinese without a script 
 
 1. Production domain for card links and the API, and the hosting provider/region.
 2. Apple Developer Team ID and Google Play account (needed for signing, app links and Sign in with Apple).
-3. Where to store photos and logos (object storage provider), and size limits.
-4. Minimum OS versions to support.
-5. Should receiving a card offer to send your own card back automatically ("exchange")?
-6. Privacy policy, target markets and data-residency requirements (e.g. GDPR, Hong Kong PDPO, Mainland China PIPL).
-7. Business model (free / premium cards / team plans), since it affects the data model.
-8. Web card visual design and branding.
+3. Where to store photos and logos on the server (object storage provider). On the device they are capped at 1024 px.
+4. Should receiving a card offer to send your own card back automatically ("exchange")?
+5. Privacy policy, target markets and data-residency requirements (e.g. GDPR, Hong Kong PDPO, Mainland China PIPL).
+6. Business model (free / premium cards / team plans), since it affects the data model.
+7. Web card visual design and branding.

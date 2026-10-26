@@ -60,14 +60,24 @@ class VCardEncoder {
           'X-SOCIALPROFILE;TYPE=${s.network.name}:${_escape(s.handleOrUrl)}',
         );
       }
-      if (card.photoUrl != null) {
-        lines.add('PHOTO;VALUE=URI:${card.photoUrl}');
-      }
-      if (card.logoUrl != null) lines.add('LOGO;VALUE=URI:${card.logoUrl}');
+      final photo = _remoteUri(card.photoUrl);
+      if (photo != null) lines.add('PHOTO;VALUE=URI:$photo');
+      final logo = _remoteUri(card.logoUrl);
+      if (logo != null) lines.add('LOGO;VALUE=URI:$logo');
     }
 
     lines.add('END:VCARD');
     return '${lines.map(_fold).join('\r\n')}\r\n';
+  }
+
+  /// Only http(s) image URLs are shared; local `file:` paths stay on device.
+  static String? _remoteUri(String? value) {
+    if (value == null) return null;
+    final uri = Uri.tryParse(value);
+    if (uri == null || (uri.scheme != 'https' && uri.scheme != 'http')) {
+      return null;
+    }
+    return value;
   }
 
   /// Best-effort split of a display name into "family;given". Users can enter

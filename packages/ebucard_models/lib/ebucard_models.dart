@@ -2,5 +2,6 @@
 library;
 
 export 'src/business_card.dart';
+export 'src/card_validation.dart';
 export 'src/share_payload.dart';
 export 'src/vcard_encoder.dart';

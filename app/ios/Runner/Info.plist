@@ -37,7 +37,9 @@
 		<string>D2760000850101</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>eBuCard uses the camera to scan business card QR codes.</string>
+	<string>eBuCard uses the camera to take your card photo and to scan business card QR codes.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>eBuCard lets you choose a profile photo or company logo from your photo library.</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>
