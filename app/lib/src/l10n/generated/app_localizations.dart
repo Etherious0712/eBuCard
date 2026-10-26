@@ -525,6 +525,186 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Other'**
   String get socialOther;
+
+  /// No description provided for @showQrTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My QR code'**
+  String get showQrTitle;
+
+  /// No description provided for @showQrHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask the other person to scan this with eBuCard or their phone\'s camera.'**
+  String get showQrHint;
+
+  /// No description provided for @showQrNoCards.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a card first, then you can share it here.'**
+  String get showQrNoCards;
+
+  /// No description provided for @createCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Create card'**
+  String get createCard;
+
+  /// No description provided for @qrTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'This card has too much information for one QR code. Remove some fields and try again.'**
+  String get qrTooLarge;
+
+  /// No description provided for @showingCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Card to share'**
+  String get showingCard;
+
+  /// No description provided for @setAsDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Set as default card'**
+  String get setAsDefault;
+
+  /// No description provided for @isDefaultCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Default card'**
+  String get isDefaultCard;
+
+  /// No description provided for @defaultCardSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Default card updated'**
+  String get defaultCardSet;
+
+  /// No description provided for @scanHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Point the camera at an eBuCard or contact QR code.'**
+  String get scanHint;
+
+  /// No description provided for @notACard.
+  ///
+  /// In en, this message translates to:
+  /// **'This QR code isn\'t a business card.'**
+  String get notACard;
+
+  /// No description provided for @cameraError.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t use the camera. Allow eBuCard to use the camera in Settings.'**
+  String get cameraError;
+
+  /// No description provided for @duplicateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Already in your Inbox'**
+  String get duplicateTitle;
+
+  /// No description provided for @duplicateMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is already in your Inbox. Update the saved card, or keep both?'**
+  String duplicateMessage(String name);
+
+  /// No description provided for @update.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get update;
+
+  /// No description provided for @keepBoth.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep both'**
+  String get keepBoth;
+
+  /// No description provided for @cardReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Card added to your Inbox'**
+  String get cardReceived;
+
+  /// No description provided for @cardUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Card updated'**
+  String get cardUpdated;
+
+  /// No description provided for @searchInbox.
+  ///
+  /// In en, this message translates to:
+  /// **'Search name, company or email'**
+  String get searchInbox;
+
+  /// No description provided for @inboxNoMatches.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching cards'**
+  String get inboxNoMatches;
+
+  /// No description provided for @receivedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Received {date}'**
+  String receivedOn(String date);
+
+  /// No description provided for @note.
+  ///
+  /// In en, this message translates to:
+  /// **'Private note'**
+  String get note;
+
+  /// No description provided for @noteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Only you can see this, e.g. where you met'**
+  String get noteHint;
+
+  /// No description provided for @saveNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Save note'**
+  String get saveNote;
+
+  /// No description provided for @noteSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Note saved'**
+  String get noteSaved;
+
+  /// No description provided for @saveToContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to Contacts'**
+  String get saveToContacts;
+
+  /// No description provided for @contactsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open Contacts.'**
+  String get contactsError;
+
+  /// No description provided for @cantOpenLink.
+  ///
+  /// In en, this message translates to:
+  /// **'No app on this phone can open this.'**
+  String get cantOpenLink;
+
+  /// No description provided for @deleteReceivedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this card from your Inbox?'**
+  String get deleteReceivedTitle;
+
+  /// No description provided for @deleteReceivedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'It is only removed from eBuCard, not from your phone\'s Contacts.'**
+  String get deleteReceivedMessage;
 }
 
 class _AppLocalizationsDelegate

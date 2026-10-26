@@ -323,6 +323,7 @@ class _CardEditorScreenState extends ConsumerState<CardEditorScreen> {
       appBar: AppBar(
         title: title,
         actions: [
+          if (!widget.isNew) _DefaultCardButton(cardId: _original!.id),
           if (!widget.isNew)
             IconButton(
               icon: const Icon(Icons.delete_outline),
@@ -491,6 +492,37 @@ class _CardEditorScreenState extends ConsumerState<CardEditorScreen> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Star in the app bar: filled when this card is the default card (shown
+/// first on the QR screen); tap the outline star to make it the default.
+class _DefaultCardButton extends ConsumerWidget {
+  const _DefaultCardButton({required this.cardId});
+
+  /// The card being edited.
+  final String cardId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final isDefault = ref.watch(defaultCardProvider).value?.id == cardId;
+    if (isDefault) {
+      return IconButton(
+        icon: const Icon(Icons.star),
+        tooltip: l10n.isDefaultCard,
+        onPressed: null,
+      );
+    }
+    return IconButton(
+      icon: const Icon(Icons.star_border),
+      tooltip: l10n.setAsDefault,
+      onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
+        await ref.read(settingsRepositoryProvider).setDefaultCardId(cardId);
+        messenger.showSnackBar(SnackBar(content: Text(l10n.defaultCardSet)));
+      },
     );
   }
 }

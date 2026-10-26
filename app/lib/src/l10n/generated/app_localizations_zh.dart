@@ -220,6 +220,100 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get socialOther => '其他';
+
+  @override
+  String get showQrTitle => '我的二维码';
+
+  @override
+  String get showQrHint => '请对方用 eBuCard 或手机相机扫描此二维码。';
+
+  @override
+  String get showQrNoCards => '请先创建名片，然后即可在此分享。';
+
+  @override
+  String get createCard => '创建名片';
+
+  @override
+  String get qrTooLarge => '此名片信息太多，无法放入一个二维码。请删减部分字段后重试。';
+
+  @override
+  String get showingCard => '要分享的名片';
+
+  @override
+  String get setAsDefault => '设为默认名片';
+
+  @override
+  String get isDefaultCard => '默认名片';
+
+  @override
+  String get defaultCardSet => '已更新默认名片';
+
+  @override
+  String get scanHint => '将相机对准 eBuCard 或联系人二维码。';
+
+  @override
+  String get notACard => '此二维码不是名片。';
+
+  @override
+  String get cameraError => '无法使用相机。请在“设置”中允许 eBuCard 使用相机。';
+
+  @override
+  String get duplicateTitle => '已在收件箱中';
+
+  @override
+  String duplicateMessage(String name) {
+    return '$name 已在你的收件箱中。要更新已保存的名片，还是两张都保留？';
+  }
+
+  @override
+  String get update => '更新';
+
+  @override
+  String get keepBoth => '两张都保留';
+
+  @override
+  String get cardReceived => '名片已加入收件箱';
+
+  @override
+  String get cardUpdated => '名片已更新';
+
+  @override
+  String get searchInbox => '搜索姓名、公司或邮箱';
+
+  @override
+  String get inboxNoMatches => '没有匹配的名片';
+
+  @override
+  String receivedOn(String date) {
+    return '收于 $date';
+  }
+
+  @override
+  String get note => '私人备注';
+
+  @override
+  String get noteHint => '只有你能看到，例如在哪里认识';
+
+  @override
+  String get saveNote => '保存备注';
+
+  @override
+  String get noteSaved => '备注已保存';
+
+  @override
+  String get saveToContacts => '保存到通讯录';
+
+  @override
+  String get contactsError => '无法打开通讯录。';
+
+  @override
+  String get cantOpenLink => '此手机上没有可打开此内容的应用。';
+
+  @override
+  String get deleteReceivedTitle => '要从收件箱删除此名片吗？';
+
+  @override
+  String get deleteReceivedMessage => '只会从 eBuCard 删除，不会从手机通讯录删除。';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).
@@ -438,6 +532,100 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get socialOther => '其他';
+
+  @override
+  String get showQrTitle => '我的二维码';
+
+  @override
+  String get showQrHint => '请对方用 eBuCard 或手机相机扫描此二维码。';
+
+  @override
+  String get showQrNoCards => '请先创建名片，然后即可在此分享。';
+
+  @override
+  String get createCard => '创建名片';
+
+  @override
+  String get qrTooLarge => '此名片信息太多，无法放入一个二维码。请删减部分字段后重试。';
+
+  @override
+  String get showingCard => '要分享的名片';
+
+  @override
+  String get setAsDefault => '设为默认名片';
+
+  @override
+  String get isDefaultCard => '默认名片';
+
+  @override
+  String get defaultCardSet => '已更新默认名片';
+
+  @override
+  String get scanHint => '将相机对准 eBuCard 或联系人二维码。';
+
+  @override
+  String get notACard => '此二维码不是名片。';
+
+  @override
+  String get cameraError => '无法使用相机。请在“设置”中允许 eBuCard 使用相机。';
+
+  @override
+  String get duplicateTitle => '已在收件箱中';
+
+  @override
+  String duplicateMessage(String name) {
+    return '$name 已在你的收件箱中。要更新已保存的名片，还是两张都保留？';
+  }
+
+  @override
+  String get update => '更新';
+
+  @override
+  String get keepBoth => '两张都保留';
+
+  @override
+  String get cardReceived => '名片已加入收件箱';
+
+  @override
+  String get cardUpdated => '名片已更新';
+
+  @override
+  String get searchInbox => '搜索姓名、公司或邮箱';
+
+  @override
+  String get inboxNoMatches => '没有匹配的名片';
+
+  @override
+  String receivedOn(String date) {
+    return '收于 $date';
+  }
+
+  @override
+  String get note => '私人备注';
+
+  @override
+  String get noteHint => '只有你能看到，例如在哪里认识';
+
+  @override
+  String get saveNote => '保存备注';
+
+  @override
+  String get noteSaved => '备注已保存';
+
+  @override
+  String get saveToContacts => '保存到通讯录';
+
+  @override
+  String get contactsError => '无法打开通讯录。';
+
+  @override
+  String get cantOpenLink => '此手机上没有可打开此内容的应用。';
+
+  @override
+  String get deleteReceivedTitle => '要从收件箱删除此名片吗？';
+
+  @override
+  String get deleteReceivedMessage => '只会从 eBuCard 删除，不会从手机通讯录删除。';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -656,4 +844,98 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get socialOther => '其他';
+
+  @override
+  String get showQrTitle => '我的 QR 碼';
+
+  @override
+  String get showQrHint => '請對方用 eBuCard 或手機相機掃描此 QR 碼。';
+
+  @override
+  String get showQrNoCards => '請先建立名片，然後便可在此分享。';
+
+  @override
+  String get createCard => '建立名片';
+
+  @override
+  String get qrTooLarge => '此名片資料太多，無法放入一個 QR 碼。請刪減部分欄位後再試。';
+
+  @override
+  String get showingCard => '要分享的名片';
+
+  @override
+  String get setAsDefault => '設為預設名片';
+
+  @override
+  String get isDefaultCard => '預設名片';
+
+  @override
+  String get defaultCardSet => '已更新預設名片';
+
+  @override
+  String get scanHint => '將相機對準 eBuCard 或聯絡人 QR 碼。';
+
+  @override
+  String get notACard => '此 QR 碼不是名片。';
+
+  @override
+  String get cameraError => '無法使用相機。請在「設定」中允許 eBuCard 使用相機。';
+
+  @override
+  String get duplicateTitle => '已在收件匣中';
+
+  @override
+  String duplicateMessage(String name) {
+    return '$name 已在你的收件匣中。要更新已儲存的名片，還是兩張都保留？';
+  }
+
+  @override
+  String get update => '更新';
+
+  @override
+  String get keepBoth => '兩張都保留';
+
+  @override
+  String get cardReceived => '名片已加入收件匣';
+
+  @override
+  String get cardUpdated => '名片已更新';
+
+  @override
+  String get searchInbox => '搜尋姓名、公司或電郵';
+
+  @override
+  String get inboxNoMatches => '沒有相符的名片';
+
+  @override
+  String receivedOn(String date) {
+    return '收於 $date';
+  }
+
+  @override
+  String get note => '私人備註';
+
+  @override
+  String get noteHint => '只有你看得到，例如在哪裡認識';
+
+  @override
+  String get saveNote => '儲存備註';
+
+  @override
+  String get noteSaved => '備註已儲存';
+
+  @override
+  String get saveToContacts => '儲存至通訊錄';
+
+  @override
+  String get contactsError => '無法開啟通訊錄。';
+
+  @override
+  String get cantOpenLink => '此手機上沒有可開啟此內容的應用程式。';
+
+  @override
+  String get deleteReceivedTitle => '要從收件匣移除此名片嗎？';
+
+  @override
+  String get deleteReceivedMessage => '只會從 eBuCard 移除，不會從手機通訊錄刪除。';
 }

@@ -3,9 +3,12 @@
 // Routes:
 //   /sign-in             SignInScreen (pushed on top of the tabs)
 //   /cards               MyCardsScreen        ┐
-//   /cards/:id/edit      CardEditorScreen     │ bottom-navigation tabs,
-//   /exchange            ExchangeScreen       │ each keeps its own stack
-//   /inbox               InboxScreen          ┘ (StatefulShellRoute)
+//   /cards/:id/edit      CardEditorScreen     │
+//   /exchange            ExchangeScreen       │ bottom-navigation tabs,
+//   /exchange/show-qr    ShowQrScreen         │ each keeps its own stack
+//   /exchange/scan       ScanScreen           │ (StatefulShellRoute)
+//   /inbox               InboxScreen          │
+//   /inbox/:id           ReceivedCardScreen   ┘
 // `/cards/new/edit` opens the editor for a new card.
 
 import 'package:flutter/material.dart';
@@ -17,7 +20,10 @@ import 'features/auth/sign_in_screen.dart';
 import 'features/cards/card_editor_screen.dart';
 import 'features/cards/my_cards_screen.dart';
 import 'features/exchange/exchange_screen.dart';
+import 'features/exchange/scan_screen.dart';
+import 'features/exchange/show_qr_screen.dart';
 import 'features/inbox/inbox_screen.dart';
+import 'features/inbox/received_card_screen.dart';
 import 'home_shell.dart';
 import 'l10n/generated/app_localizations.dart';
 
@@ -50,12 +56,29 @@ GoRouter _buildRouter() => GoRouter(
             GoRoute(
               path: '/exchange',
               builder: (_, _) => const ExchangeScreen(),
+              routes: [
+                GoRoute(
+                  path: 'show-qr',
+                  builder: (_, _) => const ShowQrScreen(),
+                ),
+                GoRoute(path: 'scan', builder: (_, _) => const ScanScreen()),
+              ],
             ),
           ],
         ),
         StatefulShellBranch(
           routes: [
-            GoRoute(path: '/inbox', builder: (_, _) => const InboxScreen()),
+            GoRoute(
+              path: '/inbox',
+              builder: (_, _) => const InboxScreen(),
+              routes: [
+                GoRoute(
+                  path: ':id',
+                  builder: (_, state) =>
+                      ReceivedCardScreen(entryId: state.pathParameters['id']!),
+                ),
+              ],
+            ),
           ],
         ),
       ],

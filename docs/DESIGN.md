@@ -1,6 +1,6 @@
 # eBuCard: Design Document
 
-Status: **Living document** · Last updated with the MVP card editor (PR A)
+Status: **Living document** · Last updated with QR exchange and the Inbox (PR B)
 
 ## 1. Goal
 
@@ -31,7 +31,12 @@ eBuCard is an electronic business card service. Business people and anyone else 
 | Required card fields | Full name, plus at least one phone number or email address. A blank card name becomes "My card" |
 | Card images | Profile photo and logo from the photo library or camera, cropped to a square, max 1024 px JPEG |
 | MVP exchange payload | **Full vCard without images**. No server exists yet, so the card URL is added in the sync phase |
-| Save to Contacts | Hand the vCard to the system add-contact screen (no Contacts permission) |
+| Save to Contacts | Open the system new-contact screen, pre-filled (`flutter_contacts` `showCreator`; no Contacts permission) |
+| Scanning other QR codes | Any contact QR is accepted: vCard 2.1/3.0/4.0 and MECARD. Anything else shows "Not a business card" |
+| Same person scanned again | Ask: **Update** the saved card (keeps its note and received date) or **Keep both**. Same person = same name plus a shared email, or a shared phone number (≥ 8 digits, country code optional) |
+| Inbox | Newest first; search by name, company or email; detail view; private note; delete; tap a phone/email/website to call/write/open |
+| Card shown on the QR screen | The user's **default card** (star in My Cards / editor), switchable on the QR screen. With no default chosen, the first card |
+| Images in received cards | Ignored: embedded images are large, and loading a stranger's remote image would tell them when the card was opened |
 
 ## 3. Platform constraints (why the exchange works this way)
 
@@ -67,6 +72,8 @@ Capability matrix as implemented in `app/lib/src/core/exchange_capabilities.dart
 * Default: the card URL (short, so the code is easy to scan).
 * "Offline QR" option, or when the card has not been synced yet: a vCard. **MVP:** the full vCard without images (§2); full vCards make denser QR codes, which may be harder to scan from a distance.
 * The receiver scans with the in-app scanner. The phone's own camera app also works: a URL opens the app or web card, and a vCard offers to add the contact.
+* The QR code uses the lowest error-correction level (most room for data). If a card is still too large for one QR code, the screen says so and asks the user to remove some fields.
+* Parsing is in `packages/ebucard_models/lib/src/contact_decoder.dart`; the scan → Inbox flow is in `app/lib/src/features/exchange/receive_card.dart`.
 
 ### 4.4 vCard
 * **vCard 3.0** (RFC 2426): the version Android and iOS Contacts import most reliably. Lines are folded at 75 octets and are UTF-8 safe for CJK names.
@@ -99,7 +106,7 @@ The app and server share `ebucard_models`, so the JSON format and the vCard enco
 
 **ReceivedCard**: `id`, `owner_user_id`, `source_card_id` (nullable, set when received by URL), `snapshot` (card JSON at time of receipt), `received_via` (`nfc` | `qr` | `link`), `received_at`, `note`, `tags[]`, `updated_at`, `deleted_at` (tombstone for sync).
 
-**Local storage**: SQLite on the device (drift) holds own cards and received cards, so the app works offline. Own cards live in the `own_cards` table as the card's JSON (same format as the API) plus `sort_order` and `updated_at`. Images are files in the app's documents folder (`card_images/`), referenced by `file:` URI until sync uploads them. **Sync**: each record carries `updated_at` and a tombstone. The client pushes local changes and pulls changes since the last sync cursor. Conflicts resolve as last-writer-wins per record.
+**Local storage**: SQLite on the device (drift) holds own cards and received cards, so the app works offline. Own cards live in the `own_cards` table as the card's JSON (same format as the API) plus `sort_order` and `updated_at`. Received cards live in `received_cards` (the `ReceivedCard` JSON plus `search_text`, `received_at`, `updated_at`), and small preferences such as the default card in `settings` (key/value). Schema version 2; older databases are upgraded in place. Images are files in the app's documents folder (`card_images/`), referenced by `file:` URI until sync uploads them. **Sync**: each record carries `updated_at` and a tombstone. The client pushes local changes and pulls changes since the last sync cursor. Conflicts resolve as last-writer-wins per record.
 
 ## 7. API outline (`/v1`, JSON, Bearer access token)
 
@@ -133,6 +140,8 @@ Still needed: account deletion endpoint (App Store requirement), image upload en
 | NFC send (Android HCE) | Native `CardHostApduService` + platform channel |
 | QR scan / render | `mobile_scanner` / `qr_flutter` |
 | Local DB | `drift` (SQLite) |
+| Save to Contacts | `flutter_contacts` (native creator screen only) |
+| Call / email / open website | `url_launcher` |
 | Sign-in | `sign_in_with_apple`, `google_sign_in` |
 | Routing / i18n | `go_router`, `flutter_localizations` + ARB (already in scaffold) |
 
@@ -144,8 +153,8 @@ ARB files in `app/lib/src/l10n/`. Devices often report Chinese without a script 
 
 1. **PR 1 (done):** design doc and scaffold.
 2. **MVP**, split into three PRs:
-   * **PR A:** card editor (multiple cards, photo/logo with square crop, validation) and local storage.
-   * **PR B:** QR share and scan, Inbox of received cards, save to phone Contacts.
+   * **PR A (done):** card editor (multiple cards, photo/logo with square crop, validation) and local storage.
+   * **PR B (done):** QR share and scan, Inbox of received cards, save to phone Contacts.
    * **PR C:** NFC: Android HCE send, NFC read on both platforms.
 3. **Accounts & sync:** auth endpoints, PostgreSQL schema and migrations, card and inbox sync, share links.
 4. **Web card & app links:** `/c/{slug}` HTML page, `.vcf` download, App Links / Universal Links.
@@ -159,9 +168,10 @@ ARB files in `app/lib/src/l10n/`. Devices often report Chinese without a script 
 | 2 | Android (app, Share) | iPhone (app, Receive) | NFC | Card saved to Inbox |
 | 3 | Android (app, Share) | iPhone (no app) | NFC background read | Web card opens |
 | 4 | Android (app, Share) | Android (no app) | NFC | Web card opens (to verify on several vendors) |
-| 5 | iPhone / Android | any (app) | QR | Card saved to Inbox |
+| 5 | iPhone / Android | any (app) | QR | Card saved to Inbox; scanning again asks Update / Keep both |
 | 6 | iPhone / Android | any (camera app, no app) | QR URL | Web card opens |
-| 7 | any | any | Offline QR | Contact import dialog |
+| 7 | any | any (camera app, no app) | vCard QR (MVP) | Phone offers to add the contact |
+| 8 | paper card / other app | any (app) | vCard or MECARD QR | Card saved to Inbox |
 
 ## 12. Open questions for the product owner
 

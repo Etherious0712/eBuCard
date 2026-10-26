@@ -1,5 +1,6 @@
 // Feature: My Cards. Lists the user's own cards; tap one to edit it, or
-// "New card" to create one. The list updates live from the database.
+// "New card" to create one. The default card (shown first on the QR screen)
+// is marked with a star. The list updates live from the database.
 
 import 'package:ebucard_models/ebucard_models.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ class MyCardsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final cards = ref.watch(ownCardsProvider);
+    final defaultId = ref.watch(defaultCardProvider).value?.id;
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.navMyCards),
@@ -44,7 +46,10 @@ class MyCardsScreen extends ConsumerWidget {
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
                 itemCount: cards.length,
                 separatorBuilder: (_, _) => const SizedBox(height: 12),
-                itemBuilder: (_, i) => _CardTile(card: cards[i]),
+                itemBuilder: (_, i) => _CardTile(
+                  card: cards[i],
+                  isDefault: cards[i].id == defaultId,
+                ),
               ),
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -60,10 +65,13 @@ class MyCardsScreen extends ConsumerWidget {
 /// card's own name on the right.
 class _CardTile extends StatelessWidget {
   /// Shows [card].
-  const _CardTile({required this.card});
+  const _CardTile({required this.card, required this.isDefault});
 
   /// The card to show.
   final BusinessCard card;
+
+  /// Whether this is the default card, marked with a star.
+  final bool isDefault;
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +101,20 @@ class _CardTile extends StatelessWidget {
         ),
         title: Text(card.fullName),
         subtitle: subtitle.isEmpty ? null : Text(subtitle),
-        trailing: Text(card.cardName, style: theme.textTheme.labelMedium),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(card.cardName, style: theme.textTheme.labelMedium),
+            if (isDefault)
+              Icon(
+                Icons.star,
+                size: 18,
+                color: theme.colorScheme.primary,
+                semanticLabel: AppLocalizations.of(context).isDefaultCard,
+              ),
+          ],
+        ),
         onTap: () => context.go('/cards/${card.id}/edit'),
       ),
     );

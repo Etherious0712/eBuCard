@@ -70,5 +70,49 @@
   "errorPhoneOrEmailRequired": "Add at least one phone number or email address",
   "errorInvalidEmail": "Enter a valid email address",
   "errorImage": "Couldn't load the image. Please try again.",
-  "socialOther": "Other"
+  "socialOther": "Other",
+  "showQrTitle": "My QR code",
+  "showQrHint": "Ask the other person to scan this with eBuCard or their phone's camera.",
+  "showQrNoCards": "Create a card first, then you can share it here.",
+  "createCard": "Create card",
+  "qrTooLarge": "This card has too much information for one QR code. Remove some fields and try again.",
+  "showingCard": "Card to share",
+  "setAsDefault": "Set as default card",
+  "isDefaultCard": "Default card",
+  "defaultCardSet": "Default card updated",
+  "scanHint": "Point the camera at an eBuCard or contact QR code.",
+  "notACard": "This QR code isn't a business card.",
+  "cameraError": "Can't use the camera. Allow eBuCard to use the camera in Settings.",
+  "duplicateTitle": "Already in your Inbox",
+  "duplicateMessage": "{name} is already in your Inbox. Update the saved card, or keep both?",
+  "@duplicateMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "update": "Update",
+  "keepBoth": "Keep both",
+  "cardReceived": "Card added to your Inbox",
+  "cardUpdated": "Card updated",
+  "searchInbox": "Search name, company or email",
+  "inboxNoMatches": "No matching cards",
+  "receivedOn": "Received {date}",
+  "@receivedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "note": "Private note",
+  "noteHint": "Only you can see this, e.g. where you met",
+  "saveNote": "Save note",
+  "noteSaved": "Note saved",
+  "saveToContacts": "Save to Contacts",
+  "contactsError": "Couldn't open Contacts.",
+  "cantOpenLink": "No app on this phone can open this.",
+  "deleteReceivedTitle": "Remove this card from your Inbox?",
+  "deleteReceivedMessage": "It is only removed from eBuCard, not from your phone's Contacts."
 }
