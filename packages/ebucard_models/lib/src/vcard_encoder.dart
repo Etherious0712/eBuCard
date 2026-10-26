@@ -13,16 +13,25 @@ class VCardEncoder {
 
   /// Full vCard including addresses and social links. Photo/logo are referenced
   /// by URL only; images are never embedded so payloads stay small.
-  String encode(BusinessCard card) => _encode(card, compact: false);
+  ///
+  /// With [includeImages] false the photo/logo URLs are left out too; QR
+  /// codes use this to stay small enough to scan.
+  String encode(BusinessCard card, {bool includeImages = true}) =>
+      _encode(card, compact: false, includeImages: includeImages);
 
   /// Minimal vCard (name, title, company, first phone/email, card URL) that
   /// fits comfortably in an NFC NDEF record or a scannable QR code.
   String encodeCompact(BusinessCard card, {Uri? cardUrl}) =>
-      _encode(card, compact: true, cardUrl: cardUrl);
+      _encode(card, compact: true, cardUrl: cardUrl, includeImages: false);
 
   /// Builds the vCard lines shared by [encode] and [encodeCompact], then
   /// folds long lines and joins them with CRLF as RFC 2426 requires.
-  String _encode(BusinessCard card, {required bool compact, Uri? cardUrl}) {
+  String _encode(
+    BusinessCard card, {
+    required bool compact,
+    required bool includeImages,
+    Uri? cardUrl,
+  }) {
     // Identity: always present.
     final lines = <String>[
       'BEGIN:VCARD',
@@ -69,6 +78,8 @@ class VCardEncoder {
           'X-SOCIALPROFILE;TYPE=${s.network.name}:${_escape(s.handleOrUrl)}',
         );
       }
+    }
+    if (!compact && includeImages) {
       final photo = _remoteUri(card.photoUrl);
       if (photo != null) lines.add('PHOTO;VALUE=URI:$photo');
       final logo = _remoteUri(card.logoUrl);

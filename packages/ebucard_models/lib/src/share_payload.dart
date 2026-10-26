@@ -9,8 +9,9 @@ import 'vcard_encoder.dart';
 /// See `docs/DESIGN.md` §4 for the format. In short:
 /// * NFC (Android HCE): an NDEF message with a URI record (card URL) first,
 ///   followed by a `text/vcard` MIME record (compact vCard) for offline use.
-/// * QR: the card URL by default; a compact vCard when the user chooses the
-///   offline QR or the card has not been synced yet.
+/// * QR: the card URL by default; the full vCard without images when the
+///   user chooses the offline QR or the card has not been synced yet (the
+///   MVP has no server, so it always uses the vCard).
 class SharePayload {
   /// Creates a payload builder for cards hosted at [baseUrl].
   SharePayload({required this.baseUrl, this.encoder = const VCardEncoder()});
@@ -34,11 +35,12 @@ class SharePayload {
     );
   }
 
-  /// Text to encode in a QR code. Uses the URL when available.
+  /// Text to encode in a QR code. Uses the URL when available, otherwise the
+  /// full vCard without images (DESIGN.md §2, "MVP exchange payload").
   String qrText(BusinessCard card, {bool offline = false}) {
     final url = cardUrl(card);
     if (!offline && url != null) return url.toString();
-    return encoder.encodeCompact(card, cardUrl: url);
+    return encoder.encode(card, includeImages: false);
   }
 
   /// Extracts the share slug from a scanned/received URL, or null if the URL

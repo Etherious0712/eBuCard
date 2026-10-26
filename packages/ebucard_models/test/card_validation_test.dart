@@ -61,6 +61,14 @@ void main() {
       expect(v, isNot(contains('PHOTO')));
     });
 
+    test('images can be left out entirely (QR codes)', () {
+      final v = encoder.encode(
+        _card(phones: [_phone], photoUrl: 'https://cdn.example.com/p.jpg'),
+        includeImages: false,
+      );
+      expect(v, isNot(contains('PHOTO')));
+    });
+
     test('remote photos are referenced by URL', () {
       final v = encoder.encode(
         _card(phones: [_phone], photoUrl: 'https://cdn.example.com/p.jpg'),
