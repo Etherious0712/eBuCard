@@ -27,9 +27,11 @@ dependencies:
   qr_flutter: ^4.1.0
   url_launcher: ^6.3.3
   flutter_contacts: ^2.6.0
+  nfc_manager: ^4.2.1
+  nfc_manager_ndef: ^1.1.0
+  ndef_record: ^1.5.0
 
   # Planned for later PRs (see docs/DESIGN.md §9):
-  #   nfc_manager      – NFC reading on Android and iOS (Core NFC)
   #   sign_in_with_apple, google_sign_in – social sign-in
 
 dev_dependencies:

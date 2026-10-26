@@ -1,6 +1,6 @@
 # eBuCard: Design Document
 
-Status: **Living document** · Last updated with QR exchange and the Inbox (PR B)
+Status: **Living document** · Last updated with NFC exchange (PR C)
 
 ## 1. Goal
 
@@ -37,6 +37,10 @@ eBuCard is an electronic business card service. Business people and anyone else 
 | Inbox | Newest first; search by name, company or email; detail view; private note; delete; tap a phone/email/website to call/write/open |
 | Card shown on the QR screen | The user's **default card** (star in My Cards / editor), switchable on the QR screen. With no default chosen, the first card |
 | Images in received cards | Ignored: embedded images are large, and loading a stranger's remote image would tell them when the card was opened |
+| NFC send (Android) | Its own screen, Exchange → **Tap phones (NFC)**. The phone shares only while that screen is open and the app is in front |
+| NFC receive | Its own screen, Exchange → **Read by NFC**. Android listens while it is open; iPhone opens the system scan sheet, with **Try again** if closed |
+| NFC off | The NFC screens say "NFC is off" with **Open NFC settings** (Android) and **Use QR code instead** |
+| Card sent by NFC | The same card as the QR screen: the default card, or the one picked on either share screen this session |
 
 ## 3. Platform constraints (why the exchange works this way)
 
@@ -62,11 +66,14 @@ Capability matrix as implemented in `app/lib/src/core/exchange_capabilities.dart
 * On a phone **without** eBuCard: the link opens the web card, which offers "Save contact (.vcf)" and an app download link.
 
 ### 4.2 NFC (Android HCE → any reader)
-* AID `D2760000850101` (NFC Forum NDEF Tag Application), Type 4 Tag v2.0 command set: SELECT AID → SELECT CC file (`E103`) → READ BINARY → SELECT NDEF file → READ BINARY.
+* AID `D2760000850101` (NFC Forum NDEF Tag Application), Type 4 Tag v2.0 command set: SELECT AID → SELECT CC file (`E103`) → READ BINARY → SELECT NDEF file → READ BINARY. The tag is read-only (writes are refused) and serves up to 255 bytes per READ BINARY.
 * NDEF message:
-  1. **URI record**: card URL (only if the card has been synced and has a slug).
-  2. **MIME record `text/vcard`**: compact vCard (§4.4) so the exchange also works offline.
-* HCE is active only while the Share screen is open and the device is unlocked (`requireDeviceUnlock`). That way the card is never broadcast in the background.
+  1. **URI record**: card URL (only if the card has been synced and has a slug, so not in the MVP).
+  2. **MIME record `text/vcard`**: the full vCard without images (§4.4), so the exchange works offline.
+* The phone shares only while the **Tap phones (NFC)** screen is open, the app is in front and the phone is unlocked (`requireDeviceUnlock`). The card lives only in memory (`CardShareState`), and `MainActivity` clears it when the app pauses. While sharing, the app asks Android to prefer its service for the AID (`CardEmulation.setPreferredService`), in case another app registered the same AID.
+* Code: NDEF message in `packages/ebucard_models/lib/src/nfc_payload.dart`; tag emulation in `app/android/.../nfc/Type4Tag.kt` (plain Kotlin, unit tested in `src/test`) and `CardHostApduService.kt`; Flutter ↔ Android channel `ebucard/nfc` in `MainActivity.kt` and `app/lib/src/data/nfc_service.dart`.
+* Reading (both platforms) uses `nfc_manager`: Android reader mode, iPhone `NFCTagReaderSession` (the AID is listed in `Info.plist`). Any NDEF message with a vCard/MECARD (MIME or text record) is accepted.
+* **Phones without eBuCard (to verify on devices, matrix rows 3–4):** an iPhone without the app reads tags in the background only for web links, so it will do nothing until card links exist (sync phase). An Android phone without the app may offer to import the vCard into Contacts, depending on the vendor.
 
 ### 4.3 QR code
 * Default: the card URL (short, so the code is easy to scan).
@@ -136,8 +143,8 @@ Still needed: account deletion endpoint (App Store requirement), image upload en
 
 | Need | Package |
 |---|---|
-| NFC read (both platforms) | `nfc_manager` |
-| NFC send (Android HCE) | Native `CardHostApduService` + platform channel |
+| NFC read (both platforms) | `nfc_manager` + `nfc_manager_ndef`; NDEF encoding with `ndef_record` |
+| NFC send (Android HCE) | Native `CardHostApduService` + `Type4Tag` + platform channel `ebucard/nfc` |
 | QR scan / render | `mobile_scanner` / `qr_flutter` |
 | Local DB | `drift` (SQLite) |
 | Save to Contacts | `flutter_contacts` (native creator screen only) |
@@ -155,7 +162,7 @@ ARB files in `app/lib/src/l10n/`. Devices often report Chinese without a script 
 2. **MVP**, split into three PRs:
    * **PR A (done):** card editor (multiple cards, photo/logo with square crop, validation) and local storage.
    * **PR B (done):** QR share and scan, Inbox of received cards, save to phone Contacts.
-   * **PR C:** NFC: Android HCE send, NFC read on both platforms.
+   * **PR C (done):** NFC: Android HCE send, NFC read on both platforms.
 3. **Accounts & sync:** auth endpoints, PostgreSQL schema and migrations, card and inbox sync, share links.
 4. **Web card & app links:** `/c/{slug}` HTML page, `.vcf` download, App Links / Universal Links.
 5. **Release:** store listings, privacy policy, account deletion, analytics/crash reporting (to be decided).
@@ -166,8 +173,10 @@ ARB files in `app/lib/src/l10n/`. Devices often report Chinese without a script 
 |---|---|---|---|---|
 | 1 | Android (app, Share) | Android (app, Receive) | NFC | Card saved to Inbox |
 | 2 | Android (app, Share) | iPhone (app, Receive) | NFC | Card saved to Inbox |
-| 3 | Android (app, Share) | iPhone (no app) | NFC background read | Web card opens |
-| 4 | Android (app, Share) | Android (no app) | NFC | Web card opens (to verify on several vendors) |
+| 3 | Android (app, Share) | iPhone (no app) | NFC background read | MVP: nothing happens (no card link yet). After sync: web card opens |
+| 4 | Android (app, Share) | Android (no app) | NFC | Possibly an offer to import the contact, depending on vendor (to verify) |
+| 4a | Android (app, Share) | any | NFC with app in background / screen locked | Nothing is shared |
+| 4b | any (app, Receive) | NFC switched off | — | "NFC is off" with settings button (Android) and QR fallback |
 | 5 | iPhone / Android | any (app) | QR | Card saved to Inbox; scanning again asks Update / Keep both |
 | 6 | iPhone / Android | any (camera app, no app) | QR URL | Web card opens |
 | 7 | any | any (camera app, no app) | vCard QR (MVP) | Phone offers to add the contact |

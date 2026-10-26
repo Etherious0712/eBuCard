@@ -321,4 +321,61 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get deleteReceivedMessage =>
       'It is only removed from eBuCard, not from your phone\'s Contacts.';
+
+  @override
+  String get nfcShareTitle => 'Tap phones (NFC)';
+
+  @override
+  String get nfcShareReady => 'Ready to share';
+
+  @override
+  String get nfcShareHint =>
+      'Keep this screen open and hold the back of your phone against the other phone. On their phone: eBuCard → Exchange → Read by NFC.';
+
+  @override
+  String get nfcCannotShare =>
+      'This phone can\'t share by NFC. Show your QR code instead.';
+
+  @override
+  String get nfcUnsupported =>
+      'This phone doesn\'t have NFC. Use a QR code instead.';
+
+  @override
+  String get nfcOff => 'NFC is off';
+
+  @override
+  String get nfcOffMessage =>
+      'Turn on NFC to exchange cards by tapping phones. You can use a QR code meanwhile.';
+
+  @override
+  String get openNfcSettings => 'Open NFC settings';
+
+  @override
+  String get useQrInstead => 'Use QR code instead';
+
+  @override
+  String get nfcReceiveTitle => 'Read by NFC';
+
+  @override
+  String get nfcReceiveListening =>
+      'Hold your phone against the back of the other phone';
+
+  @override
+  String get nfcReceiveHint =>
+      'On their phone: eBuCard → Exchange → Tap phones (NFC). iPhones can\'t share by NFC: ask them to show their QR code.';
+
+  @override
+  String get nfcIosAlert => 'Hold your iPhone near the other phone.';
+
+  @override
+  String get nfcIosSuccess => 'Card received';
+
+  @override
+  String get nfcStopped => 'Stopped listening.';
+
+  @override
+  String get tryAgain => 'Try again';
+
+  @override
+  String get nfcNotACard => 'The other phone didn\'t share a business card.';
 }

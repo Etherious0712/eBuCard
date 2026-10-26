@@ -7,6 +7,8 @@
 //   /exchange            ExchangeScreen       │ bottom-navigation tabs,
 //   /exchange/show-qr    ShowQrScreen         │ each keeps its own stack
 //   /exchange/scan       ScanScreen           │ (StatefulShellRoute)
+//   /exchange/nfc-share  NfcShareScreen       │
+//   /exchange/nfc-receive NfcReceiveScreen    │
 //   /inbox               InboxScreen          │
 //   /inbox/:id           ReceivedCardScreen   ┘
 // `/cards/new/edit` opens the editor for a new card.
@@ -20,6 +22,8 @@ import 'features/auth/sign_in_screen.dart';
 import 'features/cards/card_editor_screen.dart';
 import 'features/cards/my_cards_screen.dart';
 import 'features/exchange/exchange_screen.dart';
+import 'features/exchange/nfc_receive_screen.dart';
+import 'features/exchange/nfc_share_screen.dart';
 import 'features/exchange/scan_screen.dart';
 import 'features/exchange/show_qr_screen.dart';
 import 'features/inbox/inbox_screen.dart';
@@ -62,6 +66,14 @@ GoRouter _buildRouter() => GoRouter(
                   builder: (_, _) => const ShowQrScreen(),
                 ),
                 GoRoute(path: 'scan', builder: (_, _) => const ScanScreen()),
+                GoRoute(
+                  path: 'nfc-share',
+                  builder: (_, _) => const NfcShareScreen(),
+                ),
+                GoRoute(
+                  path: 'nfc-receive',
+                  builder: (_, _) => const NfcReceiveScreen(),
+                ),
               ],
             ),
           ],

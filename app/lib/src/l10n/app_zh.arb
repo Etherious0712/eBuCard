@@ -100,5 +100,22 @@
   "contactsError": "无法打开通讯录。",
   "cantOpenLink": "此手机上没有可打开此内容的应用。",
   "deleteReceivedTitle": "要从收件箱删除此名片吗？",
-  "deleteReceivedMessage": "只会从 eBuCard 删除，不会从手机通讯录删除。"
+  "deleteReceivedMessage": "只会从 eBuCard 删除，不会从手机通讯录删除。",
+  "nfcShareTitle": "手机触碰 (NFC)",
+  "nfcShareReady": "准备分享",
+  "nfcShareHint": "请保持此页面打开，并将手机背面贴近对方手机。对方需在 eBuCard 打开“交换”→“通过 NFC 读取”。",
+  "nfcCannotShare": "此手机无法通过 NFC 分享，请改用二维码。",
+  "nfcUnsupported": "此手机没有 NFC，请改用二维码。",
+  "nfcOff": "NFC 已关闭",
+  "nfcOffMessage": "打开 NFC 后即可通过手机触碰交换名片。在此期间可先使用二维码。",
+  "openNfcSettings": "打开 NFC 设置",
+  "useQrInstead": "改用二维码",
+  "nfcReceiveTitle": "通过 NFC 读取",
+  "nfcReceiveListening": "将手机贴近对方手机背面",
+  "nfcReceiveHint": "对方需在 eBuCard 打开“交换”→“手机触碰 (NFC)”。iPhone 无法通过 NFC 分享，请对方出示二维码。",
+  "nfcIosAlert": "将 iPhone 靠近对方手机。",
+  "nfcIosSuccess": "已收到名片",
+  "nfcStopped": "已停止读取。",
+  "tryAgain": "重试",
+  "nfcNotACard": "对方手机没有分享名片。"
 }

@@ -9,6 +9,7 @@ import 'card_image_service.dart';
 import 'card_repository.dart';
 import 'contacts_service.dart';
 import 'link_launcher.dart';
+import 'nfc_service.dart';
 import 'received_card_repository.dart';
 import 'settings_repository.dart';
 
@@ -73,6 +74,15 @@ final cardImageServiceProvider = Provider<CardImageService>(
 /// Opens the phone's "new contact" screen for a card.
 final contactsServiceProvider = Provider<ContactsService>(
   (ref) => DeviceContactsService(),
+);
+
+/// NFC: status, sharing (Android) and reading.
+final nfcServiceProvider = Provider<NfcService>((ref) => DeviceNfcService());
+
+/// Current NFC status. Screens call `ref.invalidate(nfcStatusProvider)` to
+/// check again, e.g. after the user returns from the NFC settings.
+final nfcStatusProvider = FutureProvider<NfcStatus>(
+  (ref) => ref.watch(nfcServiceProvider).status(),
 );
 
 /// Opens phone numbers, emails and websites in other apps.

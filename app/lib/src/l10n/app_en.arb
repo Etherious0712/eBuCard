@@ -114,5 +114,22 @@
   "contactsError": "Couldn't open Contacts.",
   "cantOpenLink": "No app on this phone can open this.",
   "deleteReceivedTitle": "Remove this card from your Inbox?",
-  "deleteReceivedMessage": "It is only removed from eBuCard, not from your phone's Contacts."
+  "deleteReceivedMessage": "It is only removed from eBuCard, not from your phone's Contacts.",
+  "nfcShareTitle": "Tap phones (NFC)",
+  "nfcShareReady": "Ready to share",
+  "nfcShareHint": "Keep this screen open and hold the back of your phone against the other phone. On their phone: eBuCard → Exchange → Read by NFC.",
+  "nfcCannotShare": "This phone can't share by NFC. Show your QR code instead.",
+  "nfcUnsupported": "This phone doesn't have NFC. Use a QR code instead.",
+  "nfcOff": "NFC is off",
+  "nfcOffMessage": "Turn on NFC to exchange cards by tapping phones. You can use a QR code meanwhile.",
+  "openNfcSettings": "Open NFC settings",
+  "useQrInstead": "Use QR code instead",
+  "nfcReceiveTitle": "Read by NFC",
+  "nfcReceiveListening": "Hold your phone against the back of the other phone",
+  "nfcReceiveHint": "On their phone: eBuCard → Exchange → Tap phones (NFC). iPhones can't share by NFC: ask them to show their QR code.",
+  "nfcIosAlert": "Hold your iPhone near the other phone.",
+  "nfcIosSuccess": "Card received",
+  "nfcStopped": "Stopped listening.",
+  "tryAgain": "Try again",
+  "nfcNotACard": "The other phone didn't share a business card."
 }
