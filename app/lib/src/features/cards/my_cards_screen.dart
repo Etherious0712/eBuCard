@@ -1,3 +1,6 @@
+// Feature: My Cards. Lists the user's own cards; tap one to edit it, or
+// "New card" to create one. The list updates live from the database.
+
 import 'package:ebucard_models/ebucard_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +13,7 @@ import '../placeholder_body.dart';
 
 /// Lists the user's own cards (a user may have several, e.g. Work/Personal).
 class MyCardsScreen extends ConsumerWidget {
+  /// Creates the screen.
   const MyCardsScreen({super.key});
 
   @override
@@ -52,9 +56,13 @@ class MyCardsScreen extends ConsumerWidget {
   }
 }
 
+/// One card in the list: photo (or initial), name, title · company, and the
+/// card's own name on the right.
 class _CardTile extends StatelessWidget {
+  /// Shows [card].
   const _CardTile({required this.card});
 
+  /// The card to show.
   final BusinessCard card;
 
   @override

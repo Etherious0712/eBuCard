@@ -6,8 +6,10 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'support/test_app.dart';
 
+/// The text field whose label is [label].
 Finder _field(String label) => find.widgetWithText(TextField, label);
 
+/// Taps "New card" on My Cards.
 Future<void> _openNewCard(WidgetTester tester) async {
   await tester.tap(find.text('New card'));
   await tester.pumpAndSettle();
@@ -18,9 +20,11 @@ Future<void> _openNewCard(WidgetTester tester) async {
 Future<T> _db<T>(WidgetTester tester, Future<T> Function() body) async =>
     (await tester.runAsync(body)) as T;
 
+/// Every card currently stored in [db].
 Future<List<BusinessCard>> _allCards(WidgetTester tester, AppDatabase db) =>
     _db(tester, () => CardRepository(db).watchAll().first);
 
+/// Taps Save in the editor's app bar.
 Future<void> _save(WidgetTester tester) async {
   await tester.tap(find.text('Save'));
   await tester.pumpAndSettle();

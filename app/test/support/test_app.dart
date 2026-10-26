@@ -1,3 +1,6 @@
+// Shared helpers for app tests: an in-memory database, a fake image service,
+// and pumpApp() which starts the full app with those swapped in.
+
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:ebucard/src/app.dart';
@@ -8,12 +11,18 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+/// A fresh, empty database in memory. Close it in `tearDown`.
 AppDatabase memoryDatabase() => AppDatabase(
   DatabaseConnection(NativeDatabase.memory(), closeStreamsSynchronously: true),
 );
 
+/// Image service that returns [nextImage] instead of opening the camera or
+/// library, and records deletions in [deleted].
 class FakeCardImageService implements CardImageService {
+  /// What the next pick returns; null simulates the user cancelling.
   String? nextImage;
+
+  /// URIs passed to [delete], in order.
   final deleted = <String>[];
 
   @override

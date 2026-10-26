@@ -1,27 +1,75 @@
-/// Label attached to a phone number, email or address.
-enum ContactLabel { work, mobile, home, fax, other }
+// Domain model for a business card, shared by the Flutter app and the server.
+//
+// Every type here is immutable and round-trips through JSON with `toJson` /
+// `fromJson`. That JSON is the single format used for local storage (SQLite),
+// the REST API and sync, so a change here changes all three. Add new fields
+// as optional, with a default, so older stored data still decodes.
 
-/// Social / messaging networks a card can link to.
-enum SocialNetwork {
-  linkedin,
-  wechat,
-  whatsapp,
-  x,
-  facebook,
-  instagram,
-  line,
-  telegram,
+/// Label attached to a phone number, email or address, e.g. "work" or
+/// "mobile". Stored by [Enum.name], so renaming a value breaks stored data.
+enum ContactLabel {
+  /// Work / office.
+  work,
+
+  /// Mobile phone. Only meaningful for phone numbers.
+  mobile,
+
+  /// Home / personal.
+  home,
+
+  /// Fax. Only meaningful for phone numbers.
+  fax,
+
+  /// Anything else.
   other,
 }
 
+/// Social and messaging networks a card can link to. Stored by [Enum.name],
+/// so renaming a value breaks stored data; add new networks at the end.
+enum SocialNetwork {
+  /// LinkedIn profile URL.
+  linkedin,
+
+  /// WeChat ID.
+  wechat,
+
+  /// WhatsApp number or link.
+  whatsapp,
+
+  /// X (formerly Twitter) handle.
+  x,
+
+  /// Facebook profile.
+  facebook,
+
+  /// Instagram handle.
+  instagram,
+
+  /// LINE ID.
+  line,
+
+  /// Telegram username.
+  telegram,
+
+  /// Any other network; the value is usually a full URL.
+  other,
+}
+
+/// A single labeled value, used for phone numbers and email addresses.
 class LabeledValue {
+  /// Creates a value with its [label], e.g. a mobile phone number.
   const LabeledValue({required this.label, required this.value});
 
+  /// What kind of number or address this is.
   final ContactLabel label;
+
+  /// The phone number or email address as the user typed it.
   final String value;
 
+  /// Encodes this value as JSON: `{"label": "mobile", "value": "..."}`.
   Map<String, Object?> toJson() => {'label': label.name, 'value': value};
 
+  /// Decodes a value written by [toJson].
   factory LabeledValue.fromJson(Map<String, Object?> json) => LabeledValue(
     label: ContactLabel.values.byName(json['label']! as String),
     value: json['value']! as String,
@@ -35,7 +83,9 @@ class LabeledValue {
   int get hashCode => Object.hash(label, value);
 }
 
+/// A postal address. All parts are optional; empty strings mean "not set".
 class PostalAddress {
+  /// Creates an address. Every part defaults to empty.
   const PostalAddress({
     this.label = ContactLabel.work,
     this.street = '',
@@ -45,13 +95,25 @@ class PostalAddress {
     this.country = '',
   });
 
+  /// Work, home, etc.
   final ContactLabel label;
+
+  /// Street and building, possibly several lines.
   final String street;
+
+  /// City or town.
   final String city;
+
+  /// State, province or region.
   final String region;
+
+  /// Postal / ZIP code.
   final String postalCode;
+
+  /// Country or territory name.
   final String country;
 
+  /// Encodes this address as JSON.
   Map<String, Object?> toJson() => {
     'label': label.name,
     'street': street,
@@ -61,6 +123,7 @@ class PostalAddress {
     'country': country,
   };
 
+  /// Decodes an address written by [toJson]. Missing parts become empty.
   factory PostalAddress.fromJson(Map<String, Object?> json) => PostalAddress(
     label: ContactLabel.values.byName(json['label']! as String),
     street: json['street'] as String? ?? '',
@@ -85,19 +148,24 @@ class PostalAddress {
       Object.hash(label, street, city, region, postalCode, country);
 }
 
+/// A link to the card owner's profile on a social or messaging network.
 class SocialLink {
+  /// Creates a link to [network].
   const SocialLink({required this.network, required this.handleOrUrl});
 
+  /// Which network this is.
   final SocialNetwork network;
 
   /// A full URL (e.g. LinkedIn profile) or a handle/ID (e.g. WeChat ID).
   final String handleOrUrl;
 
+  /// Encodes this link as JSON.
   Map<String, Object?> toJson() => {
     'network': network.name,
     'handleOrUrl': handleOrUrl,
   };
 
+  /// Decodes a link written by [toJson].
   factory SocialLink.fromJson(Map<String, Object?> json) => SocialLink(
     network: SocialNetwork.values.byName(json['network']! as String),
     handleOrUrl: json['handleOrUrl']! as String,
@@ -115,7 +183,12 @@ class SocialLink {
 
 /// A single business card. One user may own several cards
 /// (e.g. "Work" and "Personal"); [cardName] tells them apart.
+///
+/// Whether a card is complete enough to save is decided by `validateCard`
+/// (see `card_validation.dart`), not by this class.
 class BusinessCard {
+  /// Creates a card. Only [id], [cardName], [fullName] and [updatedAt] are
+  /// required here; everything else defaults to empty.
   const BusinessCard({
     required this.id,
     required this.cardName,
@@ -133,24 +206,51 @@ class BusinessCard {
     required this.updatedAt,
   });
 
+  /// Stable unique ID (a UUID created on the device).
   final String id;
+
+  /// The owner's own label for this card, e.g. "Work". Never shared.
   final String cardName;
+
+  /// The person's name as it should appear on the card.
   final String fullName;
+
+  /// Job title, e.g. "Sales Director". May be empty.
   final String jobTitle;
+
+  /// Company or organisation name. May be empty.
   final String company;
+
+  /// Phone numbers, in display order.
   final List<LabeledValue> phones;
+
+  /// Email addresses, in display order.
   final List<LabeledValue> emails;
+
+  /// Website URLs, in display order.
   final List<String> websites;
+
+  /// Postal addresses, in display order.
   final List<PostalAddress> addresses;
+
+  /// Social network profiles, in display order.
   final List<SocialLink> socialLinks;
+
+  /// Profile photo. A `file:` URI while the image only exists on the device,
+  /// an `https:` URL once uploaded. Only `http(s)` URLs are ever shared.
   final String? photoUrl;
+
+  /// Company logo; same rules as [photoUrl].
   final String? logoUrl;
 
   /// Public, revocable identifier used in the share URL. Null until the card
   /// has been synced to the server.
   final String? shareSlug;
+
+  /// When the card was last changed (UTC). Used for sync conflict handling.
   final DateTime updatedAt;
 
+  /// Encodes the whole card as JSON. [updatedAt] is written as UTC ISO-8601.
   Map<String, Object?> toJson() => {
     'id': id,
     'cardName': cardName,
@@ -168,7 +268,10 @@ class BusinessCard {
     'updatedAt': updatedAt.toUtc().toIso8601String(),
   };
 
+  /// Decodes a card written by [toJson]. Missing optional fields fall back
+  /// to their defaults, so older stored cards still load.
   factory BusinessCard.fromJson(Map<String, Object?> json) {
+    // Reads a JSON array of objects, treating a missing key as empty.
     List<Map<String, Object?>> list(String key) =>
         ((json[key] as List?) ?? const []).cast<Map<String, Object?>>();
     return BusinessCard(

@@ -1,3 +1,6 @@
+// Decides what goes into an NFC tag or QR code for a card, and parses card
+// links back out of scanned URLs.
+
 import 'business_card.dart';
 import 'vcard_encoder.dart';
 
@@ -9,10 +12,13 @@ import 'vcard_encoder.dart';
 /// * QR: the card URL by default; a compact vCard when the user chooses the
 ///   offline QR or the card has not been synced yet.
 class SharePayload {
+  /// Creates a payload builder for cards hosted at [baseUrl].
   SharePayload({required this.baseUrl, this.encoder = const VCardEncoder()});
 
   /// e.g. `https://card.example.com` – the host serving `/c/<slug>`.
   final Uri baseUrl;
+
+  /// Produces the vCard text used for offline payloads.
   final VCardEncoder encoder;
 
   /// Public URL of a card, or null if the card has no share slug yet.

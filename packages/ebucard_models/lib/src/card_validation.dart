@@ -1,11 +1,21 @@
+// Rules a card must meet before it can be saved. Shared so the app (editor)
+// and the server (API) enforce exactly the same rules.
+
 import 'business_card.dart';
 
+/// A reason a card can't be saved yet. The app maps each to a message.
 enum CardValidationError {
+  /// [BusinessCard.fullName] is empty or only whitespace.
   fullNameRequired,
+
+  /// The card has no non-blank phone number and no non-blank email.
   phoneOrEmailRequired,
+
+  /// At least one non-blank email doesn't look like an email address.
   invalidEmail,
 }
 
+/// `something@something.tld` with no spaces; deliberately loose.
 final _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 
 /// Basic shape check (`name@domain.tld`); not a full RFC 5322 parser.

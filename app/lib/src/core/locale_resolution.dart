@@ -1,11 +1,16 @@
+// Chooses the UI language from the phone's language setting.
+
 import 'package:flutter/widgets.dart';
 
+/// UI languages the app ships: English, Traditional and Simplified Chinese.
+/// The first entry is the fallback for any other language.
 const supportedAppLocales = [
   Locale('en'),
   Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
   Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
 ];
 
+/// Regions where Chinese is normally written in Traditional script.
 const _traditionalChineseRegions = {'TW', 'HK', 'MO'};
 
 /// Picks English, Traditional or Simplified Chinese for a device locale.

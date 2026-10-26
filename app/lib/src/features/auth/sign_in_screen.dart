@@ -1,9 +1,12 @@
+// Feature: sign in. Placeholder until accounts arrive (roadmap step 3).
+
 import 'package:flutter/material.dart';
 
 import '../../l10n/generated/app_localizations.dart';
 
 /// Email + password, Sign in with Apple and Google sign-in.
 class SignInScreen extends StatelessWidget {
+  /// Creates the screen.
   const SignInScreen({super.key});
 
   @override

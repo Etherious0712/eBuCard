@@ -1,6 +1,7 @@
 import 'package:ebucard_models/ebucard_models.dart';
 import 'package:test/test.dart';
 
+/// A minimal card for validation tests; override only what a test needs.
 BusinessCard _card({
   String fullName = 'Tai Man Chan',
   List<LabeledValue> phones = const [],

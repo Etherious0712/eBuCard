@@ -1,11 +1,17 @@
+// The bottom navigation bar (My Cards / Exchange / Inbox) wrapped around the
+// three tab branches defined in app.dart.
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'l10n/generated/app_localizations.dart';
 
+/// Scaffold with the bottom navigation bar; the current tab is the body.
 class HomeShell extends StatelessWidget {
+  /// Wraps [shell], which go_router builds from the tab branches.
   const HomeShell({super.key, required this.shell});
 
+  /// The tab branches and which one is active.
   final StatefulNavigationShell shell;
 
   @override
@@ -15,6 +21,7 @@ class HomeShell extends StatelessWidget {
       body: shell,
       bottomNavigationBar: NavigationBar(
         selectedIndex: shell.currentIndex,
+        // Tapping the active tab again returns to that tab's first screen.
         onDestinationSelected: (i) =>
             shell.goBranch(i, initialLocation: i == shell.currentIndex),
         destinations: [

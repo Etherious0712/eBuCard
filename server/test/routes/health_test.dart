@@ -7,6 +7,7 @@ import 'package:test/test.dart';
 import '../../routes/health.dart' as health;
 import '../../routes/v1/cards/index.dart' as cards;
 
+/// Stand-in for the request context Dart Frog passes to each route.
 class _MockRequestContext extends Mock implements RequestContext {}
 
 void main() {

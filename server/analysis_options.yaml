@@ -1,1 +1,7 @@
 include: package:dart_frog_lint/recommended.yaml
+
+linter:
+  rules:
+    # Every public function (including each route's onRequest) must say what
+    # it does, so contributors can read the API from the code.
+    - public_member_api_docs

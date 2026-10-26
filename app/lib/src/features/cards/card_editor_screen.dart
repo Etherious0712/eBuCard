@@ -1,3 +1,13 @@
+// Feature: card editor. Creates, edits and deletes one of the user's cards.
+//
+// How it works:
+// * The form keeps its own text controllers (one per field/row). Nothing is
+//   written to the database until the user taps Save.
+// * Save builds a BusinessCard from the form (_buildCard), checks it with
+//   validateCard from ebucard_models, then stores it via CardRepository.
+// * Images are stored as files as soon as they are picked. Files that end up
+//   unused (replaced, removed, or the user leaves without saving) are deleted.
+
 import 'package:ebucard_models/ebucard_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,17 +23,22 @@ import 'card_labels.dart';
 /// Create (`cardId == 'new'`) or edit a card: core contact fields, photo,
 /// company logo and social links.
 class CardEditorScreen extends ConsumerStatefulWidget {
+  /// Opens the editor for [cardId], or for a new card when it is `'new'`.
   const CardEditorScreen({super.key, required this.cardId});
 
+  /// ID of the card to edit, or `'new'`.
   final String cardId;
 
+  /// Whether this editor creates a new card.
   bool get isNew => cardId == 'new';
 
   @override
   ConsumerState<CardEditorScreen> createState() => _CardEditorScreenState();
 }
 
+/// Form state for [CardEditorScreen].
 class _CardEditorScreenState extends ConsumerState<CardEditorScreen> {
+  // One controller per text field; list fields hold one row per entry.
   final _cardName = TextEditingController();
   final _fullName = TextEditingController();
   final _jobTitle = TextEditingController();
@@ -34,7 +49,10 @@ class _CardEditorScreenState extends ConsumerState<CardEditorScreen> {
   final _addresses = <_AddressRow>[];
   final _socials = <_SocialRow>[];
 
+  /// The card as stored before editing; null for a new card.
   BusinessCard? _original;
+
+  /// Current photo and logo (`file:` URIs), possibly not saved yet.
   String? _photoUri;
   String? _logoUri;
 
@@ -42,9 +60,16 @@ class _CardEditorScreenState extends ConsumerState<CardEditorScreen> {
   /// user leaves without saving.
   final _unsavedImages = <String>{};
 
+  /// True while an existing card is being read from the database.
   bool _loading = true;
+
+  /// The card to edit no longer exists.
   bool _notFound = false;
+
+  /// A save or delete is in progress; disables the buttons.
   bool _saving = false;
+
+  /// Validation errors are shown only after the first Save attempt.
   bool _showErrors = false;
 
   /// Read once: `ref` can't be used in [dispose].
@@ -64,6 +89,7 @@ class _CardEditorScreenState extends ConsumerState<CardEditorScreen> {
     }
   }
 
+  /// Reads the card being edited and fills the form with it.
   Future<void> _load() async {
     final card = await ref.read(cardRepositoryProvider).find(widget.cardId);
     if (!mounted) return;
@@ -90,6 +116,7 @@ class _CardEditorScreenState extends ConsumerState<CardEditorScreen> {
     });
   }
 
+  /// Deletes images picked but never saved, and frees the controllers.
   @override
   void dispose() {
     for (final uri in _unsavedImages) {
@@ -110,6 +137,8 @@ class _CardEditorScreenState extends ConsumerState<CardEditorScreen> {
     super.dispose();
   }
 
+  /// Builds a card from the current form. Blank rows are dropped, text is
+  /// trimmed, and a blank card name becomes the default "My card".
   BusinessCard _buildCard(AppLocalizations l10n) {
     List<LabeledValue> values(List<_ValueRow> rows) => [
       for (final r in rows)
@@ -148,6 +177,8 @@ class _CardEditorScreenState extends ConsumerState<CardEditorScreen> {
     );
   }
 
+  /// Validates and stores the card, cleans up replaced images, then returns
+  /// to My Cards. On validation errors it only shows them.
   Future<void> _save() async {
     final l10n = AppLocalizations.of(context);
     final card = _buildCard(l10n);
@@ -171,6 +202,7 @@ class _CardEditorScreenState extends ConsumerState<CardEditorScreen> {
     context.go('/cards');
   }
 
+  /// Asks for confirmation, then deletes the card and its images.
   Future<void> _delete() async {
     final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
@@ -199,6 +231,8 @@ class _CardEditorScreenState extends ConsumerState<CardEditorScreen> {
     context.go('/cards');
   }
 
+  /// Lets the user pick, retake or remove the photo (or the logo when
+  /// [logo] is true). Shows a message if the picker fails.
   Future<void> _editImage({required bool logo}) async {
     final l10n = AppLocalizations.of(context);
     final current = logo ? _logoUri : _photoUri;
@@ -260,6 +294,8 @@ class _CardEditorScreenState extends ConsumerState<CardEditorScreen> {
     });
   }
 
+  /// Lays out the form: card name, profile (images, name, title, company),
+  /// then contact sections, each with its own "Add" button.
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -459,8 +495,10 @@ class _CardEditorScreenState extends ConsumerState<CardEditorScreen> {
   }
 }
 
+/// Choices in the photo/logo bottom sheet.
 enum _ImageAction { gallery, camera, remove }
 
+/// One phone or email row in the form: its label and text.
 class _ValueRow {
   _ValueRow(this.label, [String text = ''])
     : controller = TextEditingController(text: text);
@@ -471,6 +509,7 @@ class _ValueRow {
   void dispose() => controller.dispose();
 }
 
+/// One social link row in the form: the network and the handle/URL.
 class _SocialRow {
   _SocialRow(this.network, [String text = ''])
     : controller = TextEditingController(text: text);
@@ -484,6 +523,7 @@ class _SocialRow {
   void dispose() => controller.dispose();
 }
 
+/// One address in the form, with a controller per address part.
 class _AddressRow {
   _AddressRow([PostalAddress address = const PostalAddress()])
     : label = address.label,
@@ -510,8 +550,10 @@ class _AddressRow {
     country,
   ];
 
+  /// True if every part is empty; such addresses are not saved.
   bool get isBlank => _fields.every((c) => c.text.trim().isEmpty);
 
+  /// The address with all parts trimmed.
   PostalAddress toAddress() => PostalAddress(
     label: label,
     street: street.text.trim(),
@@ -528,6 +570,7 @@ class _AddressRow {
   }
 }
 
+/// Large coloured heading between form sections.
 class _SectionHeader extends StatelessWidget {
   const _SectionHeader(this.text);
 
@@ -545,6 +588,7 @@ class _SectionHeader extends StatelessWidget {
   );
 }
 
+/// Small heading above a list of rows (e.g. "Phone numbers").
 class _SubHeader extends StatelessWidget {
   const _SubHeader(this.text);
 
@@ -557,6 +601,7 @@ class _SubHeader extends StatelessWidget {
   );
 }
 
+/// "+ Add ..." button under a list of rows.
 class _AddButton extends StatelessWidget {
   const _AddButton({required this.label, required this.onPressed});
 
@@ -574,6 +619,7 @@ class _AddButton extends StatelessWidget {
   );
 }
 
+/// Minus button at the end of a row that removes it.
 class _RemoveButton extends StatelessWidget {
   const _RemoveButton({required this.onPressed});
 
@@ -587,6 +633,7 @@ class _RemoveButton extends StatelessWidget {
   );
 }
 
+/// Dropdown for choosing a [ContactLabel] (Work, Mobile, ...).
 class _LabelDropdown extends StatelessWidget {
   const _LabelDropdown({required this.value, required this.onChanged});
 
@@ -607,6 +654,7 @@ class _LabelDropdown extends StatelessWidget {
   }
 }
 
+/// A phone or email row: label dropdown, text field, remove button.
 class _LabeledValueField extends StatelessWidget {
   const _LabeledValueField({
     required this.row,
@@ -655,6 +703,7 @@ class _LabeledValueField extends StatelessWidget {
   );
 }
 
+/// An address card: label dropdown, remove button and the five parts.
 class _AddressFields extends StatelessWidget {
   const _AddressFields({
     required this.row,
@@ -705,6 +754,7 @@ class _AddressFields extends StatelessWidget {
   }
 }
 
+/// Tappable image preview for the photo (round) or logo (rounded square).
 class _ImagePickerTile extends StatelessWidget {
   const _ImagePickerTile({
     required this.label,

@@ -1,9 +1,12 @@
+// Shared empty-state body: a big icon and a message.
+
 import 'package:flutter/material.dart';
 
 import '../l10n/generated/app_localizations.dart';
 
-/// Body used by screens that are scaffolded but not yet implemented.
+/// Body for empty lists and for screens that are not built yet.
 class PlaceholderBody extends StatelessWidget {
+  /// Shows [icon] and [message]; adds "Coming soon" when [comingSoon].
   const PlaceholderBody({
     super.key,
     required this.icon,
@@ -11,8 +14,13 @@ class PlaceholderBody extends StatelessWidget {
     this.comingSoon = true,
   });
 
+  /// Large icon above the message.
   final IconData icon;
+
+  /// Main text, centred.
   final String message;
+
+  /// Whether to add a "Coming soon" line for unbuilt features.
   final bool comingSoon;
 
   @override

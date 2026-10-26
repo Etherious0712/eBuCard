@@ -2,7 +2,7 @@
 
 Electronic business cards for Android and iPhone. Exchange cards by **NFC tap** (sent from Android) or by **QR code** (any phone), and give people without the app a hosted web card.
 
-See [`docs/DESIGN.md`](docs/DESIGN.md) for requirements, platform constraints, the exchange protocol, the data model, the API and the roadmap.
+See [`docs/DESIGN.md`](docs/DESIGN.md) for requirements, platform constraints, the exchange protocol, the data model, the API and the roadmap, and [`CONTRIBUTING.md`](CONTRIBUTING.md) for a code tour and project conventions.
 
 ## Repository layout
 
@@ -31,4 +31,4 @@ cd app && flutter pub get && flutter test && flutter run
 
 ## Status
 
-Scaffold only. Screens are placeholders and API endpoints return `501` until the feature PRs listed in the roadmap land.
+Card editor with local storage is done. Exchange (QR, NFC), the Inbox and the server API are still placeholders; see the roadmap in `docs/DESIGN.md` §11.
