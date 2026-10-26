@@ -68,4 +68,158 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get comingSoon => 'Coming soon';
+
+  @override
+  String get cardName => 'Card name';
+
+  @override
+  String get cardNameHint => 'e.g. Work, Personal';
+
+  @override
+  String get defaultCardName => 'My card';
+
+  @override
+  String get profileSection => 'Profile';
+
+  @override
+  String get contactSection => 'Contact';
+
+  @override
+  String get fullName => 'Full name';
+
+  @override
+  String get jobTitle => 'Job title';
+
+  @override
+  String get company => 'Company';
+
+  @override
+  String get phones => 'Phone numbers';
+
+  @override
+  String get emails => 'Email addresses';
+
+  @override
+  String get websites => 'Websites';
+
+  @override
+  String get addresses => 'Addresses';
+
+  @override
+  String get socialLinks => 'Social links';
+
+  @override
+  String get phone => 'Phone';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get website => 'Website';
+
+  @override
+  String get addPhone => 'Add phone';
+
+  @override
+  String get addEmail => 'Add email';
+
+  @override
+  String get addWebsite => 'Add website';
+
+  @override
+  String get addAddress => 'Add address';
+
+  @override
+  String get addSocialLink => 'Add social link';
+
+  @override
+  String get street => 'Street';
+
+  @override
+  String get city => 'City';
+
+  @override
+  String get region => 'State / region';
+
+  @override
+  String get postalCode => 'Postal code';
+
+  @override
+  String get country => 'Country';
+
+  @override
+  String get handleOrUrl => 'Username or link';
+
+  @override
+  String get labelWork => 'Work';
+
+  @override
+  String get labelMobile => 'Mobile';
+
+  @override
+  String get labelHome => 'Home';
+
+  @override
+  String get labelFax => 'Fax';
+
+  @override
+  String get labelOther => 'Other';
+
+  @override
+  String get photo => 'Photo';
+
+  @override
+  String get logo => 'Logo';
+
+  @override
+  String get cropImage => 'Crop image';
+
+  @override
+  String get chooseFromGallery => 'Choose from library';
+
+  @override
+  String get takePhoto => 'Take photo';
+
+  @override
+  String get removeImage => 'Remove';
+
+  @override
+  String get remove => 'Remove';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get deleteCardTitle => 'Delete this card?';
+
+  @override
+  String get deleteCardMessage => 'This card will be removed from this device.';
+
+  @override
+  String get cardSaved => 'Card saved';
+
+  @override
+  String get cardNotFound => 'This card no longer exists.';
+
+  @override
+  String get errorFullNameRequired => 'Enter a full name';
+
+  @override
+  String get errorPhoneOrEmailRequired =>
+      'Add at least one phone number or email address';
+
+  @override
+  String get errorInvalidEmail => 'Enter a valid email address';
+
+  @override
+  String get errorImage => 'Couldn\'t load the image. Please try again.';
+
+  @override
+  String get socialOther => 'Other';
 }

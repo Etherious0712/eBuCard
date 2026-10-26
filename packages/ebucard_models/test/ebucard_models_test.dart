@@ -103,6 +103,7 @@ void main() {
   });
 }
 
+/// Byte length of [s] in UTF-8, to check vCard line folding.
 int _utf8Length(String s) => s.runes.fold(
   0,
   (n, r) =>

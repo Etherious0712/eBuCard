@@ -1,3 +1,6 @@
+// Turns a BusinessCard into vCard text, the standard contact format that phone
+// Contacts apps import. This is what is sent over NFC and in offline QR codes.
+
 import 'business_card.dart';
 
 /// Encodes a [BusinessCard] as vCard 3.0 (RFC 2426).
@@ -5,6 +8,7 @@ import 'business_card.dart';
 /// vCard 3.0 is used rather than 4.0 because it is the version imported most
 /// reliably by both Android Contacts and iOS Contacts.
 class VCardEncoder {
+  /// Creates an encoder. It holds no state, so one instance can be shared.
   const VCardEncoder();
 
   /// Full vCard including addresses and social links. Photo/logo are referenced
@@ -16,7 +20,10 @@ class VCardEncoder {
   String encodeCompact(BusinessCard card, {Uri? cardUrl}) =>
       _encode(card, compact: true, cardUrl: cardUrl);
 
+  /// Builds the vCard lines shared by [encode] and [encodeCompact], then
+  /// folds long lines and joins them with CRLF as RFC 2426 requires.
   String _encode(BusinessCard card, {required bool compact, Uri? cardUrl}) {
+    // Identity: always present.
     final lines = <String>[
       'BEGIN:VCARD',
       'VERSION:3.0',
@@ -26,6 +33,7 @@ class VCardEncoder {
       if (card.jobTitle.isNotEmpty) 'TITLE:${_escape(card.jobTitle)}',
     ];
 
+    // Contact details: compact form keeps only the first of each.
     final phones = compact ? card.phones.take(1) : card.phones;
     for (final p in phones) {
       lines.add('TEL;TYPE=${_telType(p.label)}:${_escape(p.value)}');
@@ -39,6 +47,7 @@ class VCardEncoder {
 
     if (cardUrl != null) lines.add('URL:${_escape(cardUrl.toString())}');
 
+    // Everything else is only in the full form.
     if (!compact) {
       for (final w in card.websites) {
         lines.add('URL:${_escape(w)}');
@@ -60,14 +69,24 @@ class VCardEncoder {
           'X-SOCIALPROFILE;TYPE=${s.network.name}:${_escape(s.handleOrUrl)}',
         );
       }
-      if (card.photoUrl != null) {
-        lines.add('PHOTO;VALUE=URI:${card.photoUrl}');
-      }
-      if (card.logoUrl != null) lines.add('LOGO;VALUE=URI:${card.logoUrl}');
+      final photo = _remoteUri(card.photoUrl);
+      if (photo != null) lines.add('PHOTO;VALUE=URI:$photo');
+      final logo = _remoteUri(card.logoUrl);
+      if (logo != null) lines.add('LOGO;VALUE=URI:$logo');
     }
 
     lines.add('END:VCARD');
     return '${lines.map(_fold).join('\r\n')}\r\n';
+  }
+
+  /// Only http(s) image URLs are shared; local `file:` paths stay on device.
+  static String? _remoteUri(String? value) {
+    if (value == null) return null;
+    final uri = Uri.tryParse(value);
+    if (uri == null || (uri.scheme != 'https' && uri.scheme != 'http')) {
+      return null;
+    }
+    return value;
   }
 
   /// Best-effort split of a display name into "family;given". Users can enter
@@ -80,12 +99,14 @@ class VCardEncoder {
     return '${_escape(family)};${_escape(given)};;;';
   }
 
+  /// vCard TYPE for a phone number (`CELL`, `FAX`, `WORK`, ...).
   static String _telType(ContactLabel label) => switch (label) {
     ContactLabel.mobile => 'CELL',
     ContactLabel.fax => 'FAX',
     _ => _labelType(label),
   };
 
+  /// vCard TYPE for an email or address label.
   static String _labelType(ContactLabel label) => switch (label) {
     ContactLabel.work => 'WORK',
     ContactLabel.home => 'HOME',
@@ -94,6 +115,8 @@ class VCardEncoder {
     ContactLabel.other => 'OTHER',
   };
 
+  /// Escapes characters that have a meaning in vCard values
+  /// (backslash, newline, comma, semicolon).
   static String _escape(String value) => value
       .replaceAll(r'\', r'\\')
       .replaceAll('\n', r'\n')
@@ -119,6 +142,7 @@ class VCardEncoder {
     return buffer.toString();
   }
 
+  /// Number of bytes [rune] takes in UTF-8 (1 to 4).
   static int _utf8Length(int rune) {
     if (rune < 0x80) return 1;
     if (rune < 0x800) return 2;

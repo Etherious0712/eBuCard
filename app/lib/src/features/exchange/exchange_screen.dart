@@ -1,3 +1,6 @@
+// Feature: exchange. Lists the send/receive options this phone supports.
+// The buttons are disabled until QR (PR B) and NFC (PR C) are built.
+
 import 'package:flutter/material.dart';
 
 import '../../core/exchange_capabilities.dart';
@@ -5,6 +8,7 @@ import '../../l10n/generated/app_localizations.dart';
 
 /// Send or receive a card. Shows only the methods this platform supports.
 class ExchangeScreen extends StatelessWidget {
+  /// Creates the screen.
   const ExchangeScreen({super.key});
 
   @override

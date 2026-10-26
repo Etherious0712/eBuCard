@@ -1,3 +1,13 @@
+// Root widget: theme, localization and the route table.
+//
+// Routes:
+//   /sign-in             SignInScreen (pushed on top of the tabs)
+//   /cards               MyCardsScreen        ┐
+//   /cards/:id/edit      CardEditorScreen     │ bottom-navigation tabs,
+//   /exchange            ExchangeScreen       │ each keeps its own stack
+//   /inbox               InboxScreen          ┘ (StatefulShellRoute)
+// `/cards/new/edit` opens the editor for a new card.
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
@@ -11,7 +21,9 @@ import 'features/inbox/inbox_screen.dart';
 import 'home_shell.dart';
 import 'l10n/generated/app_localizations.dart';
 
-final _router = GoRouter(
+/// Builds the app's router. A new instance per [EBuCardApp] keeps widget
+/// tests independent of each other.
+GoRouter _buildRouter() => GoRouter(
   initialLocation: '/cards',
   routes: [
     GoRoute(path: '/sign-in', builder: (_, _) => const SignInScreen()),
@@ -51,8 +63,24 @@ final _router = GoRouter(
   ],
 );
 
-class EBuCardApp extends StatelessWidget {
+/// The eBuCard application: theme, localization and navigation.
+class EBuCardApp extends StatefulWidget {
+  /// Creates the app. Must sit below a `ProviderScope`.
   const EBuCardApp({super.key});
+
+  @override
+  State<EBuCardApp> createState() => _EBuCardAppState();
+}
+
+/// Owns the router so it lives as long as the app.
+class _EBuCardAppState extends State<EBuCardApp> {
+  final _router = _buildRouter();
+
+  @override
+  void dispose() {
+    _router.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

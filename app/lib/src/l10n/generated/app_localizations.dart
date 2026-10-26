@@ -219,6 +219,312 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Coming soon'**
   String get comingSoon;
+
+  /// No description provided for @cardName.
+  ///
+  /// In en, this message translates to:
+  /// **'Card name'**
+  String get cardName;
+
+  /// No description provided for @cardNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Work, Personal'**
+  String get cardNameHint;
+
+  /// No description provided for @defaultCardName.
+  ///
+  /// In en, this message translates to:
+  /// **'My card'**
+  String get defaultCardName;
+
+  /// No description provided for @profileSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profileSection;
+
+  /// No description provided for @contactSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get contactSection;
+
+  /// No description provided for @fullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full name'**
+  String get fullName;
+
+  /// No description provided for @jobTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Job title'**
+  String get jobTitle;
+
+  /// No description provided for @company.
+  ///
+  /// In en, this message translates to:
+  /// **'Company'**
+  String get company;
+
+  /// No description provided for @phones.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone numbers'**
+  String get phones;
+
+  /// No description provided for @emails.
+  ///
+  /// In en, this message translates to:
+  /// **'Email addresses'**
+  String get emails;
+
+  /// No description provided for @websites.
+  ///
+  /// In en, this message translates to:
+  /// **'Websites'**
+  String get websites;
+
+  /// No description provided for @addresses.
+  ///
+  /// In en, this message translates to:
+  /// **'Addresses'**
+  String get addresses;
+
+  /// No description provided for @socialLinks.
+  ///
+  /// In en, this message translates to:
+  /// **'Social links'**
+  String get socialLinks;
+
+  /// No description provided for @phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get phone;
+
+  /// No description provided for @email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// No description provided for @website.
+  ///
+  /// In en, this message translates to:
+  /// **'Website'**
+  String get website;
+
+  /// No description provided for @addPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Add phone'**
+  String get addPhone;
+
+  /// No description provided for @addEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Add email'**
+  String get addEmail;
+
+  /// No description provided for @addWebsite.
+  ///
+  /// In en, this message translates to:
+  /// **'Add website'**
+  String get addWebsite;
+
+  /// No description provided for @addAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Add address'**
+  String get addAddress;
+
+  /// No description provided for @addSocialLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Add social link'**
+  String get addSocialLink;
+
+  /// No description provided for @street.
+  ///
+  /// In en, this message translates to:
+  /// **'Street'**
+  String get street;
+
+  /// No description provided for @city.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get city;
+
+  /// No description provided for @region.
+  ///
+  /// In en, this message translates to:
+  /// **'State / region'**
+  String get region;
+
+  /// No description provided for @postalCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Postal code'**
+  String get postalCode;
+
+  /// No description provided for @country.
+  ///
+  /// In en, this message translates to:
+  /// **'Country'**
+  String get country;
+
+  /// No description provided for @handleOrUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Username or link'**
+  String get handleOrUrl;
+
+  /// No description provided for @labelWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Work'**
+  String get labelWork;
+
+  /// No description provided for @labelMobile.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile'**
+  String get labelMobile;
+
+  /// No description provided for @labelHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get labelHome;
+
+  /// No description provided for @labelFax.
+  ///
+  /// In en, this message translates to:
+  /// **'Fax'**
+  String get labelFax;
+
+  /// No description provided for @labelOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get labelOther;
+
+  /// No description provided for @photo.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get photo;
+
+  /// No description provided for @logo.
+  ///
+  /// In en, this message translates to:
+  /// **'Logo'**
+  String get logo;
+
+  /// No description provided for @cropImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop image'**
+  String get cropImage;
+
+  /// No description provided for @chooseFromGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from library'**
+  String get chooseFromGallery;
+
+  /// No description provided for @takePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take photo'**
+  String get takePhoto;
+
+  /// No description provided for @removeImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get removeImage;
+
+  /// No description provided for @remove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get remove;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @deleteCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this card?'**
+  String get deleteCardTitle;
+
+  /// No description provided for @deleteCardMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This card will be removed from this device.'**
+  String get deleteCardMessage;
+
+  /// No description provided for @cardSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Card saved'**
+  String get cardSaved;
+
+  /// No description provided for @cardNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'This card no longer exists.'**
+  String get cardNotFound;
+
+  /// No description provided for @errorFullNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a full name'**
+  String get errorFullNameRequired;
+
+  /// No description provided for @errorPhoneOrEmailRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Add at least one phone number or email address'**
+  String get errorPhoneOrEmailRequired;
+
+  /// No description provided for @errorInvalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address'**
+  String get errorInvalidEmail;
+
+  /// No description provided for @errorImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the image. Please try again.'**
+  String get errorImage;
+
+  /// No description provided for @socialOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get socialOther;
 }
 
 class _AppLocalizationsDelegate
