@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../data/providers.dart';
 import '../../l10n/generated/app_localizations.dart';
+import '../../sync/sync_refresh.dart';
 import '../placeholder_body.dart';
 
 /// List of received cards with a search box.
@@ -59,9 +60,11 @@ class _InboxScreenState extends ConsumerState<InboxScreen> {
                     : l10n.inboxNoMatches,
                 comingSoon: false,
               )
-            : ListView.builder(
-                itemCount: entries.length,
-                itemBuilder: (_, i) => _InboxTile(entry: entries[i]),
+            : SyncRefresh(
+                child: ListView.builder(
+                  itemCount: entries.length,
+                  itemBuilder: (_, i) => _InboxTile(entry: entries[i]),
+                ),
               ),
       ),
       floatingActionButton: FloatingActionButton.extended(

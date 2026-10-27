@@ -1,7 +1,7 @@
 // Root widget: theme, localization and the route table.
 //
 // Routes:
-//   /sign-in             SignInScreen (pushed on top of the tabs)
+//   /account             AccountScreen: sign in, or the account (on top of tabs)
 //   /cards               MyCardsScreen        ┐
 //   /cards/:id/edit      CardEditorScreen     │
 //   /exchange            ExchangeScreen       │ bottom-navigation tabs,
@@ -18,7 +18,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 
 import 'core/locale_resolution.dart';
-import 'features/auth/sign_in_screen.dart';
+import 'features/auth/account_screen.dart';
 import 'features/cards/card_editor_screen.dart';
 import 'features/cards/my_cards_screen.dart';
 import 'features/exchange/exchange_screen.dart';
@@ -36,7 +36,7 @@ import 'l10n/generated/app_localizations.dart';
 GoRouter _buildRouter() => GoRouter(
   initialLocation: '/cards',
   routes: [
-    GoRoute(path: '/sign-in', builder: (_, _) => const SignInScreen()),
+    GoRoute(path: '/account', builder: (_, _) => const AccountScreen()),
     StatefulShellRoute.indexedStack(
       builder: (_, _, shell) => HomeShell(shell: shell),
       branches: [

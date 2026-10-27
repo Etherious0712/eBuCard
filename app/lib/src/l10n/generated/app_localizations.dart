@@ -807,6 +807,258 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The other phone didn\'t share a business card.'**
   String get nfcNotACard;
+
+  /// No description provided for @account.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get account;
+
+  /// No description provided for @signInIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Signing in is optional. It backs up your cards and Inbox and keeps them the same on all your phones.'**
+  String get signInIntro;
+
+  /// No description provided for @createAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get createAccount;
+
+  /// No description provided for @password.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get password;
+
+  /// No description provided for @passwordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'At least 8 characters'**
+  String get passwordHint;
+
+  /// No description provided for @showPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get showPassword;
+
+  /// No description provided for @hidePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get hidePassword;
+
+  /// No description provided for @forgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password?'**
+  String get forgotPassword;
+
+  /// No description provided for @resetPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset password'**
+  String get resetPasswordTitle;
+
+  /// No description provided for @resetPasswordMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll email you a link to choose a new password.'**
+  String get resetPasswordMessage;
+
+  /// No description provided for @send.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get send;
+
+  /// No description provided for @resetEmailSent.
+  ///
+  /// In en, this message translates to:
+  /// **'If an account uses that email, a reset link is on its way.'**
+  String get resetEmailSent;
+
+  /// No description provided for @orContinueWith.
+  ///
+  /// In en, this message translates to:
+  /// **'or'**
+  String get orContinueWith;
+
+  /// No description provided for @continueWithApple.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Apple'**
+  String get continueWithApple;
+
+  /// No description provided for @continueWithGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get continueWithGoogle;
+
+  /// No description provided for @signOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get signOut;
+
+  /// No description provided for @signOutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out?'**
+  String get signOutTitle;
+
+  /// No description provided for @signOutMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your cards and Inbox will be removed from this phone. They stay safe in your account.'**
+  String get signOutMessage;
+
+  /// No description provided for @signOutUnsynced.
+  ///
+  /// In en, this message translates to:
+  /// **'Some changes haven\'t reached your account yet (no connection). If you sign out now, they are lost.'**
+  String get signOutUnsynced;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your account?'**
+  String get deleteAccountTitle;
+
+  /// No description provided for @deleteAccountMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll be signed out everywhere. Your account, cards, Inbox and photos are erased after 30 days. Signing in again before then cancels the deletion.'**
+  String get deleteAccountMessage;
+
+  /// No description provided for @emailConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Email confirmed'**
+  String get emailConfirmed;
+
+  /// No description provided for @emailNotConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your email to turn on sync. We sent you a link.'**
+  String get emailNotConfirmed;
+
+  /// No description provided for @resendEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Send the email again'**
+  String get resendEmail;
+
+  /// No description provided for @emailResent.
+  ///
+  /// In en, this message translates to:
+  /// **'Email sent'**
+  String get emailResent;
+
+  /// No description provided for @iConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'ve confirmed it'**
+  String get iConfirmed;
+
+  /// No description provided for @signedInWithApple.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed in with Apple'**
+  String get signedInWithApple;
+
+  /// No description provided for @signedInWithGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed in with Google'**
+  String get signedInWithGoogle;
+
+  /// No description provided for @syncSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync'**
+  String get syncSection;
+
+  /// No description provided for @syncing.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing…'**
+  String get syncing;
+
+  /// No description provided for @syncedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Synced {time}'**
+  String syncedAt(String time);
+
+  /// No description provided for @notSyncedYet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not synced yet'**
+  String get notSyncedYet;
+
+  /// No description provided for @syncNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync now'**
+  String get syncNow;
+
+  /// No description provided for @sessionExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'You were signed out. Sign in again to keep syncing.'**
+  String get sessionExpired;
+
+  /// No description provided for @errorNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t reach eBuCard. Check your connection and try again.'**
+  String get errorNetwork;
+
+  /// No description provided for @errorInvalidCredentials.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong email or password.'**
+  String get errorInvalidCredentials;
+
+  /// No description provided for @errorEmailTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'An account with this email already exists. Sign in instead.'**
+  String get errorEmailTaken;
+
+  /// No description provided for @errorPasswordTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Use at least 8 characters.'**
+  String get errorPasswordTooShort;
+
+  /// No description provided for @errorPasswordBreached.
+  ///
+  /// In en, this message translates to:
+  /// **'This password has appeared in a data breach. Please choose another one.'**
+  String get errorPasswordBreached;
+
+  /// No description provided for @errorTooManyRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many attempts. Please wait a few minutes.'**
+  String get errorTooManyRequests;
+
+  /// No description provided for @errorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get errorGeneric;
 }
 
 class _AppLocalizationsDelegate
