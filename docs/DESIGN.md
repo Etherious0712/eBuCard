@@ -1,6 +1,6 @@
 # eBuCard: Design Document
 
-Status: **Living document** · Last updated with sign-in and sync in the app (PR E)
+Status: **Living document** · Last updated with card links and the web card (PR F)
 
 ## 1. Goal
 
@@ -42,13 +42,17 @@ eBuCard is an electronic business card service. Business people and anyone else 
 | State management | Riverpod |
 | Required card fields | Full name, plus at least one phone number or email address. A blank card name becomes "My card" |
 | Card images | Profile photo and logo from the photo library or camera, cropped to a square, max 1024 px JPEG |
-| MVP exchange payload | **Full vCard without images**. No server exists yet, so the card URL is added in the sync phase |
+| Exchange payload | **Card link** once the card has synced (QR code, and first on the NFC tag), with an **Offline QR** switch for the full vCard without images. Before sync, or signed out: the full vCard |
+| Card links | Made **automatically** when a card first syncs (signed in, email confirmed). The owner can **replace** it (old link stops) or **turn it off** (stays off until they make a new one). Deleting the card or the account ends the link |
+| Receiving a link | The app downloads the card and saves a **snapshot** to the Inbox that remembers the link, so **Check for updates** can fetch the latest version while the link works. NFC: the link when online, otherwise the tag's vCard |
+| Web card | `/c/<slug>` in the visitor's language (en / zh-Hant / zh-Hans from the browser), **Save contact (.vcf)**, store buttons only once `PLAY_STORE_URL` / `APP_STORE_URL` are set. Not indexed by search engines |
+| Look and feel | eBuCard design system (`docs/design-system/ebucard/MASTER.md`): flat, professional blue, Poppins + Open Sans, light and dark |
 | Save to Contacts | Open the system new-contact screen, pre-filled (`flutter_contacts` `showCreator`; no Contacts permission) |
 | Scanning other QR codes | Any contact QR is accepted: vCard 2.1/3.0/4.0 and MECARD. Anything else shows "Not a business card" |
 | Same person scanned again | Ask: **Update** the saved card (keeps its note and received date) or **Keep both**. Same person = same name plus a shared email, or a shared phone number (≥ 8 digits, country code optional) |
 | Inbox | Newest first; search by name, company or email; detail view; private note; delete; tap a phone/email/website to call/write/open |
 | Card shown on the QR screen | The user's **default card** (star in My Cards / editor), switchable on the QR screen. With no default chosen, the first card |
-| Images in received cards | Ignored: embedded images are large, and loading a stranger's remote image would tell them when the card was opened |
+| Images in received cards | From a vCard: ignored (embedded images are large, and loading a stranger's remote image would tell them when the card was opened). From a card link: kept, because they are hosted by the eBuCard server, so the owner can't see when they load |
 | NFC send (Android) | Its own screen, Exchange → **Tap phones (NFC)**. The phone shares only while that screen is open and the app is in front |
 | NFC receive | Its own screen, Exchange → **Read by NFC**. Android listens while it is open; iPhone opens the system scan sheet, with **Try again** if closed |
 | NFC off | The NFC screens say "NFC is off" with **Open NFC settings** (Android) and **Use QR code instead** |
@@ -72,24 +76,25 @@ Capability matrix as implemented in `app/lib/src/core/exchange_capabilities.dart
 ## 4. Exchange payloads
 
 ### 4.1 Card URL
-`https://<card-domain>/c/<slug>`. The `slug` is a random, unguessable value (≥128 bits, base62) that the owner can revoke and regenerate. The production domain is **still to be decided** (see §12).
+`https://<card-domain>/c/<slug>`. The `slug` is a random, unguessable value (22 base62 characters, about 131 bits) that the server makes when the card first syncs; the owner can turn it off or replace it. The card domain is the server's `PUBLIC_BASE_URL`; the production domain is **still to be decided** (see §12).
 
-* On a phone **with** eBuCard: the link opens the app (Android App Links / iOS Universal Links). The app fetches the card and saves it to the Inbox.
-* On a phone **without** eBuCard: the link opens the web card, which offers "Save contact (.vcf)" and an app download link.
+* On a phone **with** eBuCard: the link opens the app (Android App Links / iOS Universal Links, once `ANDROID_CERT_SHA256` / `APPLE_TEAM_ID` are set on the server and the app is built for the domain). The app fetches the card (`/c/<slug>?format=json`) and saves a snapshot to the Inbox, remembering the link for **Check for updates**. Scanning a link QR code in the app does the same.
+* On a phone **without** eBuCard: the link opens the web card, which offers "Save contact (.vcf)" and, once store listings exist, app download buttons.
+* Code: server `server/lib/src/sync/share_links.dart`, `server/lib/src/web/`, `routes/c/[slug].dart`; app `app/lib/src/sync/card_links.dart`, `features/exchange/receive_card.dart`, `card_link_section.dart`, `card_link_screen.dart`.
 
 ### 4.2 NFC (Android HCE → any reader)
 * AID `D2760000850101` (NFC Forum NDEF Tag Application), Type 4 Tag v2.0 command set: SELECT AID → SELECT CC file (`E103`) → READ BINARY → SELECT NDEF file → READ BINARY. The tag is read-only (writes are refused) and serves up to 255 bytes per READ BINARY.
 * NDEF message:
-  1. **URI record**: card URL (only if the card has been synced and has a slug, so not in the MVP).
+  1. **URI record**: card URL (once the card has synced and has a link). A receiving eBuCard app uses it when online and falls back to the vCard below.
   2. **MIME record `text/vcard`**: the full vCard without images (§4.4), so the exchange works offline.
 * The phone shares only while the **Tap phones (NFC)** screen is open, the app is in front and the phone is unlocked (`requireDeviceUnlock`). The card lives only in memory (`CardShareState`), and `MainActivity` clears it when the app pauses. While sharing, the app asks Android to prefer its service for the AID (`CardEmulation.setPreferredService`), in case another app registered the same AID.
 * Code: NDEF message in `packages/ebucard_models/lib/src/nfc_payload.dart`; tag emulation in `app/android/.../nfc/Type4Tag.kt` (plain Kotlin, unit tested in `src/test`) and `CardHostApduService.kt`; Flutter ↔ Android channel `ebucard/nfc` in `MainActivity.kt` and `app/lib/src/data/nfc_service.dart`.
 * Reading (both platforms) uses `nfc_manager`: Android reader mode, iPhone `NFCTagReaderSession` (the AID is listed in `Info.plist`). Any NDEF message with a vCard/MECARD (MIME or text record) is accepted.
-* **Phones without eBuCard (to verify on devices, matrix rows 3–4):** an iPhone without the app reads tags in the background only for web links, so it will do nothing until card links exist (sync phase). An Android phone without the app may offer to import the vCard into Contacts, depending on the vendor.
+* **Phones without eBuCard (to verify on devices, matrix rows 3–4):** an iPhone without the app reads tags in the background only for web links, so it opens the web card only when the tag carries a card link. An Android phone without the app may offer to import the vCard into Contacts, depending on the vendor.
 
 ### 4.3 QR code
-* Default: the card URL (short, so the code is easy to scan).
-* "Offline QR" option, or when the card has not been synced yet: a vCard. **MVP:** the full vCard without images (§2); full vCards make denser QR codes, which may be harder to scan from a distance.
+* Default: the card URL (short, so the code is easy to scan, and always the latest card).
+* "Offline QR" switch, or when the card has no link (not synced, signed out, or link turned off): the full vCard without images (§2). Full vCards make denser QR codes, which may be harder to scan from a distance.
 * The receiver scans with the in-app scanner. The phone's own camera app also works: a URL opens the app or web card, and a vCard offers to add the contact.
 * The QR code uses the lowest error-correction level (most room for data). If a card is still too large for one QR code, the screen says so and asks the user to remove some fields.
 * Parsing is in `packages/ebucard_models/lib/src/contact_decoder.dart`; the scan → Inbox flow is in `app/lib/src/features/exchange/receive_card.dart`.
@@ -123,7 +128,7 @@ The app and server share `ebucard_models`, so the JSON format and the vCard enco
 
 **Card** (own card, 0..n per user): `id`, `user_id`, `card_name` (e.g. "Work"), `full_name`, `job_title`, `company`, `phones[]`, `emails[]`, `websites[]`, `addresses[]`, `social_links[]`, `photo_url`, `logo_url`, `share_slug` (nullable, unique), `updated_at`.
 
-**ReceivedCard**: `id`, `owner_user_id`, `source_card_id` (nullable, set when received by URL), `snapshot` (card JSON at time of receipt), `received_via` (`nfc` | `qr` | `link`), `received_at`, `note`, `tags[]`, `updated_at`, `deleted_at` (tombstone for sync).
+**ReceivedCard**: `id`, `owner_user_id`, `source_slug` (nullable, the card link it came from, for Check for updates), `snapshot` (card JSON at time of receipt), `received_via` (`nfc` | `qr` | `link`), `received_at`, `note`, `tags[]`, `updated_at`, `deleted_at` (tombstone for sync).
 
 **Local storage**: SQLite on the device (drift) holds own cards and received cards, so the app works offline. Own cards live in the `own_cards` table as the card's JSON (same format as the API) plus `sort_order` and `updated_at`. Received cards live in `received_cards` (the `ReceivedCard` JSON plus `search_text`, `received_at`, `updated_at`), and small preferences such as the default card in `settings` (key/value). Schema version 3; older databases are upgraded in place. For sync, each card and Inbox row has a `dirty` flag (changed since last upload), deletions wait in `pending_deletions` until the server has them, and `settings` also keeps the sync cursors (`sync_cursor_cards`, `sync_cursor_received`) and the signed-in account id (`sync_account_id`). Images are files in the app's documents folder (`card_images/`), referenced by `file:` URI until sync uploads them. **Sync**: each record carries `updated_at` and a tombstone. The client first uploads local `file:` images, then per kind pushes deletions, pushes dirty records and pulls changes since the last sync cursor. Conflicts resolve as last-writer-wins per record. The refresh token is kept in the phone's secure storage (Keychain / Android Keystore).
 
@@ -140,11 +145,12 @@ The app and server share `ebucard_models`, so the JSON format and the vCard enco
 | `GET /v1/cards?since=`, `PUT/DELETE /v1/cards/{id}` | Own-card sync |
 | `GET /v1/received?since=`, `PUT/DELETE /v1/received/{id}` | Inbox sync |
 | `POST /v1/images`, `DELETE /v1/images/{id}`, `GET /images/{id}` | Card images |
-| `POST/DELETE /v1/cards/{id}/share_link` | Create / revoke public slug (step 4) |
-| `GET /c/{slug}` | Public web card (HTML). `Accept: text/vcard` or `?format=vcf` returns the vCard (step 4) |
+| `POST/DELETE /v1/cards/{id}/share_link` | Replace / turn off the card's link (it is made automatically on first sync) |
+| `GET /c/{slug}` | Public web card (HTML). `?format=vcf` / `Accept: text/vcard` returns the vCard, `?format=json` / `Accept: application/json` the card JSON for the app |
+| `GET /.well-known/assetlinks.json`, `/.well-known/apple-app-site-association` | App Links / Universal Links, once configured |
 | `GET /health` | Liveness |
 
-Details, sync protocol and settings: `server/README.md`. Still needed (step 4): `/.well-known/assetlinks.json` and `/.well-known/apple-app-site-association` for app links.
+Details, sync protocol and settings: `server/README.md`.
 
 ## 8. Security & privacy
 
@@ -156,7 +162,8 @@ Details, sync protocol and settings: `server/README.md`. Still needed (step 4): 
 * Sign-in errors don't reveal whether an email has an account (same answer and similar timing). Password-reset requests always answer 202.
 * Synced data is per user. Another user's record ids answer 404, and malformed ids are rejected before reaching SQL. Cards are checked with the same `validateCard` rules as the app. The server keeps only its own image URLs and owns the share link.
 * Images: JPEG/PNG only (detected from the bytes), ≤ 2 MB, private bucket, served by random UUID.
-* Rate limiting on the auth endpoints (per instance), and later on `/c/{slug}`. No public listing or search of cards.
+* Rate limiting on the auth endpoints and on opening card links (per instance). No public listing or search of cards; web cards send `noindex` so search engines skip them.
+* The web card escapes everything the owner typed and only links `http(s)`, `tel:` and `mailto:` values; it runs no scripts and loads nothing from other sites (strict Content-Security-Policy).
 * App Store rules: Sign in with Apple must be offered because Google sign-in is offered, and in-app account deletion is required.
 * A privacy policy and data-residency decision are needed before launch (§12).
 
@@ -186,8 +193,10 @@ ARB files in `app/lib/src/l10n/`. Devices often report Chinese without a script 
    * **PR C (done):** NFC: Android HCE send, NFC read on both platforms.
 3. **Accounts & sync**, split into two PRs:
    * **PR D (done):** server: PostgreSQL schema and migrations, email/password + Apple + Google sign-in, sessions, confirmation and reset emails, card and Inbox sync, images, account deletion, Cloud Run image.
-   * **PR E (this one):** app: sign-in screens, sync engine, image upload, first-sign-in merge, account deletion.
-4. **Web card & app links:** `/c/{slug}` HTML page, `.vcf` download, App Links / Universal Links.
+   * **PR E (done):** app: sign-in screens, sync engine, image upload, first-sign-in merge, account deletion.
+4. **Web card & app links:**
+   * **PR F (this one):** card links made on sync, replace / turn off, web card with `.vcf` download, link QR + Offline QR, NFC link record, receive by link with Check for updates, App Links / Universal Links files and app routes, new look for the server pages.
+   * **PR G:** new look for the app (design system, fonts, screens).
 5. **Release:** store listings, privacy policy, account deletion, analytics/crash reporting (to be decided).
 
 ### Manual device test matrix (NFC/QR cannot be tested in CI)
@@ -196,7 +205,7 @@ ARB files in `app/lib/src/l10n/`. Devices often report Chinese without a script 
 |---|---|---|---|---|
 | 1 | Android (app, Share) | Android (app, Receive) | NFC | Card saved to Inbox |
 | 2 | Android (app, Share) | iPhone (app, Receive) | NFC | Card saved to Inbox |
-| 3 | Android (app, Share) | iPhone (no app) | NFC background read | MVP: nothing happens (no card link yet). After sync: web card opens |
+| 3 | Android (app, Share) | iPhone (no app) | NFC background read | Signed out: nothing happens. Card with a link: web card opens |
 | 4 | Android (app, Share) | Android (no app) | NFC | Possibly an offer to import the contact, depending on vendor (to verify) |
 | 4a | Android (app, Share) | any | NFC with app in background / screen locked | Nothing is shared |
 | 4b | any (app, Receive) | NFC switched off | — | "NFC is off" with settings button (Android) and QR fallback |
@@ -208,6 +217,11 @@ ARB files in `app/lib/src/l10n/`. Devices often report Chinese without a script 
 | 10 | iPhone | — | Sign in with Apple / Google | Signs in; on first sign-in with local cards they are uploaded |
 | 11 | any | — | Sync with a card photo | Photo uploaded; shows on the other phone |
 | 12 | any, signed in | — | Sign out, then sign in to another account | First account's data is gone from the phone |
+| 13 | any (app, signed in) | any (camera app, no app) | Link QR | Web card opens; Save contact adds the contact |
+| 14 | any (app) | any (app) | Link QR / NFC | Card saved with photo; Check for updates picks up the owner's later edit |
+| 15 | Android (app, Share), link on | Android (app), no internet | NFC | Card saved from the tag's vCard |
+| 16 | owner turns the link off | anyone | Old link | "This card link is no longer active" |
+| 17 | Android / iPhone (app installed, app links configured) | — | Tap a card link in Messages / Mail | eBuCard opens and saves the card |
 
 ## 12. Open questions for the product owner
 
