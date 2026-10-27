@@ -1,7 +1,7 @@
 name: ebucard
 description: "eBuCard – exchange e-business cards by NFC or QR code."
 publish_to: 'none'
-version: 0.1.0+1
+version: 0.8.0+8
 
 environment:
   sdk: ^3.11.0
@@ -45,3 +45,18 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
+  # Design-system fonts (docs/design-system/ebucard/MASTER.md), Latin only;
+  # Chinese uses the phone's system font. Licences: assets/fonts/OFL-*.txt.
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
+    - family: OpenSans
+      fonts:
+        - asset: assets/fonts/OpenSans-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/OpenSans-SemiBold.ttf
+          weight: 600

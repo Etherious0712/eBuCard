@@ -32,6 +32,7 @@ Start with [`docs/DESIGN.md`](docs/DESIGN.md) for *what* the product does and *w
 | Accounts | `app/lib/src/account/` | `ApiClient` (tokens, refresh on 401), `SessionStore` (secure storage), `AuthController`, Apple/Google sign-in, providers |
 | Sync | `app/lib/src/sync/` | `SyncEngine` (images, push, pull, last writer wins), `SyncController` (when sync runs, status), `LocalSyncState` (cursors, pending deletions), pull-to-refresh, `CardLinks` (open someone's card link, replace / turn off your own) |
 | Card links in the app | `app/lib/src/features/exchange/` | `card_link_section.dart` (my link under the QR code), `card_link_screen.dart` (link opened from outside the app), `receive_card.dart` (link or vCard → Inbox) |
+| Theme | `app/lib/src/core/theme.dart`, `app/assets/fonts/` | Colours, fonts and component styles from the design system; `card_avatar.dart` (in `features/cards/`) draws a photo or initials |
 | Platform rules | `app/lib/src/core/exchange_capabilities.dart` | Which phones can send/receive by NFC or QR |
 | Languages | `app/lib/src/l10n/*.arb`, `core/locale_resolution.dart` | UI text in en / zh-Hant / zh-Hans |
 | Android NFC | `app/android/app/src/main/kotlin/.../nfc/` and `MainActivity.kt` | Type 4 tag emulation (`Type4Tag.kt`), the HCE service, and the `ebucard/nfc` channel |
@@ -45,6 +46,7 @@ Start with [`docs/DESIGN.md`](docs/DESIGN.md) for *what* the product does and *w
 * **Doc comments are required.** Every package enables the `public_member_api_docs` lint, so `analyze` fails on a public class, function or field without a `///` comment. Also comment private functions and classes, and start each feature file with a short `//` header saying what the feature does.
 * **Shared rules go in `ebucard_models`.** The app and the server must agree on the data format, validation and vCard output, so that logic lives in the shared package.
 * **Screens talk to repositories, not the database.** Get them through the providers in `app/lib/src/data/providers.dart`.
+* **No hard-coded colours or text styles.** Use `Theme.of(context).colorScheme` and `textTheme` (see `docs/design-system/ebucard/MASTER.md`); `theme_test.dart` checks the contrast of every colour pair.
 * **No hard-coded UI text.** Add every string to all four ARB files (`app_en`, `app_zh_Hant`, `app_zh_Hans`, and `app_zh`, which mirrors Simplified Chinese), then run `flutter gen-l10n`.
 * **Model JSON is stored data.** Add new fields as optional with a default, and never rename enum values. Old cards must keep loading.
 * **Generated code is committed.** After changing a drift table, run `dart run build_runner build` in `app/` and commit `app_database.g.dart`.

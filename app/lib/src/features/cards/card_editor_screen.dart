@@ -363,7 +363,7 @@ class _CardEditorScreenState extends ConsumerState<CardEditorScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
           TextField(
             controller: _fullName,
             textCapitalization: TextCapitalization.words,
@@ -375,10 +375,13 @@ class _CardEditorScreenState extends ConsumerState<CardEditorScreen> {
                   : null,
             ),
           ),
+          // Outlined fields need a gap so their borders don't touch.
+          const SizedBox(height: 12),
           TextField(
             controller: _jobTitle,
             decoration: InputDecoration(labelText: l10n.jobTitle),
           ),
+          const SizedBox(height: 12),
           TextField(
             controller: _company,
             decoration: InputDecoration(labelText: l10n.company),
@@ -750,15 +753,18 @@ class _AddressFields extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    Widget field(TextEditingController c, String label) => TextField(
-      controller: c,
-      onChanged: (_) => onChanged(),
-      decoration: InputDecoration(labelText: label),
+    Widget field(TextEditingController c, String label) => Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: TextField(
+        controller: c,
+        onChanged: (_) => onChanged(),
+        decoration: InputDecoration(labelText: label),
+      ),
     );
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 4, 4, 12),
+        padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
         child: Column(
           children: [
             Row(
