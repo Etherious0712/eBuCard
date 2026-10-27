@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import '../../data/card_image_service.dart';
 import '../../data/providers.dart';
 import '../../l10n/generated/app_localizations.dart';
+import '../../sync/sync_refresh.dart';
 import '../placeholder_body.dart';
 
 /// Lists the user's own cards (a user may have several, e.g. Work/Personal).
@@ -28,8 +29,8 @@ class MyCardsScreen extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.account_circle_outlined),
-            tooltip: l10n.signIn,
-            onPressed: () => context.push('/sign-in'),
+            tooltip: l10n.account,
+            onPressed: () => context.push('/account'),
           ),
         ],
       ),
@@ -42,13 +43,15 @@ class MyCardsScreen extends ConsumerWidget {
                 message: l10n.myCardsEmpty,
                 comingSoon: false,
               )
-            : ListView.separated(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
-                itemCount: cards.length,
-                separatorBuilder: (_, _) => const SizedBox(height: 12),
-                itemBuilder: (_, i) => _CardTile(
-                  card: cards[i],
-                  isDefault: cards[i].id == defaultId,
+            : SyncRefresh(
+                child: ListView.separated(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
+                  itemCount: cards.length,
+                  separatorBuilder: (_, _) => const SizedBox(height: 12),
+                  itemBuilder: (_, i) => _CardTile(
+                    card: cards[i],
+                    isDefault: cards[i].id == defaultId,
+                  ),
                 ),
               ),
       ),

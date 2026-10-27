@@ -367,6 +367,135 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get nfcNotACard => '对方手机没有分享名片。';
+
+  @override
+  String get account => '账户';
+
+  @override
+  String get signInIntro => '登录是可选的。登录后会备份你的名片和收件箱，并在你所有手机上保持一致。';
+
+  @override
+  String get createAccount => '创建账户';
+
+  @override
+  String get password => '密码';
+
+  @override
+  String get passwordHint => '至少 8 个字符';
+
+  @override
+  String get showPassword => '显示密码';
+
+  @override
+  String get hidePassword => '隐藏密码';
+
+  @override
+  String get forgotPassword => '忘记密码？';
+
+  @override
+  String get resetPasswordTitle => '重置密码';
+
+  @override
+  String get resetPasswordMessage => '我们会通过邮件发送设置新密码的链接给你。';
+
+  @override
+  String get send => '发送';
+
+  @override
+  String get resetEmailSent => '如有账户使用该邮箱，重置链接已发出。';
+
+  @override
+  String get orContinueWith => '或';
+
+  @override
+  String get continueWithApple => '通过 Apple 继续';
+
+  @override
+  String get continueWithGoogle => '通过 Google 继续';
+
+  @override
+  String get signOut => '退出登录';
+
+  @override
+  String get signOutTitle => '要退出登录吗？';
+
+  @override
+  String get signOutMessage => '你的名片和收件箱将从此手机删除，但会安全保存在你的账户中。';
+
+  @override
+  String get signOutUnsynced => '部分更改尚未同步到你的账户（没有网络连接）。如果现在退出登录，这些更改将会丢失。';
+
+  @override
+  String get deleteAccount => '删除账户';
+
+  @override
+  String get deleteAccountTitle => '要删除你的账户吗？';
+
+  @override
+  String get deleteAccountMessage =>
+      '你会在所有设备上退出登录。你的账户、名片、收件箱和照片将在 30 天后删除。在此之前重新登录即可取消删除。';
+
+  @override
+  String get emailConfirmed => '邮箱地址已确认';
+
+  @override
+  String get emailNotConfirmed => '确认你的邮箱地址以启用同步。我们已发送确认链接。';
+
+  @override
+  String get resendEmail => '重新发送邮件';
+
+  @override
+  String get emailResent => '邮件已发送';
+
+  @override
+  String get iConfirmed => '我已确认';
+
+  @override
+  String get signedInWithApple => '已通过 Apple 登录';
+
+  @override
+  String get signedInWithGoogle => '已通过 Google 登录';
+
+  @override
+  String get syncSection => '同步';
+
+  @override
+  String get syncing => '同步中…';
+
+  @override
+  String syncedAt(String time) {
+    return '已于 $time 同步';
+  }
+
+  @override
+  String get notSyncedYet => '尚未同步';
+
+  @override
+  String get syncNow => '立即同步';
+
+  @override
+  String get sessionExpired => '你已退出登录。请重新登录以继续同步。';
+
+  @override
+  String get errorNetwork => '无法连接 eBuCard，请检查网络连接后重试。';
+
+  @override
+  String get errorInvalidCredentials => '邮箱或密码不正确。';
+
+  @override
+  String get errorEmailTaken => '此邮箱已有账户，请直接登录。';
+
+  @override
+  String get errorPasswordTooShort => '请使用至少 8 个字符。';
+
+  @override
+  String get errorPasswordBreached => '此密码曾在数据泄露事件中出现，请选择其他密码。';
+
+  @override
+  String get errorTooManyRequests => '尝试次数过多，请稍候几分钟再试。';
+
+  @override
+  String get errorGeneric => '出错了，请重试。';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).
@@ -732,6 +861,135 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get nfcNotACard => '对方手机没有分享名片。';
+
+  @override
+  String get account => '账户';
+
+  @override
+  String get signInIntro => '登录是可选的。登录后会备份你的名片和收件箱，并在你所有手机上保持一致。';
+
+  @override
+  String get createAccount => '创建账户';
+
+  @override
+  String get password => '密码';
+
+  @override
+  String get passwordHint => '至少 8 个字符';
+
+  @override
+  String get showPassword => '显示密码';
+
+  @override
+  String get hidePassword => '隐藏密码';
+
+  @override
+  String get forgotPassword => '忘记密码？';
+
+  @override
+  String get resetPasswordTitle => '重置密码';
+
+  @override
+  String get resetPasswordMessage => '我们会通过邮件发送设置新密码的链接给你。';
+
+  @override
+  String get send => '发送';
+
+  @override
+  String get resetEmailSent => '如有账户使用该邮箱，重置链接已发出。';
+
+  @override
+  String get orContinueWith => '或';
+
+  @override
+  String get continueWithApple => '通过 Apple 继续';
+
+  @override
+  String get continueWithGoogle => '通过 Google 继续';
+
+  @override
+  String get signOut => '退出登录';
+
+  @override
+  String get signOutTitle => '要退出登录吗？';
+
+  @override
+  String get signOutMessage => '你的名片和收件箱将从此手机删除，但会安全保存在你的账户中。';
+
+  @override
+  String get signOutUnsynced => '部分更改尚未同步到你的账户（没有网络连接）。如果现在退出登录，这些更改将会丢失。';
+
+  @override
+  String get deleteAccount => '删除账户';
+
+  @override
+  String get deleteAccountTitle => '要删除你的账户吗？';
+
+  @override
+  String get deleteAccountMessage =>
+      '你会在所有设备上退出登录。你的账户、名片、收件箱和照片将在 30 天后删除。在此之前重新登录即可取消删除。';
+
+  @override
+  String get emailConfirmed => '邮箱地址已确认';
+
+  @override
+  String get emailNotConfirmed => '确认你的邮箱地址以启用同步。我们已发送确认链接。';
+
+  @override
+  String get resendEmail => '重新发送邮件';
+
+  @override
+  String get emailResent => '邮件已发送';
+
+  @override
+  String get iConfirmed => '我已确认';
+
+  @override
+  String get signedInWithApple => '已通过 Apple 登录';
+
+  @override
+  String get signedInWithGoogle => '已通过 Google 登录';
+
+  @override
+  String get syncSection => '同步';
+
+  @override
+  String get syncing => '同步中…';
+
+  @override
+  String syncedAt(String time) {
+    return '已于 $time 同步';
+  }
+
+  @override
+  String get notSyncedYet => '尚未同步';
+
+  @override
+  String get syncNow => '立即同步';
+
+  @override
+  String get sessionExpired => '你已退出登录。请重新登录以继续同步。';
+
+  @override
+  String get errorNetwork => '无法连接 eBuCard，请检查网络连接后重试。';
+
+  @override
+  String get errorInvalidCredentials => '邮箱或密码不正确。';
+
+  @override
+  String get errorEmailTaken => '此邮箱已有账户，请直接登录。';
+
+  @override
+  String get errorPasswordTooShort => '请使用至少 8 个字符。';
+
+  @override
+  String get errorPasswordBreached => '此密码曾在数据泄露事件中出现，请选择其他密码。';
+
+  @override
+  String get errorTooManyRequests => '尝试次数过多，请稍候几分钟再试。';
+
+  @override
+  String get errorGeneric => '出错了，请重试。';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -1097,4 +1355,133 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get nfcNotACard => '對方手機沒有分享名片。';
+
+  @override
+  String get account => '帳戶';
+
+  @override
+  String get signInIntro => '登入是可選的。登入後會備份你的名片和收件匣，並在你所有手機上保持一致。';
+
+  @override
+  String get createAccount => '建立帳戶';
+
+  @override
+  String get password => '密碼';
+
+  @override
+  String get passwordHint => '至少 8 個字元';
+
+  @override
+  String get showPassword => '顯示密碼';
+
+  @override
+  String get hidePassword => '隱藏密碼';
+
+  @override
+  String get forgotPassword => '忘記密碼？';
+
+  @override
+  String get resetPasswordTitle => '重設密碼';
+
+  @override
+  String get resetPasswordMessage => '我們會以電郵傳送設定新密碼的連結給你。';
+
+  @override
+  String get send => '傳送';
+
+  @override
+  String get resetEmailSent => '如有帳戶使用該電郵，重設連結已寄出。';
+
+  @override
+  String get orContinueWith => '或';
+
+  @override
+  String get continueWithApple => '使用 Apple 繼續';
+
+  @override
+  String get continueWithGoogle => '使用 Google 繼續';
+
+  @override
+  String get signOut => '登出';
+
+  @override
+  String get signOutTitle => '要登出嗎？';
+
+  @override
+  String get signOutMessage => '你的名片和收件匣將從此手機移除，但會安全保存在你的帳戶中。';
+
+  @override
+  String get signOutUnsynced => '部分更改尚未同步至你的帳戶（沒有網絡連線）。如現在登出，這些更改將會遺失。';
+
+  @override
+  String get deleteAccount => '刪除帳戶';
+
+  @override
+  String get deleteAccountTitle => '要刪除你的帳戶嗎？';
+
+  @override
+  String get deleteAccountMessage =>
+      '你會在所有裝置上登出。你的帳戶、名片、收件匣和相片將於 30 天後刪除。在此之前重新登入即可取消刪除。';
+
+  @override
+  String get emailConfirmed => '電郵地址已確認';
+
+  @override
+  String get emailNotConfirmed => '確認你的電郵地址以啟用同步。我們已寄出確認連結。';
+
+  @override
+  String get resendEmail => '重新傳送電郵';
+
+  @override
+  String get emailResent => '電郵已傳送';
+
+  @override
+  String get iConfirmed => '我已確認';
+
+  @override
+  String get signedInWithApple => '已使用 Apple 登入';
+
+  @override
+  String get signedInWithGoogle => '已使用 Google 登入';
+
+  @override
+  String get syncSection => '同步';
+
+  @override
+  String get syncing => '同步中…';
+
+  @override
+  String syncedAt(String time) {
+    return '已於 $time 同步';
+  }
+
+  @override
+  String get notSyncedYet => '尚未同步';
+
+  @override
+  String get syncNow => '立即同步';
+
+  @override
+  String get sessionExpired => '你已被登出。請重新登入以繼續同步。';
+
+  @override
+  String get errorNetwork => '無法連接 eBuCard，請檢查網絡連線後再試。';
+
+  @override
+  String get errorInvalidCredentials => '電郵或密碼不正確。';
+
+  @override
+  String get errorEmailTaken => '此電郵已有帳戶，請直接登入。';
+
+  @override
+  String get errorPasswordTooShort => '請使用至少 8 個字元。';
+
+  @override
+  String get errorPasswordBreached => '此密碼曾在資料外洩事件中出現，請選擇其他密碼。';
+
+  @override
+  String get errorTooManyRequests => '嘗試次數過多，請稍候幾分鐘再試。';
+
+  @override
+  String get errorGeneric => '發生錯誤，請再試一次。';
 }

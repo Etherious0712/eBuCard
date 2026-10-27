@@ -47,8 +47,10 @@ class ReceivedCardRepository {
     return null;
   }
 
-  /// Inserts [entry], or replaces the stored entry with the same id.
-  Future<void> save(ReceivedCard entry) => _db
+  /// Inserts [entry], or replaces the stored entry with the same id. Edits
+  /// made on this phone are marked for sync; [fromSync] marks an entry that
+  /// just came from (or was accepted by) the account.
+  Future<void> save(ReceivedCard entry, {bool fromSync = false}) => _db
       .into(_db.receivedCards)
       .insertOnConflictUpdate(
         ReceivedCardsCompanion.insert(
@@ -57,12 +59,26 @@ class ReceivedCardRepository {
           searchText: _searchText(entry.card),
           receivedAt: entry.receivedAt,
           updatedAt: entry.updatedAt,
+          dirty: Value(!fromSync),
         ),
       );
 
-  /// Deletes the entry with [id].
-  Future<void> delete(String id) =>
-      (_db.delete(_db.receivedCards)..where((c) => c.id.equals(id))).go();
+  /// Deletes the entry with [id] and remembers the deletion for sync
+  /// (unless it came [fromSync]).
+  Future<void> delete(String id, {bool fromSync = false}) => _db.transaction(
+    () async {
+      await (_db.delete(_db.receivedCards)..where((c) => c.id.equals(id))).go();
+      if (!fromSync) await _db.rememberDeletion('received', id);
+    },
+  );
+
+  /// Entries changed on this phone that the account doesn't have yet.
+  Future<List<ReceivedCard>> dirty() async {
+    final rows = await (_db.select(
+      _db.receivedCards,
+    )..where((c) => c.dirty.equals(true))).get();
+    return rows.map(_decode).toList();
+  }
 
   /// What Inbox search matches against.
   static String _searchText(BusinessCard card) => [

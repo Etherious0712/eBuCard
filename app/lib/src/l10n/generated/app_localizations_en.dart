@@ -378,4 +378,144 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get nfcNotACard => 'The other phone didn\'t share a business card.';
+
+  @override
+  String get account => 'Account';
+
+  @override
+  String get signInIntro =>
+      'Signing in is optional. It backs up your cards and Inbox and keeps them the same on all your phones.';
+
+  @override
+  String get createAccount => 'Create account';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get passwordHint => 'At least 8 characters';
+
+  @override
+  String get showPassword => 'Show password';
+
+  @override
+  String get hidePassword => 'Hide password';
+
+  @override
+  String get forgotPassword => 'Forgot password?';
+
+  @override
+  String get resetPasswordTitle => 'Reset password';
+
+  @override
+  String get resetPasswordMessage =>
+      'We\'ll email you a link to choose a new password.';
+
+  @override
+  String get send => 'Send';
+
+  @override
+  String get resetEmailSent =>
+      'If an account uses that email, a reset link is on its way.';
+
+  @override
+  String get orContinueWith => 'or';
+
+  @override
+  String get continueWithApple => 'Continue with Apple';
+
+  @override
+  String get continueWithGoogle => 'Continue with Google';
+
+  @override
+  String get signOut => 'Sign out';
+
+  @override
+  String get signOutTitle => 'Sign out?';
+
+  @override
+  String get signOutMessage =>
+      'Your cards and Inbox will be removed from this phone. They stay safe in your account.';
+
+  @override
+  String get signOutUnsynced =>
+      'Some changes haven\'t reached your account yet (no connection). If you sign out now, they are lost.';
+
+  @override
+  String get deleteAccount => 'Delete account';
+
+  @override
+  String get deleteAccountTitle => 'Delete your account?';
+
+  @override
+  String get deleteAccountMessage =>
+      'You\'ll be signed out everywhere. Your account, cards, Inbox and photos are erased after 30 days. Signing in again before then cancels the deletion.';
+
+  @override
+  String get emailConfirmed => 'Email confirmed';
+
+  @override
+  String get emailNotConfirmed =>
+      'Confirm your email to turn on sync. We sent you a link.';
+
+  @override
+  String get resendEmail => 'Send the email again';
+
+  @override
+  String get emailResent => 'Email sent';
+
+  @override
+  String get iConfirmed => 'I\'ve confirmed it';
+
+  @override
+  String get signedInWithApple => 'Signed in with Apple';
+
+  @override
+  String get signedInWithGoogle => 'Signed in with Google';
+
+  @override
+  String get syncSection => 'Sync';
+
+  @override
+  String get syncing => 'Syncing…';
+
+  @override
+  String syncedAt(String time) {
+    return 'Synced $time';
+  }
+
+  @override
+  String get notSyncedYet => 'Not synced yet';
+
+  @override
+  String get syncNow => 'Sync now';
+
+  @override
+  String get sessionExpired =>
+      'You were signed out. Sign in again to keep syncing.';
+
+  @override
+  String get errorNetwork =>
+      'Can\'t reach eBuCard. Check your connection and try again.';
+
+  @override
+  String get errorInvalidCredentials => 'Wrong email or password.';
+
+  @override
+  String get errorEmailTaken =>
+      'An account with this email already exists. Sign in instead.';
+
+  @override
+  String get errorPasswordTooShort => 'Use at least 8 characters.';
+
+  @override
+  String get errorPasswordBreached =>
+      'This password has appeared in a data breach. Please choose another one.';
+
+  @override
+  String get errorTooManyRequests =>
+      'Too many attempts. Please wait a few minutes.';
+
+  @override
+  String get errorGeneric => 'Something went wrong. Please try again.';
 }

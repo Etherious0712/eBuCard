@@ -32,4 +32,4 @@ cd app && flutter pub get && flutter test && flutter run
 
 ## Status
 
-MVP done: card editor with local storage, QR exchange (show and scan), NFC exchange (Android shares; Android and iPhone read), the Inbox, and Save to Contacts. Server done: accounts (email/password, Apple, Google), sync API, images, account deletion, ready for Cloud Run. Still to come: sign-in and sync in the app, then card links and the web card; see the roadmap in `docs/DESIGN.md` §11.
+MVP done: card editor with local storage, QR exchange (show and scan), NFC exchange (Android shares; Android and iPhone read), the Inbox, and Save to Contacts. Server done: accounts (email/password, Apple, Google), sync API, images, account deletion, ready for Cloud Run. App sign-in and sync done: optional account, automatic sync of cards, Inbox and images between phones. Still to come: card links and the web card; see the roadmap in `docs/DESIGN.md` §11.

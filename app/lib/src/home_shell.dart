@@ -2,12 +2,17 @@
 // three tab branches defined in app.dart.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'account/account_providers.dart';
 import 'l10n/generated/app_localizations.dart';
+import 'sync/sync_controller.dart';
 
 /// Scaffold with the bottom navigation bar; the current tab is the body.
-class HomeShell extends StatelessWidget {
+/// It also keeps automatic sync running and tells the server which
+/// language to write emails in.
+class HomeShell extends ConsumerWidget {
   /// Wraps [shell], which go_router builds from the tab branches.
   const HomeShell({super.key, required this.shell});
 
@@ -15,8 +20,13 @@ class HomeShell extends StatelessWidget {
   final StatefulNavigationShell shell;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    ref
+      ..watch(syncControllerProvider)
+      ..read(apiClientProvider).languageTag = Localizations.localeOf(
+        context,
+      ).toLanguageTag();
     return Scaffold(
       body: shell,
       bottomNavigationBar: NavigationBar(
