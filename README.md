@@ -23,7 +23,8 @@ cd packages/ebucard_models && dart pub get && dart test
 
 # Server
 cd server && docker compose up -d && dart pub get && dart test
-dart pub global activate dart_frog_cli && dart_frog dev
+dart pub global activate dart_frog_cli
+DB_PASSWORD=ebucard_dev JWT_SECRET=dev-secret-at-least-32-characters-long dart_frog dev
 
 # App
 cd app && flutter pub get && flutter test && flutter run
@@ -31,4 +32,4 @@ cd app && flutter pub get && flutter test && flutter run
 
 ## Status
 
-MVP done: card editor with local storage, QR exchange (show and scan), NFC exchange (Android shares; Android and iPhone read), the Inbox, and Save to Contacts. Still to come: accounts and sync, card links and the web card, and the server API (endpoints return `501`); see the roadmap in `docs/DESIGN.md` §11.
+MVP done: card editor with local storage, QR exchange (show and scan), NFC exchange (Android shares; Android and iPhone read), the Inbox, and Save to Contacts. Server done: accounts (email/password, Apple, Google), sync API, images, account deletion, ready for Cloud Run. Still to come: sign-in and sync in the app, then card links and the web card; see the roadmap in `docs/DESIGN.md` §11.

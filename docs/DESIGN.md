@@ -1,6 +1,6 @@
 # eBuCard: Design Document
 
-Status: **Living document** · Last updated with NFC exchange (PR C)
+Status: **Living document** · Last updated with the accounts & sync server (PR D)
 
 ## 1. Goal
 
@@ -21,7 +21,15 @@ eBuCard is an electronic business card service. Business people and anyone else 
 | Exchange data | Hybrid: offline vCard **and** a hosted card link (web card for people without the app) |
 | iPhone as sender | Shows a QR code |
 | Backend | Custom server in Dart ([Dart Frog](https://dart-frog.dev)) with PostgreSQL |
-| Sign-in | Email + password, Sign in with Apple, Google sign-in |
+| Sign-in | Email + password, Sign in with Apple, Google sign-in. **Optional**: the app works fully offline without an account; signing in adds backup and sync |
+| Hosting | Google Cloud: Cloud Run (container), Cloud SQL for PostgreSQL, Cloud Storage for images (S3-compatible XML API with HMAC keys) |
+| Domain | Not chosen yet: `https://api.example.com` placeholder, one setting (`PUBLIC_BASE_URL`) |
+| Email | SMTP (any provider), for confirmation and password-reset emails |
+| Email confirmation | Required **before sync**. Signing in works at once. Apple/Google accounts count as confirmed |
+| Password rules | At least 8 characters (max 128), and not found in known data breaches (Have I Been Pwned, k-anonymity: only 5 hex chars of the SHA-1 leave the server; if the service is down, sign-up is not blocked) |
+| Session length | Signed in until sign-out; ends after **90 days without use** (refresh tokens rotate on every use) |
+| Account deletion | **30-day grace period**: signed out everywhere at once; signing in again within 30 days cancels; then account, cards, Inbox and images are erased |
+| First sign-in on a phone with data | Merge the phone's cards and Inbox into the account (app side, PR E) |
 | Card content | Core contact fields, profile photo, company logo, social links. **Several cards per user** |
 | Received cards | Stored on the device **and** synced to the user's account |
 | App identity | Display name `eBuCard`, package / bundle ID `com.etherious.ebucard` |
@@ -122,20 +130,29 @@ The app and server share `ebucard_models`, so the JSON format and the vCard enco
 | `POST /v1/auth/register`, `POST /v1/auth/login` | Email + password |
 | `POST /v1/auth/apple`, `POST /v1/auth/google` | Exchange the provider ID token (verified server-side) for eBuCard tokens |
 | `POST /v1/auth/refresh`, `POST /v1/auth/logout` | Rotate / revoke refresh token |
-| `GET/POST /v1/cards`, `GET/PUT/DELETE /v1/cards/{id}` | Own cards |
-| `POST/DELETE /v1/cards/{id}/share_link` | Create / revoke public slug |
-| `GET/POST /v1/received`, `PUT/DELETE /v1/received/{id}` | Received-card sync (`GET` supports `?since=<cursor>`) |
-| `GET /c/{slug}` | Public web card (HTML). `Accept: text/vcard` or `?format=vcf` returns the vCard |
+| `POST /v1/auth/resend_verification`, `POST /v1/auth/password_reset` | Confirmation and reset emails |
+| `GET /email/verify`, `GET/POST /password/reset` | Small web pages opened from those emails (en / zh-Hant / zh-Hans) |
+| `GET/DELETE /v1/account` | Account details; request deletion (30-day grace) |
+| `GET /v1/cards?since=`, `PUT/DELETE /v1/cards/{id}` | Own-card sync |
+| `GET /v1/received?since=`, `PUT/DELETE /v1/received/{id}` | Inbox sync |
+| `POST /v1/images`, `DELETE /v1/images/{id}`, `GET /images/{id}` | Card images |
+| `POST/DELETE /v1/cards/{id}/share_link` | Create / revoke public slug (step 4) |
+| `GET /c/{slug}` | Public web card (HTML). `Accept: text/vcard` or `?format=vcf` returns the vCard (step 4) |
 | `GET /health` | Liveness |
 
-Still needed: account deletion endpoint (App Store requirement), image upload endpoint, `/.well-known/assetlinks.json` and `/.well-known/apple-app-site-association` for app links.
+Details, sync protocol and settings: `server/README.md`. Still needed (step 4): `/.well-known/assetlinks.json` and `/.well-known/apple-app-site-association` for app links.
 
 ## 8. Security & privacy
 
 * A share link exposes **only** the fields on that card. The owner can revoke the link at any time; afterwards `/c/{slug}` returns 404 and future NFC/QR shares use the new slug. Cards that were already received keep their snapshot.
 * NFC is emitted only while the Share screen is open on an unlocked phone.
-* Passwords use Argon2id. Access tokens are short-lived and refresh tokens rotate. Apple/Google ID tokens are verified against the provider keys.
-* Rate limiting on `/c/{slug}` and the auth endpoints. No public listing or search of cards.
+* Passwords use Argon2id (19 MiB, 2 passes; checked against the RFC 9106 test vector). Access tokens are HS256 JWTs valid 15 minutes. Refresh tokens are random 256-bit values stored only as SHA-256 hashes, and they rotate on every use. **Replaying an old refresh token ends all of that user's sessions** (theft detection). Email links are single-use, hashed, and expire (24 h confirmation, 1 h reset).
+* Apple/Google ID tokens are verified against the provider's published keys (RS256 only; `iss`, `aud`, `exp` checked).
+* **Account linking:** an Apple/Google sign-in with a provider-confirmed email joins an existing account with that email only if that account's email is confirmed. If it isn't, the provider proves ownership, so the unconfirmed password is removed and its sessions are ended.
+* Sign-in errors don't reveal whether an email has an account (same answer and similar timing). Password-reset requests always answer 202.
+* Synced data is per user. Another user's record ids answer 404, and malformed ids are rejected before reaching SQL. Cards are checked with the same `validateCard` rules as the app. The server keeps only its own image URLs and owns the share link.
+* Images: JPEG/PNG only (detected from the bytes), ≤ 2 MB, private bucket, served by random UUID.
+* Rate limiting on the auth endpoints (per instance), and later on `/c/{slug}`. No public listing or search of cards.
 * App Store rules: Sign in with Apple must be offered because Google sign-in is offered, and in-app account deletion is required.
 * A privacy policy and data-residency decision are needed before launch (§12).
 
@@ -163,7 +180,9 @@ ARB files in `app/lib/src/l10n/`. Devices often report Chinese without a script 
    * **PR A (done):** card editor (multiple cards, photo/logo with square crop, validation) and local storage.
    * **PR B (done):** QR share and scan, Inbox of received cards, save to phone Contacts.
    * **PR C (done):** NFC: Android HCE send, NFC read on both platforms.
-3. **Accounts & sync:** auth endpoints, PostgreSQL schema and migrations, card and inbox sync, share links.
+3. **Accounts & sync**, split into two PRs:
+   * **PR D (this one):** server: PostgreSQL schema and migrations, email/password + Apple + Google sign-in, sessions, confirmation and reset emails, card and Inbox sync, images, account deletion, Cloud Run image.
+   * **PR E:** app: sign-in screens, sync engine, image upload, first-sign-in merge, account deletion.
 4. **Web card & app links:** `/c/{slug}` HTML page, `.vcf` download, App Links / Universal Links.
 5. **Release:** store listings, privacy policy, account deletion, analytics/crash reporting (to be decided).
 
@@ -184,9 +203,9 @@ ARB files in `app/lib/src/l10n/`. Devices often report Chinese without a script 
 
 ## 12. Open questions for the product owner
 
-1. Production domain for card links and the API, and the hosting provider/region.
-2. Apple Developer Team ID and Google Play account (needed for signing, app links and Sign in with Apple).
-3. Where to store photos and logos on the server (object storage provider). On the device they are capped at 1024 px.
+1. Production domain for card links and the API (placeholder `api.example.com` for now), and the Google Cloud region.
+2. Apple Developer Team ID and Google Play account (needed for signing, app links and Sign in with Apple), plus the Google OAuth client IDs.
+3. Which SMTP account sends the emails, and the sender address.
 4. Should receiving a card offer to send your own card back automatically ("exchange")?
 5. Privacy policy, target markets and data-residency requirements (e.g. GDPR, Hong Kong PDPO, Mainland China PIPL).
 6. Business model (free / premium cards / team plans), since it affects the data model.
