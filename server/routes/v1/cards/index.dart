@@ -1,15 +1,12 @@
 import 'package:dart_frog/dart_frog.dart';
-import 'package:ebucard_server/src/not_implemented.dart';
+import 'package:ebucard_server/src/http/request_helpers.dart';
+import 'package:ebucard_server/src/sync/sync_handlers.dart';
+import 'package:ebucard_server/src/sync/sync_store.dart';
 
-/// `/v1/cards`: the signed-in user's own cards.
-///
-/// * `GET` lists all of them.
-/// * `POST` creates one (body: `BusinessCard` JSON from `ebucard_models`,
-///   checked with `validateCard`).
-Response onRequest(RequestContext context) {
-  return switch (context.request.method) {
-    HttpMethod.get => notImplemented('GET /v1/cards'),
-    HttpMethod.post => notImplemented('POST /v1/cards'),
-    _ => methodNotAllowed(),
-  };
+/// `GET /v1/cards?since=<cursor>`: the signed-in user's own cards changed
+/// after the cursor, with deletions as tombstones (needs a confirmed email:
+/// otherwise 403 `email_not_verified`).
+Future<Response> onRequest(RequestContext context) {
+  allowMethods(context, {HttpMethod.get});
+  return listChanges(context, SyncKind.cards);
 }
