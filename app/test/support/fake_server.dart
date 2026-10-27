@@ -1,12 +1,14 @@
 // An in-memory stand-in for the eBuCard server, speaking the same HTTP API
 // (server/README.md) through `package:http`'s MockClient. It follows the
-// real server's rules for sign-in, token rotation, email confirmation and
-// sync (last writer wins, tombstones, paging), so app tests exercise the
-// real client and sync engine.
+// real server's rules for sign-in, token rotation, email confirmation,
+// sync (last writer wins, tombstones, paging) and card links, so app tests
+// exercise the real client and sync engine.
 
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:ebucard/src/account/account.dart';
+import 'package:ebucard/src/account/session_store.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
@@ -77,6 +79,48 @@ class FakeServer {
   /// Page size for change lists (small, to exercise paging).
   int pageSize = 50;
 
+  /// Card link slugs by card id; cards whose owner turned the link off.
+  final _slugs = <String, String>{};
+  final _revoked = <String>{};
+
+  /// Gives card [cardId] the link [slug] (for cards put with
+  /// [putFromOtherPhone]).
+  void linkSlug(String cardId, String slug) => _slugs[cardId] = slug;
+
+  /// Turns off the link of card [cardId], as its owner can.
+  void unlinkSlug(String cardId) {
+    _slugs.remove(cardId);
+    _revoked.add(cardId);
+  }
+
+  /// The card behind link [slug] (any user), or null.
+  Map<String, Object?>? cardForSlug(String slug) {
+    for (final kinds in records.values) {
+      for (final e in (kinds['cards'] ?? {}).entries) {
+        if (e.value.data != null && _slugs[e.key] == slug) return e.value.data;
+      }
+    }
+    return null;
+  }
+
+  /// Changes card [id]'s link to [slug] (null = off), as the server does
+  /// for share_link: the record moves to the end of the change list.
+  FakeRecord? _setSlug(FakeUser user, String id, String? slug) {
+    final record = records[user.id]?['cards']?[id];
+    if (record == null || record.data == null) return null;
+    if (slug == null) {
+      _slugs.remove(id);
+      _revoked.add(id);
+    } else {
+      _slugs[id] = slug;
+      _revoked.remove(id);
+    }
+    record
+      ..data = {...record.data!, 'shareSlug': slug}
+      ..seq = ++_seq;
+    return record;
+  }
+
   final _access = <String, String>{};
   final _refresh = <String, String>{};
   final _usedRefresh = <String>{};
@@ -96,6 +140,14 @@ class FakeServer {
     );
     users[email] = user;
     return user;
+  }
+
+  /// A stored session for [user], as if the phone had signed in earlier.
+  /// Pass it to `MemorySessionStore` to start a test signed in.
+  StoredSession sessionFor(FakeUser user) {
+    final refresh = 'refresh-${++_ids}';
+    _refresh[refresh] = user.id;
+    return StoredSession(refresh, Account.fromJson(user.toJson()));
   }
 
   /// Ends every session (as if the user signed out elsewhere long ago).
@@ -174,6 +226,12 @@ class FakeServer {
         return _signIn(user);
     }
 
+    final link = RegExp(r'^/c/([^/]+)$').firstMatch(path);
+    if (link != null && request.method == 'GET') {
+      final card = cardForSlug(link.group(1)!);
+      return card == null ? _error(404, 'not_found') : _json({'card': card});
+    }
+
     final user = _user(request);
     if (user == null) return _error(401, 'unauthorized');
 
@@ -197,6 +255,19 @@ class FakeServer {
         'id': id,
         'url': 'https://api.example.com/images/$id',
       }, 201);
+    }
+
+    final share = RegExp(r'^/v1/cards/([^/]+)/share_link$').firstMatch(path);
+    if (share != null) {
+      final id = share.group(1)!;
+      final record = _setSlug(
+        user,
+        id,
+        request.method == 'POST' ? 'slug-${++_ids}' : null,
+      );
+      return record == null
+          ? _error(404, 'not_found')
+          : _json(_recordJson(id, record));
     }
 
     final match = RegExp(
@@ -232,10 +303,16 @@ class FakeServer {
             data[f] = null;
           }
         }
+        // The server owns the link: made on first sync unless turned off.
+        if (!_revoked.contains(id)) {
+          _slugs.putIfAbsent(id, () => 'slug-${++_ids}');
+        }
+        data['shareSlug'] = _slugs[id];
       }
       return _json(_recordJson(id, _store(user, kind, id, data, updatedAt)));
     }
     if (request.method == 'DELETE') {
+      if (kind == 'cards') _slugs.remove(id);
       final updatedAt = DateTime.parse(body['updatedAt']! as String);
       return _json(_recordJson(id, _store(user, kind, id, null, updatedAt)));
     }
