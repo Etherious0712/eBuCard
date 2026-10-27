@@ -85,4 +85,19 @@ void main() {
     expect(edited.receivedAt, entry.receivedAt);
     expect(edited.note, 'x');
   });
+
+  test('ReceivedCard keeps the source link slug; older JSON has none', () {
+    final entry = ReceivedCard(
+      id: 'r2',
+      card: _card('B', emails: ['b@c.com']),
+      receivedVia: ReceivedVia.link,
+      receivedAt: DateTime.utc(2026, 1, 1),
+      updatedAt: DateTime.utc(2026, 1, 1),
+      sourceSlug: 'abc123',
+    );
+    expect(ReceivedCard.fromJson(entry.toJson()).sourceSlug, 'abc123');
+    final old = entry.toJson()..remove('sourceSlug');
+    expect(ReceivedCard.fromJson(old).sourceSlug, isNull);
+    expect(entry.copyWith(note: 'n').sourceSlug, 'abc123');
+  });
 }

@@ -21,6 +21,9 @@ FROM scratch
 COPY --from=build /runtime/ /
 COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=build /app/server/build/bin/server /app/bin/server
+# Static files (web fonts), served from ./public relative to WORKDIR.
+COPY --from=build /app/server/build/public /app/public
+WORKDIR /app
 ENV HOST=0.0.0.0
 EXPOSE 8080
 CMD ["/app/bin/server"]

@@ -103,5 +103,31 @@ void main() {
         ),
       );
     });
+
+    test('reads app-link and store settings, all off by default', () {
+      final none = Config.fromEnvironment({'JWT_SECRET': 'x' * 32}).appLinks;
+      expect(none.appleTeamId, isNull);
+      expect(none.androidCertSha256, isEmpty);
+      expect(none.playStoreUrl, isNull);
+
+      final links = Config.fromEnvironment({
+        'JWT_SECRET': 'x' * 32,
+        'APPLE_TEAM_ID': 'TEAM123456',
+        'ANDROID_CERT_SHA256': 'AA:BB, CC:DD',
+        'PLAY_STORE_URL': 'https://play.google.com/store/apps/x',
+        'APP_STORE_URL': 'https://apps.apple.com/app/id1',
+      }).appLinks;
+      expect(links.appleTeamId, 'TEAM123456');
+      expect(links.androidCertSha256, ['AA:BB', 'CC:DD']);
+      expect(links.appStoreUrl.toString(), 'https://apps.apple.com/app/id1');
+
+      expect(
+        () => Config.fromEnvironment({
+          'JWT_SECRET': 'x' * 32,
+          'PLAY_STORE_URL': 'javascript:alert(1)',
+        }),
+        throwsA(isA<ConfigException>()),
+      );
+    });
   });
 }

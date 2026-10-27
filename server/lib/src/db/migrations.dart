@@ -69,4 +69,9 @@ const migrations = <String>[
   );
   CREATE INDEX images_user ON images(user_id);
   ''',
+  // 2: card links. A card gets a share slug on its first sync; the owner
+  // can revoke it, and then none is created again until they ask for one.
+  '''
+  ALTER TABLE cards ADD COLUMN link_revoked BOOLEAN NOT NULL DEFAULT false;
+  ''',
 ];

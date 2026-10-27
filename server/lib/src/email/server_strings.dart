@@ -1,8 +1,8 @@
 // Translations are kept one per line for easy review.
 // ignore_for_file: lines_longer_than_80_chars
 
-// Text the server itself shows people: emails and the small web pages for
-// email verification and password reset. Same three languages as the app.
+// Text the server itself shows people: emails, the public web card, and
+// the small web pages for email verification and password reset. Same three languages as the app.
 
 /// Languages the server writes in.
 enum ServerLocale {
@@ -106,6 +106,40 @@ class ServerStrings {
 
   /// Page text after the password was changed.
   String get resetDoneBody => _t['resetDoneBody']!;
+
+  /// Button that downloads the card as a contact (.vcf).
+  String get saveContact => _t['saveContact']!;
+
+  /// Note under the save button.
+  String get saveContactHint => _t['saveContactHint']!;
+
+  /// Name of a phone/email/address label (`work`, `mobile`, ...).
+  String label(String name) => _t['label_$name'] ?? _t['label_other']!;
+
+  /// Heading above the store buttons.
+  String get getApp => _t['getApp']!;
+
+  /// Google Play button.
+  String get playStore => _t['playStore']!;
+
+  /// App Store button.
+  String get appStore => _t['appStore']!;
+
+  /// Small print at the bottom of a web card.
+  String get sharedWith => _t['sharedWith']!;
+
+  /// Title when a card link doesn't work (revoked or never existed).
+  String get cardGoneTitle => _t['cardGoneTitle']!;
+
+  /// Explanation when a card link doesn't work.
+  String get cardGoneBody => _t['cardGoneBody']!;
+
+  /// Alt text of a person's photo.
+  String photoOf(String name) => _t['photoOf']!.replaceAll('{name}', name);
+
+  /// Alt text of a company logo.
+  String logoOf(String company) =>
+      _t['logoOf']!.replaceAll('{company}', company);
 }
 
 const _en = {
@@ -132,6 +166,22 @@ const _en = {
   'resetDoneTitle': 'Password changed',
   'resetDoneBody':
       'Sign in to eBuCard with your new password. Other phones have been signed out.',
+  'saveContact': 'Save contact',
+  'saveContactHint': "Adds this card to your phone's contacts.",
+  'label_work': 'Work',
+  'label_mobile': 'Mobile',
+  'label_home': 'Home',
+  'label_fax': 'Fax',
+  'label_other': 'Other',
+  'getApp': 'Exchange cards with eBuCard',
+  'playStore': 'Get it on Google Play',
+  'appStore': 'Download on the App Store',
+  'sharedWith': 'Shared with eBuCard',
+  'cardGoneTitle': 'This card link is no longer active',
+  'cardGoneBody':
+      'The owner may have turned the link off or made a new one. Ask them to share their card again.',
+  'photoOf': 'Photo of {name}',
+  'logoOf': '{company} logo',
 };
 
 const _zhHant = {
@@ -155,6 +205,21 @@ const _zhHant = {
   'passwordBreached': '此密碼曾在資料外洩事件中出現，請選擇其他密碼。',
   'resetDoneTitle': '密碼已更改',
   'resetDoneBody': '請使用新密碼登入 eBuCard。其他手機已被登出。',
+  'saveContact': '儲存聯絡人',
+  'saveContactHint': '把這張名片加入手機通訊錄。',
+  'label_work': '公司',
+  'label_mobile': '手機',
+  'label_home': '住宅',
+  'label_fax': '傳真',
+  'label_other': '其他',
+  'getApp': '用 eBuCard 交換名片',
+  'playStore': '在 Google Play 下載',
+  'appStore': '在 App Store 下載',
+  'sharedWith': '透過 eBuCard 分享',
+  'cardGoneTitle': '此名片連結已停用',
+  'cardGoneBody': '擁有人可能已停用此連結或建立了新連結。請對方再次分享名片。',
+  'photoOf': '{name} 的相片',
+  'logoOf': '{company} 標誌',
 };
 
 const _zhHans = {
@@ -178,4 +243,19 @@ const _zhHans = {
   'passwordBreached': '此密码曾在数据泄露事件中出现，请选择其他密码。',
   'resetDoneTitle': '密码已更改',
   'resetDoneBody': '请使用新密码登录 eBuCard。其他手机已退出登录。',
+  'saveContact': '保存联系人',
+  'saveContactHint': '把这张名片添加到手机通讯录。',
+  'label_work': '工作',
+  'label_mobile': '手机',
+  'label_home': '住宅',
+  'label_fax': '传真',
+  'label_other': '其他',
+  'getApp': '用 eBuCard 交换名片',
+  'playStore': '在 Google Play 下载',
+  'appStore': '在 App Store 下载',
+  'sharedWith': '通过 eBuCard 分享',
+  'cardGoneTitle': '此名片链接已停用',
+  'cardGoneBody': '所有者可能已停用此链接或创建了新链接。请对方再次分享名片。',
+  'photoOf': '{name} 的照片',
+  'logoOf': '{company} 标志',
 };
