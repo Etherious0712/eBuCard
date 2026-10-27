@@ -18,6 +18,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 
 import 'core/locale_resolution.dart';
+import 'core/theme.dart';
 import 'features/auth/account_screen.dart';
 import 'features/cards/card_editor_screen.dart';
 import 'features/cards/my_cards_screen.dart';
@@ -133,11 +134,8 @@ class _EBuCardAppState extends State<EBuCardApp> {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
-      theme: ThemeData(colorSchemeSeed: Colors.indigo),
-      darkTheme: ThemeData(
-        colorSchemeSeed: Colors.indigo,
-        brightness: Brightness.dark,
-      ),
+      theme: lightTheme(),
+      darkTheme: darkTheme(),
       routerConfig: _router,
       supportedLocales: supportedAppLocales,
       localeResolutionCallback: (locale, _) => resolveAppLocale(locale),
