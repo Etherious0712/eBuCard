@@ -5,6 +5,9 @@
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:ebucard/src/account/account_providers.dart';
+import 'package:ebucard/src/account/identity_sign_in.dart';
+import 'package:ebucard/src/account/session_store.dart';
 import 'package:ebucard/src/app.dart';
 import 'package:ebucard/src/data/app_database.dart';
 import 'package:ebucard/src/data/card_image_service.dart';
@@ -18,6 +21,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ndef_record/ndef_record.dart';
+
+import 'fake_server.dart';
 
 /// A fresh, empty database in memory. Close it in `tearDown`.
 AppDatabase memoryDatabase() => AppDatabase(
@@ -42,6 +47,21 @@ class FakeCardImageService implements CardImageService {
   @override
   Future<void> delete(String? uri) async {
     if (uri != null) deleted.add(uri);
+  }
+
+  /// Bytes returned by [readLocal], by URI.
+  final files = <String, Uint8List>{};
+
+  /// Whether [deleteAll] was called.
+  bool deletedAll = false;
+
+  @override
+  Future<Uint8List?> readLocal(String uri) async => files[uri];
+
+  @override
+  Future<void> deleteAll() async {
+    deletedAll = true;
+    files.clear();
   }
 }
 
@@ -138,6 +158,19 @@ class FakeNfcService implements NfcService {
   }
 }
 
+/// Apple/Google sign-in that returns [token] (null = cancelled) for
+/// whichever providers are in [available].
+class FakeIdentitySignIn implements IdentitySignIn {
+  @override
+  Set<IdentityProviderKind> available = {};
+
+  /// The identity token to "receive" from the provider.
+  String? token = 'fake-identity-token';
+
+  @override
+  Future<String?> identityToken(IdentityProviderKind provider) async => token;
+}
+
 /// Runs real database work outside the widget test's fake-async zone, where
 /// it would otherwise never complete.
 Future<T> dbCall<T>(WidgetTester tester, Future<T> Function() body) async =>
@@ -152,6 +185,9 @@ Future<void> pumpApp(
   LinkLauncher? links,
   FakeScanner? scanner,
   FakeNfcService? nfc,
+  FakeServer? server,
+  SessionStore? sessions,
+  IdentitySignIn? identity,
 }) async {
   tester.view.physicalSize = const Size(1080, 4000);
   tester.view.devicePixelRatio = 1;
@@ -168,6 +204,13 @@ Future<void> pumpApp(
         ),
         linkLauncherProvider.overrideWithValue(links ?? FakeLinkLauncher()),
         nfcServiceProvider.overrideWithValue(nfc ?? FakeNfcService()),
+        httpClientProvider.overrideWithValue((server ?? FakeServer()).client),
+        sessionStoreProvider.overrideWithValue(
+          sessions ?? MemorySessionStore(),
+        ),
+        identitySignInProvider.overrideWithValue(
+          identity ?? FakeIdentitySignIn(),
+        ),
         scannerBuilderProvider.overrideWithValue(
           (scanner ?? FakeScanner()).build,
         ),

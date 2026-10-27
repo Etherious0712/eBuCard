@@ -100,6 +100,39 @@ void main() {
     },
   );
 
+  test('upgrading a version 2 database adds sync tracking', () async {
+    final v2 = AppDatabase(
+      NativeDatabase.memory(
+        setup: (raw) {
+          raw
+            ..execute(
+              'CREATE TABLE own_cards (id TEXT NOT NULL, json TEXT NOT NULL, '
+              'sort_order INTEGER NOT NULL, updated_at INTEGER NOT NULL, '
+              'PRIMARY KEY (id))',
+            )
+            ..execute(
+              'CREATE TABLE received_cards (id TEXT NOT NULL, '
+              'json TEXT NOT NULL, search_text TEXT NOT NULL, '
+              'received_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, '
+              'PRIMARY KEY (id))',
+            )
+            ..execute(
+              'CREATE TABLE settings (key TEXT NOT NULL, value TEXT NOT NULL, '
+              'PRIMARY KEY (key))',
+            )
+            ..execute('PRAGMA user_version = 2');
+        },
+      ),
+    );
+    addTearDown(v2.close);
+    final repo = ReceivedCardRepository(v2);
+    await repo.save(_entry('a', 'A'));
+    // Existing and new records count as "not yet in the account".
+    expect((await repo.dirty()).single.id, 'a');
+    await repo.delete('a');
+    expect(await v2.select(v2.pendingDeletions).get(), hasLength(1));
+  });
+
   group('default card', () {
     BusinessCard card(String id) => BusinessCard(
       id: id,
