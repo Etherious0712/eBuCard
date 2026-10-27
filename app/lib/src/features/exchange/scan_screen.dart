@@ -1,7 +1,6 @@
 // Feature: scan a QR code. Shows the camera; when a code is read it is
 // stored in the Inbox (see receive_card.dart) and its card is opened.
 
-import 'package:ebucard_models/ebucard_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -43,12 +42,7 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
   Future<void> _onScanned(String text) async {
     if (_busy || text == _lastRejected) return;
     _busy = true;
-    final id = await receiveContactText(
-      context,
-      ref,
-      text,
-      via: ReceivedVia.qr,
-    );
+    final id = await receiveScanned(context, ref, text);
     _busy = false;
     if (!mounted) return;
     if (id == null) {

@@ -1,5 +1,6 @@
 // Feature: a received card. Shows every detail with tap-to-act (call, email,
 // open website), the user's private note, Save to Contacts, and delete.
+// Cards received through a card link can be checked for a newer version.
 
 import 'package:ebucard_models/ebucard_models.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +8,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../account/api_client.dart';
 import '../../data/link_launcher.dart';
 import '../../data/providers.dart';
 import '../../l10n/generated/app_localizations.dart';
+import '../../sync/card_links.dart';
+import '../auth/api_error_text.dart';
 import '../cards/card_labels.dart';
 
 /// Details of one Inbox entry.
@@ -32,6 +36,9 @@ class _ReceivedCardScreenState extends ConsumerState<ReceivedCardScreen> {
 
   /// The note differs from the saved one, so "Save note" is enabled.
   bool _noteChanged = false;
+
+  /// A check for updates is running.
+  bool _checking = false;
 
   @override
   void initState() {
@@ -75,6 +82,41 @@ class _ReceivedCardScreenState extends ConsumerState<ReceivedCardScreen> {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(l10n.noteSaved)));
+  }
+
+  /// Downloads the card from its link and keeps it if it changed. The
+  /// note and received date stay as they are.
+  Future<void> _checkForUpdates() async {
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final entry = _entry!;
+    setState(() => _checking = true);
+    try {
+      final latest = inboxSnapshot(
+        await ref.read(cardLinksProvider).fetch(entry.sourceSlug!),
+      );
+      if (sameDetails(latest, entry.card)) {
+        messenger.showSnackBar(SnackBar(content: Text(l10n.cardUpToDate)));
+        return;
+      }
+      final updated = entry.copyWith(
+        card: latest,
+        updatedAt: DateTime.now().toUtc(),
+      );
+      await ref.read(receivedCardRepositoryProvider).save(updated);
+      if (mounted) setState(() => _entry = updated);
+      messenger.showSnackBar(SnackBar(content: Text(l10n.cardUpdated)));
+    } on ApiError catch (e) {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            e.code == 'not_found' ? l10n.linkInactive : apiErrorText(l10n, e),
+          ),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _checking = false);
+    }
   }
 
   /// Opens the phone's new-contact screen pre-filled with this card.
@@ -182,6 +224,19 @@ class _ReceivedCardScreenState extends ConsumerState<ReceivedCardScreen> {
             icon: const Icon(Icons.person_add_alt_1),
             label: Text(l10n.saveToContacts),
           ),
+          if (entry.sourceSlug != null) ...[
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              onPressed: _checking ? null : _checkForUpdates,
+              icon: _checking
+                  ? const SizedBox.square(
+                      dimension: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.refresh),
+              label: Text(l10n.checkForUpdates),
+            ),
+          ],
           const SizedBox(height: 8),
           for (final p in card.phones)
             _DetailTile(

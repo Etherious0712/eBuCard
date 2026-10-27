@@ -518,4 +518,83 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorGeneric => 'Something went wrong. Please try again.';
+
+  @override
+  String get showQrLinkHint =>
+      'Anyone can scan this with their phone camera to open your card, even without eBuCard.';
+
+  @override
+  String get offlineQr => 'Offline QR';
+
+  @override
+  String get offlineQrHint =>
+      'Puts the whole card in the code, so it works without internet. Photo and logo aren\'t included.';
+
+  @override
+  String get linkTitle => 'Card link';
+
+  @override
+  String get linkSignInHint =>
+      'Sign in to get a link to this card that anyone can open, even without the app.';
+
+  @override
+  String get linkConfirmEmailHint =>
+      'Confirm your email to turn on sync and card links.';
+
+  @override
+  String get linkNone => 'This card has no link right now.';
+
+  @override
+  String get linkMake => 'Make a link';
+
+  @override
+  String get linkHint =>
+      'Share this link anywhere. It always shows your latest card.';
+
+  @override
+  String get linkCopy => 'Copy';
+
+  @override
+  String get linkCopied => 'Link copied';
+
+  @override
+  String get linkNew => 'New link';
+
+  @override
+  String get linkNewTitle => 'Make a new link?';
+
+  @override
+  String get linkNewMessage =>
+      'The current link stops working. People who already saved your card keep it.';
+
+  @override
+  String get linkOff => 'Turn off';
+
+  @override
+  String get linkOffTitle => 'Turn off this link?';
+
+  @override
+  String get linkOffMessage =>
+      'The link stops working at once. QR codes and NFC will share the full card instead. You can make a new link later.';
+
+  @override
+  String get linkSyncFirst =>
+      'This card hasn\'t synced yet. Try again in a moment.';
+
+  @override
+  String get linkInactive =>
+      'This card link is no longer active. Ask for the card again.';
+
+  @override
+  String get linkOffline =>
+      'Couldn\'t open the card link. Check your connection and try again.';
+
+  @override
+  String get checkForUpdates => 'Check for updates';
+
+  @override
+  String get cardUpToDate => 'This card is up to date';
+
+  @override
+  String get openingCard => 'Opening card…';
 }

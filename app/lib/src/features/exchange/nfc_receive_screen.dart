@@ -85,22 +85,28 @@ class _NfcReceiveScreenState extends ConsumerState<NfcReceiveScreen> {
     _handling = true;
     final l10n = AppLocalizations.of(context);
     final text = message == null ? null : contactTextFromNdef(message);
+    final link = message == null ? null : uriFromNdef(message)?.toString();
 
     if (_isIos) {
       // iOS closes its sheet after one read either way.
       await _nfc.stopReading(
-        iosSuccessMessage: text == null ? null : l10n.nfcIosSuccess,
-        iosErrorMessage: text == null ? l10n.nfcNotACard : null,
+        iosSuccessMessage: text == null && link == null
+            ? null
+            : l10n.nfcIosSuccess,
+        iosErrorMessage: text == null && link == null ? l10n.nfcNotACard : null,
       );
       if (mounted) setState(() => _listening = false);
     }
     if (!mounted) return;
 
-    // An empty text makes receiveContactText show "not a business card".
-    final id = await receiveContactText(
+    // Online, the card link gives the latest card with photo and logo;
+    // otherwise the vCard on the tag is used. With neither, the user is
+    // told it isn't a business card.
+    final id = await receiveCard(
       context,
       ref,
-      text ?? '',
+      link: link,
+      contactText: text,
       via: ReceivedVia.nfc,
     );
     _handling = false;

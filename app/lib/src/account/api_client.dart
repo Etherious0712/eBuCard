@@ -97,6 +97,10 @@ class ApiClient {
     Map<String, Object?> body,
   ) async => _decode(await _send('POST', path, body: body));
 
+  /// `GET` without a session (a public card link). Returns the JSON body.
+  Future<Map<String, Object?>> getPublic(String path) async =>
+      _decode(await _send('GET', path));
+
   /// A request with the session; refreshes the access token when needed.
   Future<Map<String, Object?>> authed(
     String method,

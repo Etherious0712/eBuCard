@@ -17,6 +17,10 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.etherious.ebucard"
+        // Host of card links that open the app; same as the server's
+        // PUBLIC_BASE_URL. Placeholder until the domain is chosen.
+        manifestPlaceholders["linkHost"] =
+            (project.findProperty("ebucard.linkHost") as String?) ?: "api.example.com"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

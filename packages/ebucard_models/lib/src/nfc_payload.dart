@@ -80,6 +80,30 @@ String? contactTextFromNdef(NdefMessage message) {
   return null;
 }
 
+/// The first web link (URI record) in [message], e.g. a card link shared
+/// by another eBuCard phone; null if there is none.
+Uri? uriFromNdef(NdefMessage message) {
+  for (final record in message.records) {
+    if (record.typeNameFormat != TypeNameFormat.wellKnown ||
+        !_sameBytes(record.type, _uriType) ||
+        record.payload.isEmpty) {
+      continue;
+    }
+    final code = record.payload.first;
+    final prefix = code < _uriPrefixes.length ? _uriPrefixes[code] : '';
+    final rest = utf8.decode(record.payload.sublist(1), allowMalformed: true);
+    final uri = Uri.tryParse('$prefix$rest');
+    if (uri != null && (uri.scheme == 'https' || uri.scheme == 'http')) {
+      return uri;
+    }
+  }
+  return null;
+}
+
+/// URI record prefix codes 0–4 from the NFC Forum URI record spec (the
+/// web ones; others are read without a prefix and then ignored).
+const _uriPrefixes = ['', 'http://www.', 'https://www.', 'http://', 'https://'];
+
 /// A URI record for [uri], using the `https://` / `http://` prefix codes
 /// from the NFC Forum URI record spec to save space.
 NdefRecord _uriRecord(Uri uri) {
