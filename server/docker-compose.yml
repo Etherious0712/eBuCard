@@ -10,6 +10,8 @@ services:
       - "5432:5432"
     volumes:
       - ebucard_pg:/var/lib/postgresql/data
+      # Creates the ebucard_test database used by `dart test`.
+      - ./db/init-test-db.sql:/docker-entrypoint-initdb.d/init-test-db.sql:ro
 
 volumes:
   ebucard_pg:

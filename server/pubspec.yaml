@@ -7,9 +7,15 @@ environment:
   sdk: ^3.11.0
 
 dependencies:
+  crypto: ^3.0.8
   dart_frog: ^1.1.0
+  dart_jsonwebtoken: ^3.4.1
   ebucard_models:
     path: ../packages/ebucard_models
+  http: ^1.6.0
+  mailer: ^7.2.0
+  pointycastle: ^4.0.0
+  postgres: ^3.5.20
 
 dev_dependencies:
   dart_frog_lint: ^0.1.0

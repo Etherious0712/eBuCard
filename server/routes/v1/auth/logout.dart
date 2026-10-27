@@ -1,10 +1,15 @@
-import 'package:dart_frog/dart_frog.dart';
-import 'package:ebucard_server/src/not_implemented.dart';
+import 'dart:io';
 
-/// `POST /v1/auth/logout`: revoke the caller's refresh token.
-Response onRequest(RequestContext context) {
-  return switch (context.request.method) {
-    HttpMethod.post => notImplemented('POST /v1/auth/logout'),
-    _ => methodNotAllowed(),
-  };
+import 'package:dart_frog/dart_frog.dart';
+import 'package:ebucard_server/src/http/request_helpers.dart';
+import 'package:ebucard_server/src/services.dart';
+
+/// `POST /v1/auth/logout` `{refreshToken}`: ends that session. Always 204.
+Future<Response> onRequest(RequestContext context) async {
+  allowMethods(context, {HttpMethod.post});
+  final body = await readJsonObject(context);
+  await context.read<Services>().accounts.logout(
+    requireString(body, 'refreshToken'),
+  );
+  return Response(statusCode: HttpStatus.noContent);
 }

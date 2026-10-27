@@ -1,14 +1,11 @@
 import 'package:dart_frog/dart_frog.dart';
-import 'package:ebucard_server/src/not_implemented.dart';
+import 'package:ebucard_server/src/http/request_helpers.dart';
+import 'package:ebucard_server/src/sync/sync_handlers.dart';
+import 'package:ebucard_server/src/sync/sync_store.dart';
 
-/// `/v1/received`: cards the user has received from other people.
-///
-/// * `GET ?since=<cursor>` returns changes since the last sync.
-/// * `POST` uploads newly received cards from the device.
-Response onRequest(RequestContext context) {
-  return switch (context.request.method) {
-    HttpMethod.get => notImplemented('GET /v1/received'),
-    HttpMethod.post => notImplemented('POST /v1/received'),
-    _ => methodNotAllowed(),
-  };
+/// `GET /v1/received?since=<cursor>`: the signed-in user's Inbox entries
+/// changed after the cursor, with deletions as tombstones.
+Future<Response> onRequest(RequestContext context) {
+  allowMethods(context, {HttpMethod.get});
+  return listChanges(context, SyncKind.received);
 }

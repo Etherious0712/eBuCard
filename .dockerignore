@@ -1,0 +1,7 @@
+# Only the server and the shared models are needed to build the server image.
+*
+!server/
+!packages/ebucard_models/
+server/.dart_tool/
+server/build/
+packages/ebucard_models/.dart_tool/

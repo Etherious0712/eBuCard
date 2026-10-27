@@ -32,7 +32,9 @@ Start with [`docs/DESIGN.md`](docs/DESIGN.md) for *what* the product does and *w
 | Platform rules | `app/lib/src/core/exchange_capabilities.dart` | Which phones can send/receive by NFC or QR |
 | Languages | `app/lib/src/l10n/*.arb`, `core/locale_resolution.dart` | UI text in en / zh-Hant / zh-Hans |
 | Android NFC | `app/android/app/src/main/kotlin/.../nfc/` and `MainActivity.kt` | Type 4 tag emulation (`Type4Tag.kt`), the HCE service, and the `ebucard/nfc` channel |
-| Server | `server/routes/` | One file per endpoint (Dart Frog); stubs return 501 |
+| Server routes | `server/routes/` | One file per endpoint (Dart Frog); each calls a service and stays thin |
+| Server services | `server/lib/src/` | `auth/` (accounts, passwords, tokens, Apple/Google), `sync/`, `storage/` (images, S3 signing), `email/`, `db/` (pool, migrations), `services.dart` (wiring) |
+| Server entrypoint | `server/main.dart` | Reads settings, migrates the database, schedules the daily purge |
 
 ## Conventions
 
@@ -47,7 +49,7 @@ Start with [`docs/DESIGN.md`](docs/DESIGN.md) for *what* the product does and *w
 
 ```sh
 cd packages/ebucard_models && dart format . && dart analyze && dart test
-cd server && dart format . && dart analyze && dart test
+cd server && docker compose up -d && dart format . && dart analyze && dart test
 cd app && dart format lib test && flutter analyze && flutter test
 cd app/android && ./gradlew test   # Kotlin unit tests (NFC tag emulation)
 ```
@@ -58,6 +60,12 @@ cd app/android && ./gradlew test   # Kotlin unit tests (NFC tag emulation)
 * For iPhone-only behaviour, pass `variant: TargetPlatformVariant.only(TargetPlatform.iOS)` to `testWidgets`.
 * Inside `testWidgets`, wrap direct database calls in `dbCall(tester, ...)` (or `tester.runAsync`); otherwise they never complete.
 * Real NFC and camera behaviour can't run in tests. Use the manual device test matrix in `docs/DESIGN.md` §11.
+
+### Writing server tests
+
+* `TestServer.start()` (`server/test/support/test_server.dart`) wipes the test database, migrates it and wires the real services with fakes: emails are kept in `email.sent`, images in `storage.objects`, and the clock is `now` (move it forward to test expiry).
+* Call routes with `server.call(route.onRequest, jsonRequest(...))`; errors come back as JSON exactly as in production.
+* Database changes go in a **new** entry at the end of `server/lib/src/db/migrations.dart`; never edit a released migration.
 
 ## Branches and commits
 
