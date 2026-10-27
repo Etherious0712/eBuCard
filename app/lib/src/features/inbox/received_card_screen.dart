@@ -14,6 +14,7 @@ import '../../data/providers.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../sync/card_links.dart';
 import '../auth/api_error_text.dart';
+import '../cards/card_avatar.dart';
 import '../cards/card_labels.dart';
 
 /// Details of one Inbox entry.
@@ -207,21 +208,49 @@ class _ReceivedCardScreenState extends ConsumerState<ReceivedCardScreen> {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
         children: [
-          Text(card.fullName, style: theme.textTheme.headlineSmall),
-          if (card.jobTitle.isNotEmpty || card.company.isNotEmpty)
-            Text(
-              [
-                card.jobTitle,
-                card.company,
-              ].where((s) => s.isNotEmpty).join(' · '),
-              style: theme.textTheme.titleMedium,
-            ),
-          const SizedBox(height: 4),
-          Text(l10n.receivedOn(received), style: theme.textTheme.bodySmall),
-          const SizedBox(height: 16),
+          // Same layout as the web card: photo, name, title · company.
+          Row(
+            children: [
+              CardAvatar(
+                name: card.fullName,
+                photoUrl: card.photoUrl,
+                size: 72,
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(card.fullName, style: theme.textTheme.headlineSmall),
+                    if (card.jobTitle.isNotEmpty || card.company.isNotEmpty)
+                      Text(
+                        [
+                          card.jobTitle,
+                          card.company,
+                        ].where((s) => s.isNotEmpty).join(' · '),
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    const SizedBox(height: 4),
+                    Text(
+                      l10n.receivedOn(received),
+                      style: theme.textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          // The accent colour marks the main action, as on the web card.
           FilledButton.icon(
+            style: FilledButton.styleFrom(
+              backgroundColor: theme.colorScheme.tertiary,
+              foregroundColor: theme.colorScheme.onTertiary,
+            ),
             onPressed: _saveToContacts,
-            icon: const Icon(Icons.person_add_alt_1),
+            icon: const Icon(Icons.person_add_alt_outlined),
             label: Text(l10n.saveToContacts),
           ),
           if (entry.sourceSlug != null) ...[

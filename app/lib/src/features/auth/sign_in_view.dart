@@ -115,6 +115,7 @@ class _SignInViewState extends ConsumerState<SignInView> {
             autofillHints: const [AutofillHints.email],
             decoration: InputDecoration(labelText: l10n.email),
           ),
+          const SizedBox(height: 12),
           TextField(
             controller: _password,
             obscureText: !_showPassword,

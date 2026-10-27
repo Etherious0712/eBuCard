@@ -57,7 +57,7 @@ class _ShowQrScreenState extends ConsumerState<ShowQrScreen> {
                   Text(
                     card.fullName,
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleLarge,
+                    style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -110,7 +110,13 @@ class _CardQr extends StatelessWidget {
       child: Container(
         // Always dark-on-white with a quiet zone, even in dark mode, so
         // every scanner can read it.
-        color: Colors.white,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outlineVariant,
+          ),
+        ),
         padding: const EdgeInsets.all(16),
         child: QrImageView.withQr(
           qr: validation.qrCode!,

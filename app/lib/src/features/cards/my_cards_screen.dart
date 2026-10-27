@@ -7,11 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../data/card_image_service.dart';
 import '../../data/providers.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../sync/sync_refresh.dart';
 import '../placeholder_body.dart';
+import 'card_avatar.dart';
 
 /// Lists the user's own cards (a user may have several, e.g. Work/Personal).
 class MyCardsScreen extends ConsumerWidget {
@@ -83,35 +83,26 @@ class _CardTile extends StatelessWidget {
       card.jobTitle,
       card.company,
     ].where((s) => s.isNotEmpty).join(' · ');
-    final initials = card.fullName.trim().isEmpty
-        ? '?'
-        : card.fullName.trim().characters.first.toUpperCase();
     return Card(
       clipBehavior: Clip.antiAlias,
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: CircleAvatar(
-          radius: 24,
-          child: ClipOval(
-            child: SizedBox.square(
-              dimension: 48,
-              child: CardImage(
-                uri: card.photoUrl,
-                fallback: Center(child: Text(initials)),
-              ),
-            ),
-          ),
-        ),
-        title: Text(card.fullName),
+        leading: CardAvatar(name: card.fullName, photoUrl: card.photoUrl),
+        title: Text(card.fullName, style: theme.textTheme.titleMedium),
         subtitle: subtitle.isEmpty ? null : Text(subtitle),
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(card.cardName, style: theme.textTheme.labelMedium),
+            Text(
+              card.cardName,
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
             if (isDefault)
               Icon(
-                Icons.star,
+                Icons.star_rounded,
                 size: 18,
                 color: theme.colorScheme.primary,
                 semanticLabel: AppLocalizations.of(context).isDefaultCard,

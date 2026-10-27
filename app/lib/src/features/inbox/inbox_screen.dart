@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import '../../data/providers.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../sync/sync_refresh.dart';
+import '../cards/card_avatar.dart';
 import '../placeholder_body.dart';
 
 /// List of received cards with a search box.
@@ -76,7 +77,8 @@ class _InboxScreenState extends ConsumerState<InboxScreen> {
   }
 }
 
-/// One received card: initial, name, title · company, and when it arrived.
+/// One received card: photo or initials, name, title · company, and when
+/// it arrived.
 class _InboxTile extends StatelessWidget {
   const _InboxTile({required this.entry});
 
@@ -93,13 +95,18 @@ class _InboxTile extends StatelessWidget {
     final date = MaterialLocalizations.of(
       context,
     ).formatMediumDate(entry.receivedAt.toLocal());
+    final theme = Theme.of(context);
     return ListTile(
-      leading: CircleAvatar(
-        child: Text(card.fullName.characters.first.toUpperCase()),
-      ),
-      title: Text(card.fullName),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      leading: CardAvatar(name: card.fullName, photoUrl: card.photoUrl),
+      title: Text(card.fullName, style: theme.textTheme.titleMedium),
       subtitle: subtitle.isEmpty ? null : Text(subtitle),
-      trailing: Text(date, style: Theme.of(context).textTheme.labelSmall),
+      trailing: Text(
+        date,
+        style: theme.textTheme.labelSmall?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+      ),
       onTap: () => context.go('/inbox/${entry.id}'),
     );
   }
