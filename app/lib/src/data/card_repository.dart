@@ -31,8 +31,9 @@ class CardRepository {
   }
 
   /// Inserts a new card at the end of the list, or updates an existing one in
-  /// place.
-  Future<void> save(BusinessCard card) {
+  /// place. Edits made on this phone are marked for sync; [fromSync] marks
+  /// a card that just came from (or was accepted by) the account.
+  Future<void> save(BusinessCard card, {bool fromSync = false}) {
     return _db.transaction(() async {
       final existing = await (_db.select(
         _db.ownCards,
@@ -46,15 +47,28 @@ class CardRepository {
               json: jsonEncode(card.toJson()),
               sortOrder: sortOrder,
               updatedAt: card.updatedAt,
+              dirty: Value(!fromSync),
             ),
           );
     });
   }
 
-  /// Deletes the card with [id]. Its image files are not touched; callers
-  /// delete them with `CardImageService.delete`.
-  Future<void> delete(String id) =>
-      (_db.delete(_db.ownCards)..where((c) => c.id.equals(id))).go();
+  /// Deletes the card with [id] and remembers the deletion for sync (unless
+  /// it came [fromSync]). Its image files are not touched; callers delete
+  /// them with `CardImageService.delete`.
+  Future<void> delete(String id, {bool fromSync = false}) =>
+      _db.transaction(() async {
+        await (_db.delete(_db.ownCards)..where((c) => c.id.equals(id))).go();
+        if (!fromSync) await _db.rememberDeletion('cards', id);
+      });
+
+  /// Cards changed on this phone that the account doesn't have yet.
+  Future<List<BusinessCard>> dirty() async {
+    final rows = await (_db.select(
+      _db.ownCards,
+    )..where((c) => c.dirty.equals(true))).get();
+    return rows.map(_decode).toList();
+  }
 
   /// One more than the largest sort order in use, or 0 for the first card.
   Future<int> _nextSortOrder() async {

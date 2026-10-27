@@ -2,6 +2,7 @@
 // to a square, store in the app's documents folder, and display.
 
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -35,6 +36,13 @@ abstract class CardImageService {
   /// Deletes an image previously returned by [pickSquareImage]. Other URIs are
   /// ignored.
   Future<void> delete(String? uri);
+
+  /// The bytes of a stored `file:` image, or null if it is gone. Sync uses
+  /// this to upload images to the account.
+  Future<Uint8List?> readLocal(String uri);
+
+  /// Deletes every stored image (sign-out, account deletion).
+  Future<void> deleteAll();
 }
 
 /// The real [CardImageService], using image_picker and image_cropper.
@@ -110,6 +118,20 @@ class DeviceCardImageService implements CardImageService {
   }
 
   /// `<documents>/card_images`, created on first use.
+  @override
+  Future<Uint8List?> readLocal(String uri) async {
+    final parsed = Uri.tryParse(uri);
+    if (parsed == null || parsed.scheme != 'file') return null;
+    final file = File.fromUri(parsed);
+    return await file.exists() ? file.readAsBytes() : null;
+  }
+
+  @override
+  Future<void> deleteAll() async {
+    final dir = await _imagesDir();
+    if (await dir.exists()) await dir.delete(recursive: true);
+  }
+
   Future<Directory> _imagesDir() async {
     final docs = await getApplicationDocumentsDirectory();
     return Directory(p.join(docs.path, 'card_images')).create(recursive: true);

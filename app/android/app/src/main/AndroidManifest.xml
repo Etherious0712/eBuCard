@@ -1,4 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Sign-in and sync with the eBuCard server. Debug builds get this from
+         src/debug, but release builds need it here. -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <!-- NFC is optional: devices without it still exchange cards by QR. -->
     <uses-permission android:name="android.permission.NFC" />
     <uses-feature android:name="android.hardware.nfc" android:required="false" />
