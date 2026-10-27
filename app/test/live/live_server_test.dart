@@ -18,6 +18,7 @@ import 'package:ebucard/src/account/session_store.dart';
 import 'package:ebucard/src/data/app_database.dart';
 import 'package:ebucard/src/data/card_repository.dart';
 import 'package:ebucard/src/data/received_card_repository.dart';
+import 'package:ebucard/src/sync/card_links.dart';
 import 'package:ebucard/src/sync/local_sync_state.dart';
 import 'package:ebucard/src/sync/sync_engine.dart';
 import 'package:ebucard_models/ebucard_models.dart';
@@ -153,11 +154,44 @@ void main() {
       'CEO',
     );
 
-    // Phone A deletes; phone B loses it too.
-    await phoneA.cards.delete('6b0f2c1e-0000-4000-8000-000000000001');
+    // The card has a public link; anyone can open it, and the web card
+    // and vCard download work too.
+    const cardId = '6b0f2c1e-0000-4000-8000-000000000001';
+    final slug = (await phoneA.cards.find(cardId))!.shareSlug!;
+    final stranger = CardLinks(
+      ApiClient(baseUrl: base, sessions: MemorySessionStore()),
+      CardRepository(phoneA.db),
+      SharePayload(baseUrl: base),
+    );
+    expect(stranger.slugIn('$api/c/$slug'), slug);
+    expect((await stranger.fetch(slug)).jobTitle, 'CEO');
+    final page = await http.get(Uri.parse('$api/c/$slug'));
+    expect(page.body, contains('陳大文'));
+    final vcf = await http.get(Uri.parse('$api/c/$slug?format=vcf'));
+    expect(vcf.body, contains('BEGIN:VCARD'));
+
+    // Phone A replaces the link; the old one stops, phone B learns the new.
+    final linksA = CardLinks(
+      phoneA.client,
+      phoneA.cards,
+      SharePayload(baseUrl: base),
+    );
+    await linksA.regenerate(cardId);
+    final fresh = (await phoneA.cards.find(cardId))!.shareSlug!;
+    expect(fresh, isNot(slug));
+    await expectLater(
+      stranger.fetch(slug),
+      throwsA(isA<ApiError>().having((e) => e.code, 'code', 'not_found')),
+    );
+    await phoneB.sync();
+    expect((await phoneB.cards.find(cardId))!.shareSlug, fresh);
+
+    // Phone A deletes; phone B loses it too, and the link stops.
+    await phoneA.cards.delete(cardId);
     await phoneA.sync();
     await phoneB.sync();
     expect(await phoneB.cards.watchAll().first, isEmpty);
+    expect((await http.get(Uri.parse('$api/c/$fresh'))).statusCode, 404);
 
     await phoneA.db.close();
     await phoneB.db.close();

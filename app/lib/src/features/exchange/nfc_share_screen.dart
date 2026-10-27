@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/nfc_service.dart';
 import '../../data/providers.dart';
 import '../../l10n/generated/app_localizations.dart';
+import '../../sync/card_links.dart';
 import 'nfc_unavailable.dart';
 import 'share_card.dart';
 
@@ -55,17 +56,25 @@ class _NfcShareScreenState extends ConsumerState<NfcShareScreen> {
   }
 
   /// Starts sharing [card], or stops when it is null. Does nothing if that
-  /// card (same id and version) is already being shared.
+  /// card (same id, version and link) is already being shared.
   void _share(BusinessCard? card) {
     final same =
         card?.id == _sharedCard?.id &&
-        card?.updatedAt == _sharedCard?.updatedAt;
+        card?.updatedAt == _sharedCard?.updatedAt &&
+        card?.shareSlug == _sharedCard?.shareSlug;
     if (same) return;
     _sharedCard = card;
     if (card == null) {
       _nfc.stopSharing();
     } else {
-      _nfc.startSharing(cardNdefBytes(card));
+      // The card link (once synced) first, so phones open the latest
+      // card; the vCard after it works without internet (DESIGN.md §4.2).
+      _nfc.startSharing(
+        cardNdefBytes(
+          card,
+          cardUrl: ref.read(sharePayloadProvider).cardUrl(card),
+        ),
+      );
     }
   }
 

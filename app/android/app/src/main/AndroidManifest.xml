@@ -32,6 +32,18 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <!-- Card links (https://<server>/c/<slug>) open the app (App Links).
+                 Android checks /.well-known/assetlinks.json on the server, which
+                 needs ANDROID_CERT_SHA256 there. The host is the Gradle property
+                 ebucard.linkHost (app/README.md). -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" />
+                <data android:host="${linkHost}" />
+                <data android:pathPrefix="/c/" />
+            </intent-filter>
         </activity>
         <!-- Square crop screen for profile photo and company logo (image_cropper). -->
         <activity

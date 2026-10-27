@@ -496,6 +496,75 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get errorGeneric => '出错了，请重试。';
+
+  @override
+  String get showQrLinkHint => '任何人都可以用手机相机扫描，打开你的名片，无需安装 eBuCard。';
+
+  @override
+  String get offlineQr => '离线二维码';
+
+  @override
+  String get offlineQrHint => '把整张名片放进二维码，无需网络也能使用。不包括照片和标志。';
+
+  @override
+  String get linkTitle => '名片链接';
+
+  @override
+  String get linkSignInHint => '登录后即可获得此名片的链接，任何人都能打开，无需安装应用。';
+
+  @override
+  String get linkConfirmEmailHint => '确认你的邮箱地址以启用同步和名片链接。';
+
+  @override
+  String get linkNone => '此名片目前没有链接。';
+
+  @override
+  String get linkMake => '创建链接';
+
+  @override
+  String get linkHint => '可在任何地方分享此链接，它总是显示你最新的名片。';
+
+  @override
+  String get linkCopy => '复制';
+
+  @override
+  String get linkCopied => '已复制链接';
+
+  @override
+  String get linkNew => '新链接';
+
+  @override
+  String get linkNewTitle => '创建新链接？';
+
+  @override
+  String get linkNewMessage => '当前链接将会失效。已保存你名片的人仍会保留名片。';
+
+  @override
+  String get linkOff => '停用';
+
+  @override
+  String get linkOffTitle => '停用此链接？';
+
+  @override
+  String get linkOffMessage => '链接会立即失效，二维码和 NFC 将改为分享完整名片。你之后可以再创建新链接。';
+
+  @override
+  String get linkSyncFirst => '此名片尚未同步，请稍后再试。';
+
+  @override
+  String get linkInactive => '此名片链接已停用，请对方再次分享名片。';
+
+  @override
+  String get linkOffline => '无法打开名片链接，请检查网络连接后再试。';
+
+  @override
+  String get checkForUpdates => '检查更新';
+
+  @override
+  String get cardUpToDate => '此名片已是最新版本';
+
+  @override
+  String get openingCard => '正在打开名片…';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).
@@ -990,6 +1059,75 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get errorGeneric => '出错了，请重试。';
+
+  @override
+  String get showQrLinkHint => '任何人都可以用手机相机扫描，打开你的名片，无需安装 eBuCard。';
+
+  @override
+  String get offlineQr => '离线二维码';
+
+  @override
+  String get offlineQrHint => '把整张名片放进二维码，无需网络也能使用。不包括照片和标志。';
+
+  @override
+  String get linkTitle => '名片链接';
+
+  @override
+  String get linkSignInHint => '登录后即可获得此名片的链接，任何人都能打开，无需安装应用。';
+
+  @override
+  String get linkConfirmEmailHint => '确认你的邮箱地址以启用同步和名片链接。';
+
+  @override
+  String get linkNone => '此名片目前没有链接。';
+
+  @override
+  String get linkMake => '创建链接';
+
+  @override
+  String get linkHint => '可在任何地方分享此链接，它总是显示你最新的名片。';
+
+  @override
+  String get linkCopy => '复制';
+
+  @override
+  String get linkCopied => '已复制链接';
+
+  @override
+  String get linkNew => '新链接';
+
+  @override
+  String get linkNewTitle => '创建新链接？';
+
+  @override
+  String get linkNewMessage => '当前链接将会失效。已保存你名片的人仍会保留名片。';
+
+  @override
+  String get linkOff => '停用';
+
+  @override
+  String get linkOffTitle => '停用此链接？';
+
+  @override
+  String get linkOffMessage => '链接会立即失效，二维码和 NFC 将改为分享完整名片。你之后可以再创建新链接。';
+
+  @override
+  String get linkSyncFirst => '此名片尚未同步，请稍后再试。';
+
+  @override
+  String get linkInactive => '此名片链接已停用，请对方再次分享名片。';
+
+  @override
+  String get linkOffline => '无法打开名片链接，请检查网络连接后再试。';
+
+  @override
+  String get checkForUpdates => '检查更新';
+
+  @override
+  String get cardUpToDate => '此名片已是最新版本';
+
+  @override
+  String get openingCard => '正在打开名片…';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -1484,4 +1622,73 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get errorGeneric => '發生錯誤，請再試一次。';
+
+  @override
+  String get showQrLinkHint => '任何人都可以用手機相機掃描，開啟你的名片，無需安裝 eBuCard。';
+
+  @override
+  String get offlineQr => '離線 QR 碼';
+
+  @override
+  String get offlineQrHint => '把整張名片放進 QR 碼，無需網絡也能使用。不包括相片和標誌。';
+
+  @override
+  String get linkTitle => '名片連結';
+
+  @override
+  String get linkSignInHint => '登入後即可取得此名片的連結，任何人都能開啟，無需安裝應用程式。';
+
+  @override
+  String get linkConfirmEmailHint => '確認你的電郵地址以啟用同步和名片連結。';
+
+  @override
+  String get linkNone => '此名片目前沒有連結。';
+
+  @override
+  String get linkMake => '建立連結';
+
+  @override
+  String get linkHint => '可在任何地方分享此連結，它總是顯示你最新的名片。';
+
+  @override
+  String get linkCopy => '複製';
+
+  @override
+  String get linkCopied => '已複製連結';
+
+  @override
+  String get linkNew => '新連結';
+
+  @override
+  String get linkNewTitle => '建立新連結？';
+
+  @override
+  String get linkNewMessage => '目前的連結將會失效。已儲存你名片的人仍會保留名片。';
+
+  @override
+  String get linkOff => '停用';
+
+  @override
+  String get linkOffTitle => '停用此連結？';
+
+  @override
+  String get linkOffMessage => '連結會立即失效，QR 碼和 NFC 將改為分享完整名片。你之後可以再建立新連結。';
+
+  @override
+  String get linkSyncFirst => '此名片尚未同步，請稍後再試。';
+
+  @override
+  String get linkInactive => '此名片連結已停用，請對方再次分享名片。';
+
+  @override
+  String get linkOffline => '無法開啟名片連結，請檢查網絡連線後再試。';
+
+  @override
+  String get checkForUpdates => '檢查更新';
+
+  @override
+  String get cardUpToDate => '此名片已是最新版本';
+
+  @override
+  String get openingCard => '正在開啟名片…';
 }

@@ -38,6 +38,9 @@ Tests that need the database are skipped if it isn't reachable. To use another d
 | `APPLE_CLIENT_IDS` | – | Comma-separated accepted audiences for Sign in with Apple (the iOS bundle id `com.etherious.ebucard`, plus a Services ID if used). Unset: Apple sign-in answers `provider_not_configured` |
 | `GOOGLE_CLIENT_IDS` | – | Comma-separated Google OAuth client IDs (iOS, Android and web clients). Unset: Google sign-in is off |
 | `BREACH_CHECK` | – | `false` turns off the Have I Been Pwned check for new passwords (default on) |
+| `APPLE_TEAM_ID` | – | Apple Developer Team ID. Turns on `/.well-known/apple-app-site-association`, so card links open the iPhone app (Universal Links) |
+| `ANDROID_CERT_SHA256` | – | Comma-separated SHA-256 fingerprints of the Android app's signing certificate(s) (`AB:CD:…`, from Play Console → App integrity). Turns on `/.well-known/assetlinks.json` (App Links) |
+| `PLAY_STORE_URL`, `APP_STORE_URL` | – | Store listings. Each shows a download button on the web card; unset: no button |
 | `HOST`, `PORT` | – | Listen address and port. The container sets `HOST=0.0.0.0`; Cloud Run sets `PORT` |
 
 ## Deploy to Google Cloud Run
@@ -91,7 +94,10 @@ Rate limits (20 sign-in/registration/email requests per address per 10 minutes) 
 | `GET /v1/received?since=`, `PUT/DELETE /v1/received/{id}` | Sync of the Inbox |
 | `POST /v1/images`, `DELETE /v1/images/{id}` | Upload (raw JPEG/PNG, ≤ 2 MB) / delete a card image |
 | `GET /images/{id}` | Public image by unguessable id |
-| `/v1/cards/{id}/share_link`, `GET /c/{slug}` | Card links and web card: roadmap step 4 (501 for now) |
+| `POST/DELETE /v1/cards/{id}/share_link` | Replace / turn off a card's link; answers the card record with its new `shareSlug` |
+| `GET /c/{slug}` | Public card link: web card (HTML, visitor's language), `?format=vcf` vCard download, `?format=json` card JSON for the app. 404 once the link is off. 120 requests per minute per address |
+| `GET /.well-known/assetlinks.json`, `/.well-known/apple-app-site-association` | App Links / Universal Links files (404 until configured) |
+| `GET /fonts/…` | Web fonts for the server's pages (Poppins, Open Sans; OFL licence files next to them) |
 
 Errors are JSON `{"error": "<code>"}`. The codes are stable, and the app translates them.
 
@@ -102,4 +108,5 @@ Signed-in requests send `Authorization: Bearer <accessToken>`. Access tokens las
 * `GET /v1/cards?since=N` returns `{changes, cursor, hasMore}`. Each change is `{id, updatedAt, deleted, data?}`. Store `cursor`, and ask again while `hasMore` is true.
 * `PUT /v1/cards/{id}` with the full card JSON stores it **only if its `updatedAt` is newer** than the server's copy (last writer wins), and returns the version now stored. If the phone's change lost, the response is the newer server version to keep.
 * `DELETE /v1/cards/{id}` with `{updatedAt}` leaves a tombstone, so other phones learn about the deletion.
-* The server keeps card images only if they are its own `/images/…` URLs, ignores the phone's `shareSlug`, and drops images from Inbox entries.
+* The server keeps card and Inbox images only if they are its own `/images/…` URLs, and ignores the phone's `shareSlug`.
+* **Card links:** the first stored version of a card gets a random `shareSlug` (22 base62 characters), returned in `data.shareSlug` of every card record. It stays the same on later writes. `share_link` `POST` replaces it, `DELETE` turns it off; a turned-off link is not made again until `POST`. Both move the card to the end of the change list, so other phones learn the new slug on their next sync. Deleting a card (or requesting account deletion) ends its link.

@@ -25,6 +25,7 @@ class ReceivedCard {
     required this.receivedAt,
     this.note = '',
     required this.updatedAt,
+    this.sourceSlug,
   });
 
   /// Stable unique ID of this Inbox entry (a UUID).
@@ -46,12 +47,18 @@ class ReceivedCard {
   /// When this entry last changed (UTC), for sync.
   final DateTime updatedAt;
 
+  /// Slug of the card link it came from (`/c/<slug>`), so the user can
+  /// check the owner's link for a newer version. Null when received as a
+  /// vCard (QR or NFC without internet).
+  final String? sourceSlug;
+
   /// Returns a copy with the given fields replaced.
   ReceivedCard copyWith({
     BusinessCard? card,
     ReceivedVia? receivedVia,
     String? note,
     DateTime? updatedAt,
+    String? sourceSlug,
   }) => ReceivedCard(
     id: id,
     card: card ?? this.card,
@@ -59,6 +66,7 @@ class ReceivedCard {
     receivedAt: receivedAt,
     note: note ?? this.note,
     updatedAt: updatedAt ?? this.updatedAt,
+    sourceSlug: sourceSlug ?? this.sourceSlug,
   );
 
   /// Encodes this entry as JSON.
@@ -69,6 +77,7 @@ class ReceivedCard {
     'receivedAt': receivedAt.toUtc().toIso8601String(),
     'note': note,
     'updatedAt': updatedAt.toUtc().toIso8601String(),
+    if (sourceSlug != null) 'sourceSlug': sourceSlug,
   };
 
   /// Decodes an entry written by [toJson].
@@ -79,5 +88,6 @@ class ReceivedCard {
     receivedAt: DateTime.parse(json['receivedAt']! as String),
     note: json['note'] as String? ?? '',
     updatedAt: DateTime.parse(json['updatedAt']! as String),
+    sourceSlug: json['sourceSlug'] as String?,
   );
 }

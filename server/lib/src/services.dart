@@ -15,6 +15,7 @@ import 'package:ebucard_server/src/email/email_sender.dart';
 import 'package:ebucard_server/src/http/rate_limiter.dart';
 import 'package:ebucard_server/src/storage/image_storage.dart';
 import 'package:ebucard_server/src/storage/images.dart';
+import 'package:ebucard_server/src/sync/share_links.dart';
 import 'package:ebucard_server/src/sync/sync_store.dart';
 import 'package:http/http.dart' as http;
 
@@ -30,6 +31,8 @@ class Services {
     required this.sync,
     required this.images,
     required this.authLimiter,
+    required this.shareLinks,
+    required this.linkLimiter,
   });
 
   /// Wires up real services for [config]. Unset SMTP logs emails; unset
@@ -94,6 +97,12 @@ class Services {
         window: const Duration(minutes: 10),
         now: now,
       ),
+      shareLinks: ShareLinks(pool),
+      linkLimiter: RateLimiter(
+        limit: 120,
+        window: const Duration(minutes: 1),
+        now: now,
+      ),
     );
   }
 
@@ -120,6 +129,13 @@ class Services {
 
   /// Rate limit for sign-in, registration and email requests, per address.
   final RateLimiter authLimiter;
+
+  /// Public card links.
+  final ShareLinks shareLinks;
+
+  /// Rate limit for opening card links, per address, so slugs can't be
+  /// tried in bulk.
+  final RateLimiter linkLimiter;
 
   /// Erases accounts whose 30-day deletion grace has ended, with their
   /// images. Run daily (main.dart) and safe to run any time.

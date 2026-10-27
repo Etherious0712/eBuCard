@@ -32,4 +32,11 @@ Sign-in setup still needed before release (needs the Apple Developer account and
 - **Google (iOS):** add `GIDClientID` (iOS client ID) and the reversed client ID as a URL scheme to `ios/Runner/Info.plist`.
 - **Google (Android):** register the app's SHA-1 signing fingerprint in an Android OAuth client in the same Google Cloud project.
 
+**Card links that open the app** (DESIGN.md §4.1) also need the domain:
+
+- **Android:** set the link host (the server's `PUBLIC_BASE_URL` host) with the Gradle property `ebucard.linkHost`, e.g. `ebucard.linkHost=cards.example.com` in `android/gradle.properties` (default `api.example.com`). The server must have `ANDROID_CERT_SHA256` set to the release signing certificate.
+- **iOS:** add the *Associated Domains* capability with `applinks:<host>` to `ios/Runner/Runner.entitlements`; the server must have `APPLE_TEAM_ID` set.
+
+The app already handles `https://<host>/c/<slug>` (route `/c/:slug`).
+
 The Android release build needs the `INTERNET` permission for sync; it is in `android/app/src/main/AndroidManifest.xml` (debug builds get it automatically).

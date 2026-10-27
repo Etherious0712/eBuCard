@@ -1059,6 +1059,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Something went wrong. Please try again.'**
   String get errorGeneric;
+
+  /// No description provided for @showQrLinkHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone can scan this with their phone camera to open your card, even without eBuCard.'**
+  String get showQrLinkHint;
+
+  /// No description provided for @offlineQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline QR'**
+  String get offlineQr;
+
+  /// No description provided for @offlineQrHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Puts the whole card in the code, so it works without internet. Photo and logo aren\'t included.'**
+  String get offlineQrHint;
+
+  /// No description provided for @linkTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Card link'**
+  String get linkTitle;
+
+  /// No description provided for @linkSignInHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to get a link to this card that anyone can open, even without the app.'**
+  String get linkSignInHint;
+
+  /// No description provided for @linkConfirmEmailHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your email to turn on sync and card links.'**
+  String get linkConfirmEmailHint;
+
+  /// No description provided for @linkNone.
+  ///
+  /// In en, this message translates to:
+  /// **'This card has no link right now.'**
+  String get linkNone;
+
+  /// No description provided for @linkMake.
+  ///
+  /// In en, this message translates to:
+  /// **'Make a link'**
+  String get linkMake;
+
+  /// No description provided for @linkHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Share this link anywhere. It always shows your latest card.'**
+  String get linkHint;
+
+  /// No description provided for @linkCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get linkCopy;
+
+  /// No description provided for @linkCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Link copied'**
+  String get linkCopied;
+
+  /// No description provided for @linkNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New link'**
+  String get linkNew;
+
+  /// No description provided for @linkNewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Make a new link?'**
+  String get linkNewTitle;
+
+  /// No description provided for @linkNewMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The current link stops working. People who already saved your card keep it.'**
+  String get linkNewMessage;
+
+  /// No description provided for @linkOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off'**
+  String get linkOff;
+
+  /// No description provided for @linkOffTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off this link?'**
+  String get linkOffTitle;
+
+  /// No description provided for @linkOffMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The link stops working at once. QR codes and NFC will share the full card instead. You can make a new link later.'**
+  String get linkOffMessage;
+
+  /// No description provided for @linkSyncFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'This card hasn\'t synced yet. Try again in a moment.'**
+  String get linkSyncFirst;
+
+  /// No description provided for @linkInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'This card link is no longer active. Ask for the card again.'**
+  String get linkInactive;
+
+  /// No description provided for @linkOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open the card link. Check your connection and try again.'**
+  String get linkOffline;
+
+  /// No description provided for @checkForUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'Check for updates'**
+  String get checkForUpdates;
+
+  /// No description provided for @cardUpToDate.
+  ///
+  /// In en, this message translates to:
+  /// **'This card is up to date'**
+  String get cardUpToDate;
+
+  /// No description provided for @openingCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening card…'**
+  String get openingCard;
 }
 
 class _AppLocalizationsDelegate

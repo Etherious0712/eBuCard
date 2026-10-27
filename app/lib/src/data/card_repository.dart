@@ -53,6 +53,22 @@ class CardRepository {
     });
   }
 
+  /// Sets the public link slug of card [id] as the server reported it,
+  /// without marking the card as changed: the link belongs to the server
+  /// (DESIGN.md §4.1), so there is nothing to upload.
+  Future<void> setShareSlug(String id, String? slug) =>
+      _db.transaction(() async {
+        final row = await (_db.select(
+          _db.ownCards,
+        )..where((c) => c.id.equals(id))).getSingleOrNull();
+        if (row == null) return;
+        final json = jsonDecode(row.json) as Map<String, Object?>
+          ..['shareSlug'] = slug;
+        await (_db.update(_db.ownCards)..where((c) => c.id.equals(id))).write(
+          OwnCardsCompanion(json: Value(jsonEncode(json))),
+        );
+      });
+
   /// Deletes the card with [id] and remembers the deletion for sync (unless
   /// it came [fromSync]). Its image files are not touched; callers delete
   /// them with `CardImageService.delete`.

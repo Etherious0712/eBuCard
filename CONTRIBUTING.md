@@ -30,12 +30,14 @@ Start with [`docs/DESIGN.md`](docs/DESIGN.md) for *what* the product does and *w
 | Inbox | `app/lib/src/features/inbox/` | Received cards: list, search, detail, note, Save to Contacts |
 | Account screen | `app/lib/src/features/auth/` | `/account`: sign in / create account (`sign_in_view.dart`), account status, sync, sign-out and deletion (`account_view.dart`), error texts |
 | Accounts | `app/lib/src/account/` | `ApiClient` (tokens, refresh on 401), `SessionStore` (secure storage), `AuthController`, Apple/Google sign-in, providers |
-| Sync | `app/lib/src/sync/` | `SyncEngine` (images, push, pull, last writer wins), `SyncController` (when sync runs, status), `LocalSyncState` (cursors, pending deletions), pull-to-refresh |
+| Sync | `app/lib/src/sync/` | `SyncEngine` (images, push, pull, last writer wins), `SyncController` (when sync runs, status), `LocalSyncState` (cursors, pending deletions), pull-to-refresh, `CardLinks` (open someone's card link, replace / turn off your own) |
+| Card links in the app | `app/lib/src/features/exchange/` | `card_link_section.dart` (my link under the QR code), `card_link_screen.dart` (link opened from outside the app), `receive_card.dart` (link or vCard → Inbox) |
 | Platform rules | `app/lib/src/core/exchange_capabilities.dart` | Which phones can send/receive by NFC or QR |
 | Languages | `app/lib/src/l10n/*.arb`, `core/locale_resolution.dart` | UI text in en / zh-Hant / zh-Hans |
 | Android NFC | `app/android/app/src/main/kotlin/.../nfc/` and `MainActivity.kt` | Type 4 tag emulation (`Type4Tag.kt`), the HCE service, and the `ebucard/nfc` channel |
 | Server routes | `server/routes/` | One file per endpoint (Dart Frog); each calls a service and stays thin |
-| Server services | `server/lib/src/` | `auth/` (accounts, passwords, tokens, Apple/Google), `sync/`, `storage/` (images, S3 signing), `email/`, `db/` (pool, migrations), `services.dart` (wiring) |
+| Server services | `server/lib/src/` | `auth/` (accounts, passwords, tokens, Apple/Google), `sync/` (sync and card links), `storage/` (images, S3 signing), `email/` (emails and all server text), `web/` (web card, app-link files), `http/html_page.dart` (page layout and styles), `db/` (pool, migrations), `services.dart` (wiring) |
+| Design system | `docs/design-system/ebucard/MASTER.md` | Colours, fonts and rules for every screen and page; its "eBuCard decisions" section wins over the generated part |
 | Server entrypoint | `server/main.dart` | Reads settings, migrates the database, schedules the daily purge |
 
 ## Conventions
@@ -61,7 +63,8 @@ cd app/android && ./gradlew test   # Kotlin unit tests (NFC tag emulation)
 * Use `pumpApp` and `memoryDatabase` from `app/test/support/test_app.dart`. They start the real app with an in-memory database and fakes for the camera (`FakeScanner`: call `scan(text)`), NFC (`FakeNfcService`: set `current`, call `deliver(message)`, inspect `sharing`), image picker, Contacts and link opening.
 * For iPhone-only behaviour, pass `variant: TargetPlatformVariant.only(TargetPlatform.iOS)` to `testWidgets`.
 * Inside `testWidgets`, wrap direct database calls in `dbCall(tester, ...)` (or `tester.runAsync`); otherwise they never complete.
-* Sign-in and sync tests pass `server: FakeServer()` (`app/test/support/fake_server.dart`), an in-memory copy of the server API. Use `addUser`, `putFromOtherPhone`, `live`, `online = false`, `expireSessions()` and `requests` to set up and check. `FakeIdentitySignIn` stands in for Apple/Google.
+* To start a test signed in, save `server.sessionFor(user)` in a `MemorySessionStore` and pass it as `sessions:`.
+* Sign-in and sync tests pass `server: FakeServer()` (`app/test/support/fake_server.dart`), an in-memory copy of the server API. Use `addUser`, `putFromOtherPhone`, `live`, `linkSlug` / `unlinkSlug` / `cardForSlug`, `online = false`, `expireSessions()` and `requests` to set up and check. `FakeIdentitySignIn` stands in for Apple/Google.
 * `app/test/live/live_server_test.dart` runs two "phones" against a real server. It is skipped unless `EBUCARD_LIVE_API` (server URL) and `EBUCARD_LIVE_EMAIL_LOG` (the server's log file, to read confirmation links) are set.
 * Real NFC and camera behaviour can't run in tests. Use the manual device test matrix in `docs/DESIGN.md` §11.
 

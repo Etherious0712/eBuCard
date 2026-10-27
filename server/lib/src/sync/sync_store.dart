@@ -48,8 +48,15 @@ class SyncRecord {
     seq: row['seq'] as int,
   );
 
-  /// Columns to select for [SyncRecord.fromRow].
-  static const columns = 'id::text AS id, data, updated_at, deleted, seq';
+  /// Columns to select for [SyncRecord.fromRow] from [kind]'s table. Own
+  /// cards get the server-owned `shareSlug` merged into their JSON.
+  static String columns(SyncKind kind) => switch (kind) {
+    SyncKind.cards =>
+      'id::text AS id, '
+          "data || jsonb_build_object('shareSlug', share_slug) AS data, "
+          'updated_at, deleted, seq',
+    SyncKind.received => 'id::text AS id, data, updated_at, deleted, seq',
+  };
 
   /// Record id (the card's / entry's UUID).
   final String id;
@@ -113,7 +120,7 @@ class SyncStore {
   }) async {
     final rows = await _db.execute(
       Sql.named(
-        'SELECT ${SyncRecord.columns} FROM ${kind.table} '
+        'SELECT ${SyncRecord.columns(kind)} FROM ${kind.table} '
         'WHERE user_id = @user::uuid AND seq > @since '
         'ORDER BY seq LIMIT @limit',
       ),
@@ -132,26 +139,34 @@ class SyncStore {
   /// Stores [data] for record [id] if it is newer than what is stored.
   /// Returns the record now stored (the winner). A [data] of null deletes.
   ///
+  /// For own cards, [newSlug] becomes the card's link if it has none yet
+  /// and the owner hasn't revoked it; deleting a card ends its link.
+  ///
   /// Throws a 404 if [id] belongs to another user.
   Future<SyncRecord> write(
     String userId,
     SyncKind kind,
     String id,
     Map<String, Object?>? data,
-    DateTime updatedAt,
-  ) async {
+    DateTime updatedAt, {
+    String? newSlug,
+  }) async {
     final table = kind.table;
+    final cards = kind == SyncKind.cards;
     final rows = await _db.execute(
       Sql.named(
-        'INSERT INTO $table (id, user_id, data, updated_at, deleted, seq) '
+        'INSERT INTO $table (id, user_id, data, updated_at, deleted, seq'
+        '${cards ? ', share_slug' : ''}) '
         'VALUES (@id::uuid, @user::uuid, @data::jsonb, @ts, @deleted, '
-        "nextval('sync_seq')) "
+        "nextval('sync_seq')"
+        '${cards ? _newSlug : ''}) '
         'ON CONFLICT (id) DO UPDATE SET data = EXCLUDED.data, '
         'updated_at = EXCLUDED.updated_at, deleted = EXCLUDED.deleted, '
         'seq = EXCLUDED.seq '
+        '${cards ? _keepSlug : ''}'
         'WHERE $table.user_id = EXCLUDED.user_id '
         'AND EXCLUDED.updated_at > $table.updated_at '
-        'RETURNING ${SyncRecord.columns}',
+        'RETURNING ${SyncRecord.columns(kind)}',
       ),
       parameters: {
         'id': id,
@@ -159,6 +174,7 @@ class SyncStore {
         'data': data == null ? null : jsonEncode(data),
         'ts': updatedAt.toUtc(),
         'deleted': data == null,
+        if (cards) 'slug': newSlug,
       },
     );
     if (rows.isNotEmpty) return SyncRecord.fromRow(rows.first.toColumnMap());
@@ -169,11 +185,21 @@ class SyncStore {
     return current;
   }
 
+  /// The share slug of a newly stored card (none for a tombstone).
+  static const _newSlug = ', CASE WHEN @deleted THEN NULL ELSE @slug::text END';
+
+  /// Keeps an existing link, gives a linkless card the new slug unless the
+  /// owner revoked its link, and ends the link of a deleted card.
+  static const _keepSlug =
+      ', share_slug = CASE WHEN EXCLUDED.deleted THEN NULL '
+      'ELSE COALESCE(cards.share_slug, CASE WHEN cards.link_revoked '
+      'THEN NULL ELSE EXCLUDED.share_slug END) END ';
+
   /// The stored record [id] of [userId], or null.
   Future<SyncRecord?> find(String userId, SyncKind kind, String id) async {
     final rows = await _db.execute(
       Sql.named(
-        'SELECT ${SyncRecord.columns} FROM ${kind.table} '
+        'SELECT ${SyncRecord.columns(kind)} FROM ${kind.table} '
         'WHERE id = @id::uuid AND user_id = @user::uuid',
       ),
       parameters: {'id': id, 'user': userId},

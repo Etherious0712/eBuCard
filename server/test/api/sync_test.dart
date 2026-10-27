@@ -192,7 +192,9 @@ Future<void> main() async {
       );
       final stored = (await jsonBody(r))['data'] as Map;
       expect(stored['photoUrl'], isNull);
-      expect(stored['shareSlug'], isNull);
+      // The phone's slug is ignored; the server makes its own.
+      expect(stored['shareSlug'], isNot('chosen-by-phone'));
+      expect(stored['shareSlug'], hasLength(22));
 
       final own = await putCard(
         alice,

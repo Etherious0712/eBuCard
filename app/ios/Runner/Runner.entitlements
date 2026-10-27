@@ -7,7 +7,9 @@
 	<array>
 		<string>TAG</string>
 	</array>
-	<!-- Universal links for https://<card domain>/c/<slug> are added here
-	     (com.apple.developer.associated-domains) once the domain is chosen. -->
+	<!-- Universal links for https://<server>/c/<slug>: once the domain and
+	     Apple Team ID exist, add com.apple.developer.associated-domains with
+	     applinks:<server host> here (app/README.md). The app already handles
+	     the /c/<slug> route. -->
 </dict>
 </plist>

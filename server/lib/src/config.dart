@@ -14,6 +14,7 @@ class Config {
     this.appleClientIds = const [],
     this.googleClientIds = const [],
     this.breachCheckEnabled = true,
+    this.appLinks = const AppLinksConfig(),
   });
 
   /// Reads settings from [env] (normally `Platform.environment`).
@@ -72,6 +73,12 @@ class Config {
       appleClientIds: list('APPLE_CLIENT_IDS'),
       googleClientIds: list('GOOGLE_CLIENT_IDS'),
       breachCheckEnabled: env['BREACH_CHECK'] != 'false',
+      appLinks: AppLinksConfig(
+        appleTeamId: env['APPLE_TEAM_ID'],
+        androidCertSha256: list('ANDROID_CERT_SHA256'),
+        playStoreUrl: _url(env['PLAY_STORE_URL']),
+        appStoreUrl: _url(env['APP_STORE_URL']),
+      ),
     );
     if (missing.isNotEmpty) throw ConfigException(missing);
     if (config.jwtSecret.length < 32) {
@@ -105,6 +112,48 @@ class Config {
 
   /// Whether new passwords are checked against known data breaches.
   final bool breachCheckEnabled;
+
+  /// App links and store buttons on the web card.
+  final AppLinksConfig appLinks;
+}
+
+/// An http(s) URL from [value], or null if unset.
+Uri? _url(String? value) {
+  if (value == null || value.isEmpty) return null;
+  final uri = Uri.tryParse(value);
+  return uri != null && (uri.scheme == 'https' || uri.scheme == 'http')
+      ? uri
+      : throw ConfigException(['a valid http(s) URL, not "$value"']);
+}
+
+/// Settings that tie card links to the app (DESIGN.md §4.1). Each part is
+/// off until set, because the Apple Team ID, release signing key and store
+/// listings don't exist yet.
+class AppLinksConfig {
+  /// Creates app-link settings.
+  const AppLinksConfig({
+    this.appleTeamId,
+    this.androidCertSha256 = const [],
+    this.playStoreUrl,
+    this.appStoreUrl,
+  });
+
+  /// iOS and Android app id (bundle id / package name).
+  static const appId = 'com.etherious.ebucard';
+
+  /// Apple Developer Team ID; turns on
+  /// `/.well-known/apple-app-site-association` (Universal Links).
+  final String? appleTeamId;
+
+  /// SHA-256 fingerprints of the Android signing certificate(s), like
+  /// `AB:CD:…`; turns on `/.well-known/assetlinks.json` (App Links).
+  final List<String> androidCertSha256;
+
+  /// Google Play listing; shows a "Get it on Google Play" button.
+  final Uri? playStoreUrl;
+
+  /// App Store listing; shows a "Download on the App Store" button.
+  final Uri? appStoreUrl;
 }
 
 /// PostgreSQL connection settings.

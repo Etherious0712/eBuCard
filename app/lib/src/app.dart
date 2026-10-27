@@ -21,6 +21,7 @@ import 'core/locale_resolution.dart';
 import 'features/auth/account_screen.dart';
 import 'features/cards/card_editor_screen.dart';
 import 'features/cards/my_cards_screen.dart';
+import 'features/exchange/card_link_screen.dart';
 import 'features/exchange/exchange_screen.dart';
 import 'features/exchange/nfc_receive_screen.dart';
 import 'features/exchange/nfc_share_screen.dart';
@@ -37,6 +38,12 @@ GoRouter _buildRouter() => GoRouter(
   initialLocation: '/cards',
   routes: [
     GoRoute(path: '/account', builder: (_, _) => const AccountScreen()),
+    // Card links opened from outside the app (App Links / Universal Links)
+    // are received inside the Inbox tab, so the tabs stay in place.
+    GoRoute(
+      path: '/c/:slug',
+      redirect: (_, state) => '/inbox/open/${state.pathParameters['slug']}',
+    ),
     StatefulShellRoute.indexedStack(
       builder: (_, _, shell) => HomeShell(shell: shell),
       branches: [
@@ -84,6 +91,11 @@ GoRouter _buildRouter() => GoRouter(
               path: '/inbox',
               builder: (_, _) => const InboxScreen(),
               routes: [
+                GoRoute(
+                  path: 'open/:slug',
+                  builder: (_, state) =>
+                      CardLinkScreen(slug: state.pathParameters['slug']!),
+                ),
                 GoRoute(
                   path: ':id',
                   builder: (_, state) =>

@@ -111,4 +111,24 @@ void main() {
       isNull,
     );
   });
+
+  test('reads the card link back, with any web prefix code', () {
+    final link = Uri.parse('https://card.example.com/c/abc');
+    expect(uriFromNdef(cardNdefMessage(_card, cardUrl: link)), link);
+    expect(uriFromNdef(cardNdefMessage(_card)), isNull);
+
+    NdefMessage uri(int code, String rest) => NdefMessage(
+      records: [
+        _record(TypeNameFormat.wellKnown, 'U', [code, ...utf8.encode(rest)]),
+      ],
+    );
+    expect(
+      uriFromNdef(uri(0x02, 'x.com/c/1')).toString(),
+      'https://www.x.com/c/1',
+    );
+    expect(uriFromNdef(uri(0x00, 'http://x.com')).toString(), 'http://x.com');
+    // Phone numbers, mail links and unknown codes are not web links.
+    expect(uriFromNdef(uri(0x05, '123')), isNull);
+    expect(uriFromNdef(uri(0x00, 'javascript:alert(1)')), isNull);
+  });
 }

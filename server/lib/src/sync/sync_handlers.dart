@@ -10,6 +10,7 @@ import 'package:ebucard_server/src/http/api_error.dart';
 import 'package:ebucard_server/src/http/auth_guard.dart';
 import 'package:ebucard_server/src/http/request_helpers.dart';
 import 'package:ebucard_server/src/services.dart';
+import 'package:ebucard_server/src/sync/share_links.dart';
 import 'package:ebucard_server/src/sync/sync_store.dart';
 
 /// Largest accepted record body. Cards without images are a few KB.
@@ -53,9 +54,17 @@ Future<Response> putRecord(
   final services = context.read<Services>();
   final (data, updatedAt) = switch (kind) {
     SyncKind.cards => _checkCard(json, id, services),
-    SyncKind.received => _checkReceived(json, id),
+    SyncKind.received => _checkReceived(json, id, services),
   };
-  final stored = await services.sync.write(user.id, kind, id, data, updatedAt);
+  final stored = await services.sync.write(
+    user.id,
+    kind,
+    id,
+    data,
+    updatedAt,
+    // Used only if the card has no link yet (DESIGN.md §4.1).
+    newSlug: kind == SyncKind.cards ? newShareSlug() : null,
+  );
   return Response.json(body: stored.toJson());
 }
 
@@ -111,21 +120,26 @@ void _checkId(String id) {
       for (final p in problems) p.name,
     ]);
   }
-  final imageBase = services.images.urlFor('').toString();
-  String? ownImage(String? url) =>
-      url != null && url.startsWith(imageBase) ? url : null;
   final data = card.toJson()
-    ..['photoUrl'] = ownImage(card.photoUrl)
-    ..['logoUrl'] = ownImage(card.logoUrl)
+    ..['photoUrl'] = _ownImage(card.photoUrl, services)
+    ..['logoUrl'] = _ownImage(card.logoUrl, services)
     ..['shareSlug'] = null;
   return (data, card.updatedAt);
 }
 
+/// [url] if it is an image hosted by this server, otherwise null.
+String? _ownImage(String? url, Services services) {
+  final imageBase = services.images.urlFor('').toString();
+  return url != null && url.startsWith(imageBase) ? url : null;
+}
+
 /// Checks an Inbox entry: it must parse and match the URL id. Received
-/// cards never keep images (DESIGN.md §2).
+/// cards keep only images hosted by this server (from a card link,
+/// DESIGN.md §2); vCard images from elsewhere are dropped.
 (Map<String, Object?>, DateTime) _checkReceived(
   Map<String, Object?> json,
   String id,
+  Services services,
 ) {
   final ReceivedCard entry;
   try {
@@ -136,7 +150,8 @@ void _checkId(String id) {
   if (entry.id != id) throw const ApiException.badRequest('id_mismatch');
   final data = entry.toJson();
   (data['card']! as Map<String, Object?>)
-    ..['photoUrl'] = null
-    ..['logoUrl'] = null;
+    ..['photoUrl'] = _ownImage(entry.card.photoUrl, services)
+    ..['logoUrl'] = _ownImage(entry.card.logoUrl, services)
+    ..['shareSlug'] = null;
   return (data, entry.updatedAt);
 }

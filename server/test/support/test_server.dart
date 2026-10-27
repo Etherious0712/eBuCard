@@ -85,7 +85,10 @@ class TestServer {
 
   /// Wipes the test database, applies migrations and builds services.
   /// [jwks] is served for Apple's and Google's key URLs.
-  static Future<TestServer> start({Map<String, Object?>? jwks}) async {
+  static Future<TestServer> start({
+    Map<String, Object?>? jwks,
+    AppLinksConfig appLinks = const AppLinksConfig(),
+  }) async {
     final database = Database.connect(testDatabaseConfig());
     await database.pool.execute(
       'DROP SCHEMA public CASCADE; CREATE SCHEMA public;',
@@ -103,6 +106,7 @@ class TestServer {
         jwtSecret: 'test-secret-that-is-long-enough-for-hs256!',
         appleClientIds: const ['com.etherious.ebucard'],
         googleClientIds: const ['google-client-id'],
+        appLinks: appLinks,
       ),
       database: database,
       email: email,
@@ -161,6 +165,7 @@ Request jsonRequest(
   String? accessToken,
   String ip = '203.0.113.1',
   String? acceptLanguage,
+  String? accept,
 }) => Request(
   method.value,
   Uri.parse('https://api.example.com$path'),
@@ -170,6 +175,7 @@ Request jsonRequest(
     'x-forwarded-for': ip,
     if (accessToken != null) 'authorization': 'Bearer $accessToken',
     if (acceptLanguage != null) 'accept-language': acceptLanguage,
+    if (accept != null) 'accept': accept,
   },
 );
 
