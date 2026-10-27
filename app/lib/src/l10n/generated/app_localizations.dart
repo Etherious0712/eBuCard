@@ -705,6 +705,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'It is only removed from eBuCard, not from your phone\'s Contacts.'**
   String get deleteReceivedMessage;
+
+  /// No description provided for @nfcShareTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap phones (NFC)'**
+  String get nfcShareTitle;
+
+  /// No description provided for @nfcShareReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to share'**
+  String get nfcShareReady;
+
+  /// No description provided for @nfcShareHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep this screen open and hold the back of your phone against the other phone. On their phone: eBuCard → Exchange → Read by NFC.'**
+  String get nfcShareHint;
+
+  /// No description provided for @nfcCannotShare.
+  ///
+  /// In en, this message translates to:
+  /// **'This phone can\'t share by NFC. Show your QR code instead.'**
+  String get nfcCannotShare;
+
+  /// No description provided for @nfcUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'This phone doesn\'t have NFC. Use a QR code instead.'**
+  String get nfcUnsupported;
+
+  /// No description provided for @nfcOff.
+  ///
+  /// In en, this message translates to:
+  /// **'NFC is off'**
+  String get nfcOff;
+
+  /// No description provided for @nfcOffMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on NFC to exchange cards by tapping phones. You can use a QR code meanwhile.'**
+  String get nfcOffMessage;
+
+  /// No description provided for @openNfcSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open NFC settings'**
+  String get openNfcSettings;
+
+  /// No description provided for @useQrInstead.
+  ///
+  /// In en, this message translates to:
+  /// **'Use QR code instead'**
+  String get useQrInstead;
+
+  /// No description provided for @nfcReceiveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Read by NFC'**
+  String get nfcReceiveTitle;
+
+  /// No description provided for @nfcReceiveListening.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold your phone against the back of the other phone'**
+  String get nfcReceiveListening;
+
+  /// No description provided for @nfcReceiveHint.
+  ///
+  /// In en, this message translates to:
+  /// **'On their phone: eBuCard → Exchange → Tap phones (NFC). iPhones can\'t share by NFC: ask them to show their QR code.'**
+  String get nfcReceiveHint;
+
+  /// No description provided for @nfcIosAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold your iPhone near the other phone.'**
+  String get nfcIosAlert;
+
+  /// No description provided for @nfcIosSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Card received'**
+  String get nfcIosSuccess;
+
+  /// No description provided for @nfcStopped.
+  ///
+  /// In en, this message translates to:
+  /// **'Stopped listening.'**
+  String get nfcStopped;
+
+  /// No description provided for @tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get tryAgain;
+
+  /// No description provided for @nfcNotACard.
+  ///
+  /// In en, this message translates to:
+  /// **'The other phone didn\'t share a business card.'**
+  String get nfcNotACard;
 }
 
 class _AppLocalizationsDelegate

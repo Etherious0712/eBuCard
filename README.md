@@ -31,4 +31,4 @@ cd app && flutter pub get && flutter test && flutter run
 
 ## Status
 
-Done: card editor with local storage, QR exchange (show and scan), the Inbox, and Save to Contacts. Still to come: NFC exchange, accounts and sync, and the server API (endpoints return `501`); see the roadmap in `docs/DESIGN.md` §11.
+MVP done: card editor with local storage, QR exchange (show and scan), NFC exchange (Android shares; Android and iPhone read), the Inbox, and Save to Contacts. Still to come: accounts and sync, card links and the web card, and the server API (endpoints return `501`); see the roadmap in `docs/DESIGN.md` §11.

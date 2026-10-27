@@ -8,7 +8,8 @@ import 'vcard_encoder.dart';
 ///
 /// See `docs/DESIGN.md` §4 for the format. In short:
 /// * NFC (Android HCE): an NDEF message with a URI record (card URL) first,
-///   followed by a `text/vcard` MIME record (compact vCard) for offline use.
+///   followed by a `text/vcard` MIME record (full vCard without images) for
+///   offline use. Built by `cardNdefMessage` in `nfc_payload.dart`.
 /// * QR: the card URL by default; the full vCard without images when the
 ///   user chooses the offline QR or the card has not been synced yet (the
 ///   MVP has no server, so it always uses the vCard).

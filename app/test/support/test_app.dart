@@ -1,6 +1,7 @@
 // Shared helpers for app tests: an in-memory database, fakes for everything
-// that needs real hardware or other apps (camera, image picker, Contacts,
-// phone/email/browser), and pumpApp() which starts the full app with them.
+// that needs real hardware or other apps (camera, NFC, image picker,
+// Contacts, phone/email/browser), and pumpApp() which starts the full app
+// with them.
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
@@ -9,12 +10,14 @@ import 'package:ebucard/src/data/app_database.dart';
 import 'package:ebucard/src/data/card_image_service.dart';
 import 'package:ebucard/src/data/contacts_service.dart';
 import 'package:ebucard/src/data/link_launcher.dart';
+import 'package:ebucard/src/data/nfc_service.dart';
 import 'package:ebucard/src/data/providers.dart';
 import 'package:ebucard/src/features/exchange/scan_screen.dart';
 import 'package:ebucard_models/ebucard_models.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ndef_record/ndef_record.dart';
 
 /// A fresh, empty database in memory. Close it in `tearDown`.
 AppDatabase memoryDatabase() => AppDatabase(
@@ -77,6 +80,64 @@ class FakeScanner {
   void scan(String text) => _onScanned!(text);
 }
 
+/// Stands in for NFC: set [current] for the status, inspect what is being
+/// shared, and call [deliver] to "hold a phone" against this one.
+class FakeNfcService implements NfcService {
+  /// What [status] reports. Defaults to NFC on, able to share.
+  NfcStatus current = const NfcStatus(state: NfcState.on, canShare: true);
+
+  /// The NDEF bytes being shared, or null when not sharing.
+  Uint8List? sharing;
+
+  /// How many times the NFC settings were opened.
+  int settingsOpened = 0;
+
+  /// Whether a reading session is running.
+  bool reading = false;
+
+  void Function(NdefMessage?)? _onMessage;
+  VoidCallback? _onCancelledIos;
+
+  @override
+  Future<NfcStatus> status() async => current;
+
+  @override
+  Future<void> startSharing(Uint8List ndefMessage) async =>
+      sharing = ndefMessage;
+
+  @override
+  Future<void> stopSharing() async => sharing = null;
+
+  @override
+  Future<void> openSettings() async => settingsOpened++;
+
+  @override
+  Future<void> startReading({
+    required void Function(NdefMessage? message) onMessage,
+    required String iosAlertMessage,
+    VoidCallback? onCancelledIos,
+  }) async {
+    reading = true;
+    _onMessage = onMessage;
+    _onCancelledIos = onCancelledIos;
+  }
+
+  @override
+  Future<void> stopReading({
+    String? iosSuccessMessage,
+    String? iosErrorMessage,
+  }) async => reading = false;
+
+  /// Simulates reading [message] from another phone.
+  void deliver(NdefMessage? message) => _onMessage!(message);
+
+  /// Simulates the user closing the iPhone scan sheet.
+  void cancelIos() {
+    reading = false;
+    _onCancelledIos?.call();
+  }
+}
+
 /// Runs real database work outside the widget test's fake-async zone, where
 /// it would otherwise never complete.
 Future<T> dbCall<T>(WidgetTester tester, Future<T> Function() body) async =>
@@ -90,6 +151,7 @@ Future<void> pumpApp(
   ContactsService? contacts,
   LinkLauncher? links,
   FakeScanner? scanner,
+  FakeNfcService? nfc,
 }) async {
   tester.view.physicalSize = const Size(1080, 4000);
   tester.view.devicePixelRatio = 1;
@@ -105,6 +167,7 @@ Future<void> pumpApp(
           contacts ?? FakeContactsService(),
         ),
         linkLauncherProvider.overrideWithValue(links ?? FakeLinkLauncher()),
+        nfcServiceProvider.overrideWithValue(nfc ?? FakeNfcService()),
         scannerBuilderProvider.overrideWithValue(
           (scanner ?? FakeScanner()).build,
         ),

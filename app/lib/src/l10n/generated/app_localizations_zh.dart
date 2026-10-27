@@ -314,6 +314,59 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get deleteReceivedMessage => '只会从 eBuCard 删除，不会从手机通讯录删除。';
+
+  @override
+  String get nfcShareTitle => '手机触碰 (NFC)';
+
+  @override
+  String get nfcShareReady => '准备分享';
+
+  @override
+  String get nfcShareHint =>
+      '请保持此页面打开，并将手机背面贴近对方手机。对方需在 eBuCard 打开“交换”→“通过 NFC 读取”。';
+
+  @override
+  String get nfcCannotShare => '此手机无法通过 NFC 分享，请改用二维码。';
+
+  @override
+  String get nfcUnsupported => '此手机没有 NFC，请改用二维码。';
+
+  @override
+  String get nfcOff => 'NFC 已关闭';
+
+  @override
+  String get nfcOffMessage => '打开 NFC 后即可通过手机触碰交换名片。在此期间可先使用二维码。';
+
+  @override
+  String get openNfcSettings => '打开 NFC 设置';
+
+  @override
+  String get useQrInstead => '改用二维码';
+
+  @override
+  String get nfcReceiveTitle => '通过 NFC 读取';
+
+  @override
+  String get nfcReceiveListening => '将手机贴近对方手机背面';
+
+  @override
+  String get nfcReceiveHint =>
+      '对方需在 eBuCard 打开“交换”→“手机触碰 (NFC)”。iPhone 无法通过 NFC 分享，请对方出示二维码。';
+
+  @override
+  String get nfcIosAlert => '将 iPhone 靠近对方手机。';
+
+  @override
+  String get nfcIosSuccess => '已收到名片';
+
+  @override
+  String get nfcStopped => '已停止读取。';
+
+  @override
+  String get tryAgain => '重试';
+
+  @override
+  String get nfcNotACard => '对方手机没有分享名片。';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).
@@ -626,6 +679,59 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get deleteReceivedMessage => '只会从 eBuCard 删除，不会从手机通讯录删除。';
+
+  @override
+  String get nfcShareTitle => '手机触碰 (NFC)';
+
+  @override
+  String get nfcShareReady => '准备分享';
+
+  @override
+  String get nfcShareHint =>
+      '请保持此页面打开，并将手机背面贴近对方手机。对方需在 eBuCard 打开“交换”→“通过 NFC 读取”。';
+
+  @override
+  String get nfcCannotShare => '此手机无法通过 NFC 分享，请改用二维码。';
+
+  @override
+  String get nfcUnsupported => '此手机没有 NFC，请改用二维码。';
+
+  @override
+  String get nfcOff => 'NFC 已关闭';
+
+  @override
+  String get nfcOffMessage => '打开 NFC 后即可通过手机触碰交换名片。在此期间可先使用二维码。';
+
+  @override
+  String get openNfcSettings => '打开 NFC 设置';
+
+  @override
+  String get useQrInstead => '改用二维码';
+
+  @override
+  String get nfcReceiveTitle => '通过 NFC 读取';
+
+  @override
+  String get nfcReceiveListening => '将手机贴近对方手机背面';
+
+  @override
+  String get nfcReceiveHint =>
+      '对方需在 eBuCard 打开“交换”→“手机触碰 (NFC)”。iPhone 无法通过 NFC 分享，请对方出示二维码。';
+
+  @override
+  String get nfcIosAlert => '将 iPhone 靠近对方手机。';
+
+  @override
+  String get nfcIosSuccess => '已收到名片';
+
+  @override
+  String get nfcStopped => '已停止读取。';
+
+  @override
+  String get tryAgain => '重试';
+
+  @override
+  String get nfcNotACard => '对方手机没有分享名片。';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -938,4 +1044,57 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get deleteReceivedMessage => '只會從 eBuCard 移除，不會從手機通訊錄刪除。';
+
+  @override
+  String get nfcShareTitle => '手機觸碰 (NFC)';
+
+  @override
+  String get nfcShareReady => '準備分享';
+
+  @override
+  String get nfcShareHint =>
+      '請保持此畫面開啟，並將手機背面貼近對方手機。對方須在 eBuCard 開啟「交換」→「以 NFC 讀取」。';
+
+  @override
+  String get nfcCannotShare => '此手機無法以 NFC 分享，請改用 QR 碼。';
+
+  @override
+  String get nfcUnsupported => '此手機沒有 NFC，請改用 QR 碼。';
+
+  @override
+  String get nfcOff => 'NFC 已關閉';
+
+  @override
+  String get nfcOffMessage => '開啟 NFC 後即可以手機觸碰交換名片。期間可先使用 QR 碼。';
+
+  @override
+  String get openNfcSettings => '開啟 NFC 設定';
+
+  @override
+  String get useQrInstead => '改用 QR 碼';
+
+  @override
+  String get nfcReceiveTitle => '以 NFC 讀取';
+
+  @override
+  String get nfcReceiveListening => '將手機貼近對方手機背面';
+
+  @override
+  String get nfcReceiveHint =>
+      '對方須在 eBuCard 開啟「交換」→「手機觸碰 (NFC)」。iPhone 無法以 NFC 分享，請對方出示 QR 碼。';
+
+  @override
+  String get nfcIosAlert => '將 iPhone 靠近對方手機。';
+
+  @override
+  String get nfcIosSuccess => '已收到名片';
+
+  @override
+  String get nfcStopped => '已停止讀取。';
+
+  @override
+  String get tryAgain => '再試一次';
+
+  @override
+  String get nfcNotACard => '對方手機沒有分享名片。';
 }

@@ -100,5 +100,22 @@
   "contactsError": "無法開啟通訊錄。",
   "cantOpenLink": "此手機上沒有可開啟此內容的應用程式。",
   "deleteReceivedTitle": "要從收件匣移除此名片嗎？",
-  "deleteReceivedMessage": "只會從 eBuCard 移除，不會從手機通訊錄刪除。"
+  "deleteReceivedMessage": "只會從 eBuCard 移除，不會從手機通訊錄刪除。",
+  "nfcShareTitle": "手機觸碰 (NFC)",
+  "nfcShareReady": "準備分享",
+  "nfcShareHint": "請保持此畫面開啟，並將手機背面貼近對方手機。對方須在 eBuCard 開啟「交換」→「以 NFC 讀取」。",
+  "nfcCannotShare": "此手機無法以 NFC 分享，請改用 QR 碼。",
+  "nfcUnsupported": "此手機沒有 NFC，請改用 QR 碼。",
+  "nfcOff": "NFC 已關閉",
+  "nfcOffMessage": "開啟 NFC 後即可以手機觸碰交換名片。期間可先使用 QR 碼。",
+  "openNfcSettings": "開啟 NFC 設定",
+  "useQrInstead": "改用 QR 碼",
+  "nfcReceiveTitle": "以 NFC 讀取",
+  "nfcReceiveListening": "將手機貼近對方手機背面",
+  "nfcReceiveHint": "對方須在 eBuCard 開啟「交換」→「手機觸碰 (NFC)」。iPhone 無法以 NFC 分享，請對方出示 QR 碼。",
+  "nfcIosAlert": "將 iPhone 靠近對方手機。",
+  "nfcIosSuccess": "已收到名片",
+  "nfcStopped": "已停止讀取。",
+  "tryAgain": "再試一次",
+  "nfcNotACard": "對方手機沒有分享名片。"
 }

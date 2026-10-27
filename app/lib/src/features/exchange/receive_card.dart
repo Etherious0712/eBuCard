@@ -41,7 +41,8 @@ Future<String?> receiveContactText(
     now: now,
   );
   if (card == null) {
-    messenger.showSnackBar(SnackBar(content: Text(l10n.notACard)));
+    final message = via == ReceivedVia.nfc ? l10n.nfcNotACard : l10n.notACard;
+    messenger.showSnackBar(SnackBar(content: Text(message)));
     return null;
   }
 
