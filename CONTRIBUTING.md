@@ -28,7 +28,9 @@ Start with [`docs/DESIGN.md`](docs/DESIGN.md) for *what* the product does and *w
 | Card editor | `app/lib/src/features/cards/card_editor_screen.dart` | Create, edit and delete a card |
 | Exchange | `app/lib/src/features/exchange/` | Show QR / scan QR, NFC share / NFC read, the shared card choice (`share_card.dart`) and what happens after a card is received (`receive_card.dart`) |
 | Inbox | `app/lib/src/features/inbox/` | Received cards: list, search, detail, note, Save to Contacts |
-| Sign in | `app/lib/src/features/auth/` | Placeholder for a later PR |
+| Account screen | `app/lib/src/features/auth/` | `/account`: sign in / create account (`sign_in_view.dart`), account status, sync, sign-out and deletion (`account_view.dart`), error texts |
+| Accounts | `app/lib/src/account/` | `ApiClient` (tokens, refresh on 401), `SessionStore` (secure storage), `AuthController`, Apple/Google sign-in, providers |
+| Sync | `app/lib/src/sync/` | `SyncEngine` (images, push, pull, last writer wins), `SyncController` (when sync runs, status), `LocalSyncState` (cursors, pending deletions), pull-to-refresh |
 | Platform rules | `app/lib/src/core/exchange_capabilities.dart` | Which phones can send/receive by NFC or QR |
 | Languages | `app/lib/src/l10n/*.arb`, `core/locale_resolution.dart` | UI text in en / zh-Hant / zh-Hans |
 | Android NFC | `app/android/app/src/main/kotlin/.../nfc/` and `MainActivity.kt` | Type 4 tag emulation (`Type4Tag.kt`), the HCE service, and the `ebucard/nfc` channel |
@@ -59,6 +61,8 @@ cd app/android && ./gradlew test   # Kotlin unit tests (NFC tag emulation)
 * Use `pumpApp` and `memoryDatabase` from `app/test/support/test_app.dart`. They start the real app with an in-memory database and fakes for the camera (`FakeScanner`: call `scan(text)`), NFC (`FakeNfcService`: set `current`, call `deliver(message)`, inspect `sharing`), image picker, Contacts and link opening.
 * For iPhone-only behaviour, pass `variant: TargetPlatformVariant.only(TargetPlatform.iOS)` to `testWidgets`.
 * Inside `testWidgets`, wrap direct database calls in `dbCall(tester, ...)` (or `tester.runAsync`); otherwise they never complete.
+* Sign-in and sync tests pass `server: FakeServer()` (`app/test/support/fake_server.dart`), an in-memory copy of the server API. Use `addUser`, `putFromOtherPhone`, `live`, `online = false`, `expireSessions()` and `requests` to set up and check. `FakeIdentitySignIn` stands in for Apple/Google.
+* `app/test/live/live_server_test.dart` runs two "phones" against a real server. It is skipped unless `EBUCARD_LIVE_API` (server URL) and `EBUCARD_LIVE_EMAIL_LOG` (the server's log file, to read confirmation links) are set.
 * Real NFC and camera behaviour can't run in tests. Use the manual device test matrix in `docs/DESIGN.md` §11.
 
 ### Writing server tests

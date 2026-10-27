@@ -1,6 +1,6 @@
 # eBuCard: Design Document
 
-Status: **Living document** · Last updated with the accounts & sync server (PR D)
+Status: **Living document** · Last updated with sign-in and sync in the app (PR E)
 
 ## 1. Goal
 
@@ -29,7 +29,11 @@ eBuCard is an electronic business card service. Business people and anyone else 
 | Password rules | At least 8 characters (max 128), and not found in known data breaches (Have I Been Pwned, k-anonymity: only 5 hex chars of the SHA-1 leave the server; if the service is down, sign-up is not blocked) |
 | Session length | Signed in until sign-out; ends after **90 days without use** (refresh tokens rotate on every use) |
 | Account deletion | **30-day grace period**: signed out everywhere at once; signing in again within 30 days cancels; then account, cards, Inbox and images are erased |
-| First sign-in on a phone with data | Merge the phone's cards and Inbox into the account (app side, PR E) |
+| First sign-in on a phone with data | Merge the phone's cards and Inbox into the account (newer copy wins per record) |
+| Sign-out | Syncs first, then **removes the account's cards and Inbox from the phone** (warns if changes could not be synced) |
+| Session expired | Local data stays; the user is asked to sign in again. Signing in to a **different** account first clears the previous account's data from the phone |
+| Apple / Google buttons | Hidden until configured: Apple needs `APPLE_SIGN_IN=true` (iOS only), Google needs `GOOGLE_SERVER_CLIENT_ID` |
+| When sync runs | Automatically: at start, when the app returns to the foreground, 2 s after a local change, and on pull-to-refresh or "Sync now" |
 | Card content | Core contact fields, profile photo, company logo, social links. **Several cards per user** |
 | Received cards | Stored on the device **and** synced to the user's account |
 | App identity | Display name `eBuCard`, package / bundle ID `com.etherious.ebucard` |
@@ -121,7 +125,7 @@ The app and server share `ebucard_models`, so the JSON format and the vCard enco
 
 **ReceivedCard**: `id`, `owner_user_id`, `source_card_id` (nullable, set when received by URL), `snapshot` (card JSON at time of receipt), `received_via` (`nfc` | `qr` | `link`), `received_at`, `note`, `tags[]`, `updated_at`, `deleted_at` (tombstone for sync).
 
-**Local storage**: SQLite on the device (drift) holds own cards and received cards, so the app works offline. Own cards live in the `own_cards` table as the card's JSON (same format as the API) plus `sort_order` and `updated_at`. Received cards live in `received_cards` (the `ReceivedCard` JSON plus `search_text`, `received_at`, `updated_at`), and small preferences such as the default card in `settings` (key/value). Schema version 2; older databases are upgraded in place. Images are files in the app's documents folder (`card_images/`), referenced by `file:` URI until sync uploads them. **Sync**: each record carries `updated_at` and a tombstone. The client pushes local changes and pulls changes since the last sync cursor. Conflicts resolve as last-writer-wins per record.
+**Local storage**: SQLite on the device (drift) holds own cards and received cards, so the app works offline. Own cards live in the `own_cards` table as the card's JSON (same format as the API) plus `sort_order` and `updated_at`. Received cards live in `received_cards` (the `ReceivedCard` JSON plus `search_text`, `received_at`, `updated_at`), and small preferences such as the default card in `settings` (key/value). Schema version 3; older databases are upgraded in place. For sync, each card and Inbox row has a `dirty` flag (changed since last upload), deletions wait in `pending_deletions` until the server has them, and `settings` also keeps the sync cursors (`sync_cursor_cards`, `sync_cursor_received`) and the signed-in account id (`sync_account_id`). Images are files in the app's documents folder (`card_images/`), referenced by `file:` URI until sync uploads them. **Sync**: each record carries `updated_at` and a tombstone. The client first uploads local `file:` images, then per kind pushes deletions, pushes dirty records and pulls changes since the last sync cursor. Conflicts resolve as last-writer-wins per record. The refresh token is kept in the phone's secure storage (Keychain / Android Keystore).
 
 ## 7. API outline (`/v1`, JSON, Bearer access token)
 
@@ -181,8 +185,8 @@ ARB files in `app/lib/src/l10n/`. Devices often report Chinese without a script 
    * **PR B (done):** QR share and scan, Inbox of received cards, save to phone Contacts.
    * **PR C (done):** NFC: Android HCE send, NFC read on both platforms.
 3. **Accounts & sync**, split into two PRs:
-   * **PR D (this one):** server: PostgreSQL schema and migrations, email/password + Apple + Google sign-in, sessions, confirmation and reset emails, card and Inbox sync, images, account deletion, Cloud Run image.
-   * **PR E:** app: sign-in screens, sync engine, image upload, first-sign-in merge, account deletion.
+   * **PR D (done):** server: PostgreSQL schema and migrations, email/password + Apple + Google sign-in, sessions, confirmation and reset emails, card and Inbox sync, images, account deletion, Cloud Run image.
+   * **PR E (this one):** app: sign-in screens, sync engine, image upload, first-sign-in merge, account deletion.
 4. **Web card & app links:** `/c/{slug}` HTML page, `.vcf` download, App Links / Universal Links.
 5. **Release:** store listings, privacy policy, account deletion, analytics/crash reporting (to be decided).
 
@@ -200,6 +204,10 @@ ARB files in `app/lib/src/l10n/`. Devices often report Chinese without a script 
 | 6 | iPhone / Android | any (camera app, no app) | QR URL | Web card opens |
 | 7 | any | any (camera app, no app) | vCard QR (MVP) | Phone offers to add the contact |
 | 8 | paper card / other app | any (app) | vCard or MECARD QR | Card saved to Inbox |
+| 9 | Phone A and B, same account | — | Sync | A card edited on A appears on B after pull-to-refresh; deleting it on B removes it on A |
+| 10 | iPhone | — | Sign in with Apple / Google | Signs in; on first sign-in with local cards they are uploaded |
+| 11 | any | — | Sync with a card photo | Photo uploaded; shows on the other phone |
+| 12 | any, signed in | — | Sign out, then sign in to another account | First account's data is gone from the phone |
 
 ## 12. Open questions for the product owner
 

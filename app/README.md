@@ -4,13 +4,32 @@ Android and iOS client. See `../docs/DESIGN.md` for the full design.
 
 ```sh
 flutter pub get
-flutter run --dart-define=EBUCARD_API_BASE_URL=http://<host>:8080
+flutter run --dart-define=EBUCARD_API_BASE_URL=http://<host>:8080 \
+  --dart-define=GOOGLE_SERVER_CLIENT_ID=<web client id>.apps.googleusercontent.com \
+  --dart-define=APPLE_SIGN_IN=true
 flutter analyze
 flutter test
 ```
 
-- `lib/src/features/` – `cards` (own cards), `exchange` (NFC / QR), `inbox` (received cards), `auth`.
+- `lib/src/features/` – `cards` (own cards), `exchange` (NFC / QR), `inbox` (received cards), `auth` (account screen).
+- `lib/src/account/` – API client, secure session, sign-in. `lib/src/sync/` – sync engine and when it runs.
 - `lib/src/core/` – config, platform exchange capabilities, locale resolution.
 - `lib/src/l10n/` – ARB strings for `en`, `zh_Hant`, `zh_Hans` (`app_zh.arb` is the required base and mirrors Simplified Chinese).
-- `android/.../nfc/CardHostApduService.kt` – NFC Host Card Emulation service (stub).
+- `android/.../nfc/CardHostApduService.kt` – NFC Host Card Emulation service (Type 4 tag emulation).
 - `ios/Runner/Runner.entitlements` – Core NFC entitlement.
+
+## Build settings
+
+| `--dart-define` | Meaning |
+|---|---|
+| `EBUCARD_API_BASE_URL` | Server address. Default `http://localhost:8080` (development) |
+| `GOOGLE_SERVER_CLIENT_ID` | Google OAuth **web** client ID; the server must list it in `GOOGLE_CLIENT_IDS`. Unset: no Google button |
+| `APPLE_SIGN_IN` | `true` shows Sign in with Apple on iPhone. Leave unset until the capability below is set up |
+
+Sign-in setup still needed before release (needs the Apple Developer account and Google Cloud project, DESIGN.md §12):
+
+- **Apple (iOS):** add the *Sign in with Apple* capability to the Runner target in Xcode (adds `com.apple.developer.applesignin` to `Runner.entitlements`) and enable it for the App ID `com.etherious.ebucard`.
+- **Google (iOS):** add `GIDClientID` (iOS client ID) and the reversed client ID as a URL scheme to `ios/Runner/Info.plist`.
+- **Google (Android):** register the app's SHA-1 signing fingerprint in an Android OAuth client in the same Google Cloud project.
+
+The Android release build needs the `INTERNET` permission for sync; it is in `android/app/src/main/AndroidManifest.xml` (debug builds get it automatically).
