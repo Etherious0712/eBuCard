@@ -24,7 +24,7 @@ Generated with the UI/UX Pro Max skill (query: "digital business card contact sh
 | Touch targets | At least 48px high for buttons and contact rows | Android/iOS guidelines |
 | Page pattern | Not used for the web card, which is a single card, not a landing page | The generated "Product Demo" pattern fits a marketing site |
 
-Implemented in `server/lib/src/http/html_page.dart` (`pageCss`) and, for the app, `app/lib/src/core/theme.dart` (PR G).
+Implemented in `server/lib/src/http/html_page.dart` (`pageCss`) and, for the app, `app/lib/src/core/theme.dart` (checked by `app/test/theme_test.dart`).
 
 ---
 

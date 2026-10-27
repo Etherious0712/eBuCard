@@ -13,7 +13,8 @@ flutter test
 
 - `lib/src/features/` – `cards` (own cards), `exchange` (NFC / QR), `inbox` (received cards), `auth` (account screen).
 - `lib/src/account/` – API client, secure session, sign-in. `lib/src/sync/` – sync engine and when it runs.
-- `lib/src/core/` – config, platform exchange capabilities, locale resolution.
+- `lib/src/core/` – config, theme (design system, `theme.dart`), platform exchange capabilities, locale resolution.
+- `assets/fonts/` – Poppins and Open Sans (Latin, SIL Open Font License; licence files next to them). Chinese text uses the phone's system font.
 - `lib/src/l10n/` – ARB strings for `en`, `zh_Hant`, `zh_Hans` (`app_zh.arb` is the required base and mirrors Simplified Chinese).
 - `android/.../nfc/CardHostApduService.kt` – NFC Host Card Emulation service (Type 4 tag emulation).
 - `ios/Runner/Runner.entitlements` – Core NFC entitlement.

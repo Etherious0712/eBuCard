@@ -1,6 +1,6 @@
 # eBuCard: Design Document
 
-Status: **Living document** · Last updated with card links and the web card (PR F)
+Status: **Living document** · Last updated with the app's new look (PR G)
 
 ## 1. Goal
 
@@ -195,8 +195,8 @@ ARB files in `app/lib/src/l10n/`. Devices often report Chinese without a script 
    * **PR D (done):** server: PostgreSQL schema and migrations, email/password + Apple + Google sign-in, sessions, confirmation and reset emails, card and Inbox sync, images, account deletion, Cloud Run image.
    * **PR E (done):** app: sign-in screens, sync engine, image upload, first-sign-in merge, account deletion.
 4. **Web card & app links:**
-   * **PR F (this one):** card links made on sync, replace / turn off, web card with `.vcf` download, link QR + Offline QR, NFC link record, receive by link with Check for updates, App Links / Universal Links files and app routes, new look for the server pages.
-   * **PR G:** new look for the app (design system, fonts, screens).
+   * **PR F (done):** card links made on sync, replace / turn off, web card with `.vcf` download, link QR + Offline QR, NFC link record, receive by link with Check for updates, App Links / Universal Links files and app routes, new look for the server pages.
+   * **PR G (this one):** new look for the app: design-system theme (light/dark), bundled Poppins + Open Sans, photo/initials avatars, web-card-style card header, version 0.8.0.
 5. **Release:** store listings, privacy policy, account deletion, analytics/crash reporting (to be decided).
 
 ### Manual device test matrix (NFC/QR cannot be tested in CI)
