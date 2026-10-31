@@ -1,6 +1,6 @@
 # eBuCard: Design Document
 
-Status: **Living document** · Last updated with serverless mode (PR H)
+Status: **Living document** · Last updated with the static web card (PR I)
 
 ## 1. Goal
 
@@ -120,6 +120,7 @@ Capability matrix as implemented in `app/lib/src/core/exchange_capabilities.dart
 * **Receiving in the app:** scanned or read offline links are decoded on the phone (no internet) and go through the usual duplicate check. Server links are ignored while the cloud features are off.
 * **"Open in eBuCard"** on the web card uses `ebucard://card/receive/<data>` (custom scheme: github.io pages can't host App Links / Universal Links files). The app opens, saves the card (`received_via = link`) and shows it.
 * **Download eBuCard (Android)** on the web card links to the latest GitHub release.
+* **Web card page:** `web/c/` (static HTML + JS, published by `.github/workflows/pages.yml`). No outside requests, cookies or analytics; strict Content-Security-Policy; card text shown with `textContent` only. Needs a browser with `DecompressionStream` (2023+); older ones see "Please update your browser".
 * Code: `packages/ebucard_models/lib/src/offline_link.dart` (shared test vectors in `test/fixtures/offline_links.json`, also used by the web page tests), `app/lib/src/features/exchange/` (`show_qr_screen.dart`, `receive_card.dart`, `card_link_screen.dart`).
 
 ## 5. Architecture
@@ -215,8 +216,8 @@ ARB files in `app/lib/src/l10n/`. Devices often report Chinese without a script 
    * **PR F (done):** card links made on sync, replace / turn off, web card with `.vcf` download, link QR + Offline QR, NFC link record, receive by link with Check for updates, App Links / Universal Links files and app routes, new look for the server pages.
    * **PR G (done):** new look for the app: design-system theme (light/dark), bundled Poppins + Open Sans, photo/initials avatars, web-card-style card header, version 0.8.0.
 5. **Serverless mode** (zero hosting cost until there is traffic):
-   * **PR H (this one):** `EBUCARD_CLOUD` switch (default off), offline card links in QR / NFC / receive, `ebucard://` app link, version 0.9.0.
-   * **PR I:** static web card (`web/c/`) on GitHub Pages: decode, Save contact, Open in eBuCard, Download for Android.
+   * **PR H (done):** `EBUCARD_CLOUD` switch (default off), offline card links in QR / NFC / receive, `ebucard://` app link, version 0.9.0.
+   * **PR I (this one):** static web card (`web/c/`) on GitHub Pages: decode, Save contact, Open in eBuCard, Download for Android.
 6. **Later, once there is traffic:** turn the cloud features back on (accounts, sync, server links, photos for others), backup, then store release: store listings, privacy policy, analytics/crash reporting (to be decided).
 
 ### Manual device test matrix (NFC/QR cannot be tested in CI)
