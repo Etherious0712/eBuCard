@@ -23,7 +23,9 @@ flutter test
 
 | `--dart-define` | Meaning |
 |---|---|
-| `EBUCARD_API_BASE_URL` | Server address. Default `http://localhost:8080` (development) |
+| `EBUCARD_CLOUD` | `true` turns on accounts, sync, server card links and Check for updates. **Off by default**: the app needs no server (DESIGN.md §2) |
+| `EBUCARD_WEB_CARD_URL` | Static web card page for offline links. Default `https://etherious0712.github.io/eBuCard/c/` |
+| `EBUCARD_API_BASE_URL` | Server address (cloud features only). Default `http://localhost:8080` (development) |
 | `GOOGLE_SERVER_CLIENT_ID` | Google OAuth **web** client ID; the server must list it in `GOOGLE_CLIENT_IDS`. Unset: no Google button |
 | `APPLE_SIGN_IN` | `true` shows Sign in with Apple on iPhone. Leave unset until the capability below is set up |
 
