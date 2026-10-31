@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../account/api_client.dart';
+import '../../core/config.dart';
 import '../../data/providers.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../sync/card_links.dart';
@@ -24,14 +25,18 @@ enum DuplicateChoice {
   keepBoth,
 }
 
-/// Stores what a QR code held: a card link of this server is opened
-/// online; anything else is read as contact text. See [receiveCard].
+/// Stores what a QR code held: an offline card link is read on the phone,
+/// a card link of this app's server is opened online (cloud features on);
+/// anything else is read as contact text. See [receiveCard].
 Future<String?> receiveScanned(
   BuildContext context,
   WidgetRef ref,
   String text,
 ) {
-  final isLink = ref.read(cardLinksProvider).slugIn(text) != null;
+  final isLink =
+      ref.read(offlineLinksProvider).dataIn(text) != null ||
+      (ref.read(cloudEnabledProvider) &&
+          ref.read(cardLinksProvider).slugIn(text) != null);
   return receiveCard(
     context,
     ref,
@@ -43,10 +48,11 @@ Future<String?> receiveScanned(
 
 /// Stores a received card in the Inbox and returns the entry's id.
 ///
-/// [link] is a card link (from a QR code, NFC tag or opened URL); if it
-/// belongs to this server, the card is downloaded. [contactText] is a
-/// vCard or MECARD, used when there is no link or the download fails
-/// (an NFC tag carries both).
+/// [link] is a card link (from a QR code, NFC tag or opened URL). An
+/// offline link carries the card itself and is read without internet; a
+/// link of this app's server (cloud features on) is downloaded.
+/// [contactText] is a vCard or MECARD, used when there is no usable link
+/// or the download fails (an NFC tag carries both).
 ///
 /// Returns null, after telling the user why, if nothing usable arrived.
 /// If the same person is already in the Inbox (see `isSamePerson`), asks
@@ -64,7 +70,16 @@ Future<String?> receiveCard(
   final links = ref.read(cardLinksProvider);
   final now = DateTime.now().toUtc();
 
-  final slug = link == null ? null : links.slugIn(link);
+  final offline = link == null
+      ? null
+      : ref
+            .read(offlineLinksProvider)
+            .decode(link, id: const Uuid().v4(), now: now);
+  if (offline != null) return _store(context, ref, offline, via, now);
+
+  final slug = link == null || !ref.read(cloudEnabledProvider)
+      ? null
+      : links.slugIn(link);
   if (slug != null) {
     try {
       final card = await links.fetch(slug);

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/config.dart';
 import '../../data/providers.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../sync/sync_refresh.dart';
@@ -27,11 +28,12 @@ class MyCardsScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(l10n.navMyCards),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.account_circle_outlined),
-            tooltip: l10n.account,
-            onPressed: () => context.push('/account'),
-          ),
+          if (ref.watch(cloudEnabledProvider))
+            IconButton(
+              icon: const Icon(Icons.account_circle_outlined),
+              tooltip: l10n.account,
+              onPressed: () => context.push('/account'),
+            ),
         ],
       ),
       body: cards.when(

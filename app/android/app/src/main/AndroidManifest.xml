@@ -44,6 +44,14 @@
                 <data android:host="${linkHost}" />
                 <data android:pathPrefix="/c/" />
             </intent-filter>
+            <!-- "Open in eBuCard" on the web card: ebucard://card/receive/<card data>
+                 (DESIGN.md §4.5). A custom scheme needs no domain or server. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="ebucard" android:host="card" />
+            </intent-filter>
         </activity>
         <!-- Square crop screen for profile photo and company logo (image_cropper). -->
         <activity

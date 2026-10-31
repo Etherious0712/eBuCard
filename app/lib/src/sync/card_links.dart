@@ -13,6 +13,12 @@ import '../core/config.dart';
 import '../data/card_repository.dart';
 import '../data/providers.dart';
 
+/// Builds and reads offline card links (the card inside the link, opened
+/// by the static web card page; no server needed).
+final offlineLinksProvider = Provider<OfflineCardLink>(
+  (ref) => OfflineCardLink(AppConfig.webCardUrl),
+);
+
 /// Builds and reads card links for this app's server.
 final sharePayloadProvider = Provider<SharePayload>(
   (ref) => SharePayload(baseUrl: AppConfig.apiBaseUrl),

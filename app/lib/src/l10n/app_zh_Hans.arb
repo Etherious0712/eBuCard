@@ -182,5 +182,9 @@
   "linkOffline": "无法打开名片链接，请检查网络连接后再试。",
   "checkForUpdates": "检查更新",
   "cardUpToDate": "此名片已是最新版本",
-  "openingCard": "正在打开名片…"
+  "openingCard": "正在打开名片…",
+  "showQrOfflineLinkHint": "任何人都可以用手机相机扫描，查看并保存你的名片，无需安装 eBuCard。使用 eBuCard 扫描则无需网络。",
+  "fullVcardQr": "二维码放完整 vCard",
+  "fullVcardQrHint": "相机会直接打开手机的新建联系人界面，而不是网页名片。",
+  "offlineLinkHint": "可在任何聊天或邮件中发送此链接。名片内容就在链接里，之后修改名片不会改变已分享的链接。"
 }

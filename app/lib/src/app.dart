@@ -15,8 +15,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'core/config.dart';
 import 'core/locale_resolution.dart';
 import 'core/theme.dart';
 import 'features/auth/account_screen.dart';
@@ -34,16 +36,25 @@ import 'home_shell.dart';
 import 'l10n/generated/app_localizations.dart';
 
 /// Builds the app's router. A new instance per [EBuCardApp] keeps widget
-/// tests independent of each other.
-GoRouter _buildRouter() => GoRouter(
+/// tests independent of each other. The account screen and server card
+/// links exist only with the [cloud] features on.
+GoRouter _buildRouter({required bool cloud}) => GoRouter(
   initialLocation: '/cards',
   routes: [
-    GoRoute(path: '/account', builder: (_, _) => const AccountScreen()),
-    // Card links opened from outside the app (App Links / Universal Links)
-    // are received inside the Inbox tab, so the tabs stay in place.
+    if (cloud) ...[
+      GoRoute(path: '/account', builder: (_, _) => const AccountScreen()),
+      // Server card links opened from outside the app (App Links /
+      // Universal Links) are received inside the Inbox tab, so the tabs
+      // stay in place.
+      GoRoute(
+        path: '/c/:slug',
+        redirect: (_, state) => '/inbox/open/${state.pathParameters['slug']}',
+      ),
+    ],
+    // "Open in eBuCard" on the web card: ebucard://card/receive/<data>.
     GoRoute(
-      path: '/c/:slug',
-      redirect: (_, state) => '/inbox/open/${state.pathParameters['slug']}',
+      path: '/receive/:data',
+      redirect: (_, state) => '/inbox/receive/${state.pathParameters['data']}',
     ),
     StatefulShellRoute.indexedStack(
       builder: (_, _, shell) => HomeShell(shell: shell),
@@ -92,10 +103,17 @@ GoRouter _buildRouter() => GoRouter(
               path: '/inbox',
               builder: (_, _) => const InboxScreen(),
               routes: [
+                if (cloud)
+                  GoRoute(
+                    path: 'open/:slug',
+                    builder: (_, state) =>
+                        CardLinkScreen(slug: state.pathParameters['slug']!),
+                  ),
                 GoRoute(
-                  path: 'open/:slug',
-                  builder: (_, state) =>
-                      CardLinkScreen(slug: state.pathParameters['slug']!),
+                  path: 'receive/:data',
+                  builder: (_, state) => CardLinkScreen.offline(
+                    data: state.pathParameters['data']!,
+                  ),
                 ),
                 GoRoute(
                   path: ':id',
@@ -112,17 +130,17 @@ GoRouter _buildRouter() => GoRouter(
 );
 
 /// The eBuCard application: theme, localization and navigation.
-class EBuCardApp extends StatefulWidget {
+class EBuCardApp extends ConsumerStatefulWidget {
   /// Creates the app. Must sit below a `ProviderScope`.
   const EBuCardApp({super.key});
 
   @override
-  State<EBuCardApp> createState() => _EBuCardAppState();
+  ConsumerState<EBuCardApp> createState() => _EBuCardAppState();
 }
 
 /// Owns the router so it lives as long as the app.
-class _EBuCardAppState extends State<EBuCardApp> {
-  final _router = _buildRouter();
+class _EBuCardAppState extends ConsumerState<EBuCardApp> {
+  late final _router = _buildRouter(cloud: ref.read(cloudEnabledProvider));
 
   @override
   void dispose() {
