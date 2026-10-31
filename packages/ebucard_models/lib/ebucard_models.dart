@@ -10,6 +10,8 @@
 /// * `contact_matching.dart`: is this scanned card someone already saved?
 /// * `nfc_payload.dart`: the NFC (NDEF) message for a card, and reading
 ///   contact text back out of one.
+/// * `offline_link.dart`: links that carry the whole card, for sharing
+///   without the server.
 library;
 
 export 'src/business_card.dart';
@@ -17,6 +19,7 @@ export 'src/card_validation.dart';
 export 'src/contact_decoder.dart';
 export 'src/contact_matching.dart';
 export 'src/nfc_payload.dart';
+export 'src/offline_link.dart';
 export 'src/received_card.dart';
 export 'src/share_payload.dart';
 export 'src/vcard_encoder.dart';
