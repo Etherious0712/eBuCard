@@ -1,14 +1,23 @@
 // Feature: show my QR code. Shares the card chosen in share_card.dart (the
 // default card unless the user switched; the NFC screen shares the same
-// one). Once the card has a link, the QR code holds the link (short, easy
-// to scan, always the latest card); "Offline QR" switches to the full
-// vCard without images, which works without internet (DESIGN.md §4.3).
+// one).
+//
+// * Default (no server): the QR code holds an offline card link, the card
+//   inside the link. A phone camera opens the web card; eBuCard reads it
+//   without internet. "Full vCard" switches to a plain vCard, which a
+//   camera turns straight into a new contact (DESIGN.md §4.3).
+// * Cloud features on: once the card has synced, the QR code holds its
+//   server link (short, always the latest card); "Offline QR" switches to
+//   the full vCard.
 
 import 'package:ebucard_models/ebucard_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+import 'package:flutter/services.dart';
+
+import '../../core/config.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../sync/card_links.dart';
 import 'card_link_section.dart';
@@ -23,7 +32,7 @@ class ShowQrScreen extends ConsumerStatefulWidget {
   ConsumerState<ShowQrScreen> createState() => _ShowQrScreenState();
 }
 
-/// Holds the "Offline QR" choice for this visit.
+/// Holds the "vCard instead of link" choice for this visit.
 class _ShowQrScreenState extends ConsumerState<ShowQrScreen> {
   bool _offline = false;
 
@@ -31,6 +40,7 @@ class _ShowQrScreenState extends ConsumerState<ShowQrScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final payload = ref.watch(sharePayloadProvider);
+    final cloud = ref.watch(cloudEnabledProvider);
     return Scaffold(
       appBar: AppBar(title: Text(l10n.showQrTitle)),
       body: ref
@@ -42,6 +52,7 @@ class _ShowQrScreenState extends ConsumerState<ShowQrScreen> {
               if (card == null) {
                 return const NoCardsToShare(icon: Icons.qr_code_2);
               }
+              if (!cloud) return _offlineBody(context, card);
               final hasLink = payload.cardUrl(card) != null;
               final showsLink = hasLink && !_offline;
               return ListView(
@@ -77,6 +88,62 @@ class _ShowQrScreenState extends ConsumerState<ShowQrScreen> {
               );
             },
           ),
+    );
+  }
+
+  /// The screen without a server: offline link by default, or the vCard.
+  Widget _offlineBody(BuildContext context, BusinessCard card) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final link = ref.read(offlineLinksProvider).linkFor(card);
+    return ListView(
+      padding: const EdgeInsets.all(24),
+      children: [
+        ShareCardDropdown(selected: card),
+        const SizedBox(height: 24),
+        _CardQr(
+          card: card,
+          text: _offline
+              ? const VCardEncoder().encode(card, includeImages: false)
+              : link.toString(),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          card.fullName,
+          textAlign: TextAlign.center,
+          style: theme.textTheme.headlineSmall,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          _offline ? l10n.showQrHint : l10n.showQrOfflineLinkHint,
+          textAlign: TextAlign.center,
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: Text(l10n.fullVcardQr),
+          subtitle: Text(l10n.fullVcardQrHint),
+          value: _offline,
+          onChanged: (value) => setState(() => _offline = value),
+        ),
+        const Divider(height: 32),
+        Text(l10n.linkTitle, style: theme.textTheme.titleMedium),
+        const SizedBox(height: 4),
+        Text(l10n.offlineLinkHint, style: theme.textTheme.bodySmall),
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: TextButton.icon(
+            onPressed: () async {
+              await Clipboard.setData(ClipboardData(text: link.toString()));
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(l10n.linkCopied)));
+            },
+            icon: const Icon(Icons.copy),
+            label: Text(l10n.linkCopy),
+          ),
+        ),
+      ],
     );
   }
 }

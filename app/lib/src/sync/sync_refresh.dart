@@ -1,9 +1,11 @@
-// Pull-to-refresh that syncs with the account (only while signed in).
+// Pull-to-refresh that syncs with the account (only with the cloud features
+// on and while signed in).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../account/account_providers.dart';
+import '../core/config.dart';
 import 'sync_controller.dart';
 
 /// Wraps a scrollable [child]; pulling down runs sync when signed in.
@@ -16,7 +18,10 @@ class SyncRefresh extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (ref.watch(authProvider).value == null) return child;
+    if (!ref.watch(cloudEnabledProvider) ||
+        ref.watch(authProvider).value == null) {
+      return child;
+    }
     return RefreshIndicator(
       onRefresh: ref.read(syncControllerProvider.notifier).syncNow,
       child: child,

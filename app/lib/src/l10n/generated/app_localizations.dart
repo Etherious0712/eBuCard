@@ -1197,6 +1197,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Opening card…'**
   String get openingCard;
+
+  /// No description provided for @showQrOfflineLinkHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone can scan this with their phone camera to see your card and save it, even without eBuCard. eBuCard users don\'t need internet.'**
+  String get showQrOfflineLinkHint;
+
+  /// No description provided for @fullVcardQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Full vCard in the code'**
+  String get fullVcardQr;
+
+  /// No description provided for @fullVcardQrHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The camera opens the phone\'s new-contact screen directly instead of a web card.'**
+  String get fullVcardQrHint;
+
+  /// No description provided for @offlineLinkHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Send this link in any chat or email. Your card is inside the link itself, so later edits don\'t change links you\'ve already shared.'**
+  String get offlineLinkHint;
 }
 
 class _AppLocalizationsDelegate
