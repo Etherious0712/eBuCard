@@ -15,7 +15,7 @@ final _vectors =
         as List;
 
 void main() {
-  test('every shared vector decodes to its card', () {
+  test('every shared vector decodes to its card and vCard', () {
     for (final v in _vectors.cast<Map<String, Object?>>()) {
       final card = OfflineCardLink.decodeData(
         v['data']! as String,
@@ -23,6 +23,11 @@ void main() {
         now: _now,
       )!;
       expect(OfflineCardLink.compactJson(card), v['card']);
+      // The web card's Save contact must produce the same vCard.
+      expect(
+        const VCardEncoder().encode(card, includeImages: false),
+        v['vcard'],
+      );
     }
   });
 

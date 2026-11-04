@@ -44,7 +44,8 @@
           "jane_chan"
         ]
       ]
-    }
+    },
+    "vcard": "BEGIN:VCARD\r\nVERSION:3.0\r\nFN:Jane Chan\r\nN:Chan;Jane;;;\r\nORG:Acme Ltd\r\nTITLE:Product Lead\r\nTEL;TYPE=CELL:+852 9123 4567\r\nTEL;TYPE=WORK:+852 2345 6789\r\nEMAIL;TYPE=INTERNET,WORK:jane@acme.example\r\nURL:acme.example\r\nADR;TYPE=WORK:;;1 Harbour Road;Wan Chai;Hong Kong;;Hong Kong\r\nX-SOCIALPROFILE;TYPE=linkedin:https://www.linkedin.com/in/janechan\r\nX-SOCIALPROFILE;TYPE=wechat:jane_chan\r\nEND:VCARD\r\n"
   },
   {
     "data": "1q1bKU7JSejlz89Mly59Na1fSUSpRslJ6MXHxk13dSjpK-UpWShCZF5v2P5sx-dmczpczJzxtXfO0f4eSjlKBklV0tFJuflJmTqqSjpKloZGxiamZuVJsbC0A",
@@ -58,7 +59,8 @@
           "91234567"
         ]
       ]
-    }
+    },
+    "vcard": "BEGIN:VCARD\r\nVERSION:3.0\r\nFN:陳大文\r\nN:陳大文;;;;\r\nORG:大文貿易有限公司\r\nTITLE:董事\r\nTEL;TYPE=CELL:91234567\r\nEND:VCARD\r\n"
   },
   {
     "data": "1q1bKU7JS8ld3KspMzVOIUXLKj1FSsAlJLS6xU1BTcM5X0lFKVbKKjlbKyM9NVdJRSsp3qNBLrUjMLchJVYqNrQUA",
@@ -70,6 +72,7 @@
           "bo@x.example"
         ]
       ]
-    }
+    },
+    "vcard": "BEGIN:VCARD\r\nVERSION:3.0\r\nFN:O'Brien \"Bo\" <Test> & Co\r\nN:Co;O'Brien \"Bo\" <Test> &;;;\r\nEMAIL;TYPE=INTERNET,HOME:bo@x.example\r\nEND:VCARD\r\n"
   }
 ]

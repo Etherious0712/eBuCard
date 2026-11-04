@@ -37,6 +37,7 @@ Start with [`docs/DESIGN.md`](docs/DESIGN.md) for *what* the product does and *w
 | Platform rules | `app/lib/src/core/exchange_capabilities.dart` | Which phones can send/receive by NFC or QR |
 | Languages | `app/lib/src/l10n/*.arb`, `core/locale_resolution.dart` | UI text in en / zh-Hant / zh-Hans |
 | Android NFC | `app/android/app/src/main/kotlin/.../nfc/` and `MainActivity.kt` | Type 4 tag emulation (`Type4Tag.kt`), the HCE service, and the `ebucard/nfc` channel |
+| Web card (no server) | `web/` | Static page on GitHub Pages that shows offline links (`web/c/`), with Save contact, Open in eBuCard and Download; see `web/README.md` |
 | Server routes | `server/routes/` | One file per endpoint (Dart Frog); each calls a service and stays thin |
 | Server services | `server/lib/src/` | `auth/` (accounts, passwords, tokens, Apple/Google), `sync/` (sync and card links), `storage/` (images, S3 signing), `email/` (emails and all server text), `web/` (web card, app-link files), `http/html_page.dart` (page layout and styles), `db/` (pool, migrations), `services.dart` (wiring) |
 | Design system | `docs/design-system/ebucard/MASTER.md` | Colours, fonts and rules for every screen and page; its "eBuCard decisions" section wins over the generated part |
@@ -60,6 +61,7 @@ cd packages/ebucard_models && dart format . && dart analyze && dart test
 cd server && docker compose up -d && dart format . && dart analyze && dart test
 cd app && dart format lib test && flutter analyze && flutter test
 cd app/android && ./gradlew test   # Kotlin unit tests (NFC tag emulation)
+node --test web/test/*.test.mjs   # web card logic (same test vectors as the app)
 ```
 
 ### Writing app tests

@@ -1,0 +1,25 @@
+<!doctype html>
+<!--
+  eBuCard web card for offline links (DESIGN.md §4.5). The card is in the
+  link after "#", so it never reaches this website: card.js reads it in the
+  browser and shows it. No outside requests, no cookies, no analytics.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="light dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'">
+<title>eBuCard</title>
+<link rel="stylesheet" href="card.css">
+<script type="module" src="card.js"></script>
+</head>
+<body>
+<main class="card" id="card" aria-live="polite">
+<noscript><h1>eBuCard</h1><p>Turn on JavaScript to see this card.</p></noscript>
+</main>
+<footer class="foot" id="foot"></footer>
+</body>
+</html>
