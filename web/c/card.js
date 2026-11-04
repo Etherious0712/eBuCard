@@ -1,7 +1,7 @@
 // The web card page (web/c/index.html): reads the card from the link after
 // "#", shows it like the server's web card, and offers Save contact (a
 // .vcf made in the browser), Open in eBuCard (ebucard:// app link) and,
-// except on iPhone/iPad, Download eBuCard for Android.
+// except on iPhone/iPad, Download eBuCard for Android (the APK itself).
 //
 // Everything shown comes from whoever made the link, so the page only
 // uses textContent (never innerHTML) and only links http(s), tel: and
@@ -11,8 +11,14 @@ import {
   decodeData, initials, pickLanguage, telUri, toVCard, webUri,
 } from './lib.js';
 
-/** Where the Android app is downloaded (the latest GitHub release). */
-const DOWNLOAD_URL = 'https://github.com/Etherious0712/eBuCard/releases/latest';
+/**
+ * The Android app itself. The owner's website rewrites /ebucard.apk to the
+ * newest release's APK (my_website vercel.json), so this never changes.
+ * GitHub's releases/latest skips pre-releases, so it can't be used while
+ * every release is a beta.
+ */
+export const DOWNLOAD_URL =
+  'https://my-website-whitestone0712s-projects.vercel.app/ebucard.apk';
 
 /** Page text, in the app's three languages. */
 const STRINGS = {
