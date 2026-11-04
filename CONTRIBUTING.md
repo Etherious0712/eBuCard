@@ -13,7 +13,8 @@ Start with [`docs/DESIGN.md`](docs/DESIGN.md) for *what* the product does and *w
 | Reading QR data | `packages/ebucard_models/lib/src/contact_decoder.dart` | vCard 2.1/3.0/4.0 or MECARD text → card |
 | Inbox model | `packages/ebucard_models/lib/src/received_card.dart` | A received card plus the user's private note |
 | Same person? | `packages/ebucard_models/lib/src/contact_matching.dart` | Decides when a scan should offer "Update or keep both" |
-| NFC payload | `packages/ebucard_models/lib/src/nfc_payload.dart` | The NDEF message a phone shares; contact text from a read message |
+| NFC payload | `packages/ebucard_models/lib/src/nfc_payload.dart` | The NDEF message a phone shares; contact text and links from a read message |
+| Offline links | `packages/ebucard_models/lib/src/offline_link.dart` | The card inside a link (serverless mode, DESIGN.md §4.5); test vectors in `test/fixtures/offline_links.json` |
 | App entry & routes | `app/lib/main.dart`, `app/lib/src/app.dart` | Riverpod scope, theme, languages, route table |
 | Bottom tabs | `app/lib/src/home_shell.dart` | My Cards / Exchange / Inbox navigation |
 | Local database | `app/lib/src/data/app_database.dart` | SQLite tables (drift) |
@@ -43,6 +44,7 @@ Start with [`docs/DESIGN.md`](docs/DESIGN.md) for *what* the product does and *w
 
 ## Conventions
 
+* **Cloud features are behind a switch.** Accounts, sync, server links and Check for updates only run when `cloudEnabledProvider` (`app/lib/src/core/config.dart`, build setting `EBUCARD_CLOUD`) is true; it is off by default. Gate any new server-dependent UI the same way.
 * **Doc comments are required.** Every package enables the `public_member_api_docs` lint, so `analyze` fails on a public class, function or field without a `///` comment. Also comment private functions and classes, and start each feature file with a short `//` header saying what the feature does.
 * **Shared rules go in `ebucard_models`.** The app and the server must agree on the data format, validation and vCard output, so that logic lives in the shared package.
 * **Screens talk to repositories, not the database.** Get them through the providers in `app/lib/src/data/providers.dart`.
@@ -65,6 +67,7 @@ cd app/android && ./gradlew test   # Kotlin unit tests (NFC tag emulation)
 * Use `pumpApp` and `memoryDatabase` from `app/test/support/test_app.dart`. They start the real app with an in-memory database and fakes for the camera (`FakeScanner`: call `scan(text)`), NFC (`FakeNfcService`: set `current`, call `deliver(message)`, inspect `sharing`), image picker, Contacts and link opening.
 * For iPhone-only behaviour, pass `variant: TargetPlatformVariant.only(TargetPlatform.iOS)` to `testWidgets`.
 * Inside `testWidgets`, wrap direct database calls in `dbCall(tester, ...)` (or `tester.runAsync`); otherwise they never complete.
+* `pumpApp` starts the default (serverless) build; pass `cloud: true` for account, sync and server-link tests.
 * To start a test signed in, save `server.sessionFor(user)` in a `MemorySessionStore` and pass it as `sessions:`.
 * Sign-in and sync tests pass `server: FakeServer()` (`app/test/support/fake_server.dart`), an in-memory copy of the server API. Use `addUser`, `putFromOtherPhone`, `live`, `linkSlug` / `unlinkSlug` / `cardForSlug`, `online = false`, `expireSessions()` and `requests` to set up and check. `FakeIdentitySignIn` stands in for Apple/Google.
 * `app/test/live/live_server_test.dart` runs two "phones" against a real server. It is skipped unless `EBUCARD_LIVE_API` (server URL) and `EBUCARD_LIVE_EMAIL_LOG` (the server's log file, to read confirmation links) are set.

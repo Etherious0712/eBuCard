@@ -182,5 +182,9 @@
   "linkOffline": "無法開啟名片連結，請檢查網絡連線後再試。",
   "checkForUpdates": "檢查更新",
   "cardUpToDate": "此名片已是最新版本",
-  "openingCard": "正在開啟名片…"
+  "openingCard": "正在開啟名片…",
+  "showQrOfflineLinkHint": "任何人都可以用手機相機掃描，查看並儲存你的名片，無需安裝 eBuCard。使用 eBuCard 掃描則無需網絡。",
+  "fullVcardQr": "QR 碼放完整 vCard",
+  "fullVcardQrHint": "相機會直接開啟手機的新增聯絡人畫面，而不是網頁名片。",
+  "offlineLinkHint": "可在任何聊天或電郵中發送此連結。名片內容就在連結裡，之後修改名片不會改變已分享的連結。"
 }

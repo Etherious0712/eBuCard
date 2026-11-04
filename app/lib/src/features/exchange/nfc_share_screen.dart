@@ -7,6 +7,7 @@ import 'package:ebucard_models/ebucard_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/config.dart';
 import '../../data/nfc_service.dart';
 import '../../data/providers.dart';
 import '../../l10n/generated/app_localizations.dart';
@@ -67,12 +68,16 @@ class _NfcShareScreenState extends ConsumerState<NfcShareScreen> {
     if (card == null) {
       _nfc.stopSharing();
     } else {
-      // The card link (once synced) first, so phones open the latest
-      // card; the vCard after it works without internet (DESIGN.md §4.2).
+      // A card link first, so phones without eBuCard open the web card;
+      // the vCard after it works without internet (DESIGN.md §4.2). The
+      // link is the offline link, or the server link with the cloud
+      // features on (once the card has synced).
       _nfc.startSharing(
         cardNdefBytes(
           card,
-          cardUrl: ref.read(sharePayloadProvider).cardUrl(card),
+          cardUrl: ref.read(cloudEnabledProvider)
+              ? ref.read(sharePayloadProvider).cardUrl(card)
+              : ref.read(offlineLinksProvider).linkFor(card),
         ),
       );
     }

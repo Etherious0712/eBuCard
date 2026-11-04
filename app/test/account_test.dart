@@ -1,3 +1,5 @@
+// Account screens; they exist only with the cloud features on.
+
 import 'package:ebucard/src/account/identity_sign_in.dart';
 import 'package:ebucard/src/data/app_database.dart';
 import 'package:ebucard/src/data/card_repository.dart';
@@ -33,7 +35,13 @@ void main() {
     WidgetTester tester, {
     FakeIdentitySignIn? identity,
   }) async {
-    await pumpApp(tester, db: db, server: server, identity: identity);
+    await pumpApp(
+      tester,
+      db: db,
+      server: server,
+      identity: identity,
+      cloud: true,
+    );
     await settle(tester);
     await tester.tap(find.byTooltip('Account'));
     await settle(tester);

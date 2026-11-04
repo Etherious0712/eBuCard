@@ -1,6 +1,7 @@
 // Feature: a received card. Shows every detail with tap-to-act (call, email,
 // open website), the user's private note, Save to Contacts, and delete.
-// Cards received through a card link can be checked for a newer version.
+// With the cloud features on, cards received through a card link can be
+// checked for a newer version.
 
 import 'package:ebucard_models/ebucard_models.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../account/api_client.dart';
+import '../../core/config.dart';
 import '../../data/link_launcher.dart';
 import '../../data/providers.dart';
 import '../../l10n/generated/app_localizations.dart';
@@ -253,7 +255,7 @@ class _ReceivedCardScreenState extends ConsumerState<ReceivedCardScreen> {
             icon: const Icon(Icons.person_add_alt_outlined),
             label: Text(l10n.saveToContacts),
           ),
-          if (entry.sourceSlug != null) ...[
+          if (entry.sourceSlug != null && ref.watch(cloudEnabledProvider)) ...[
             const SizedBox(height: 8),
             OutlinedButton.icon(
               onPressed: _checking ? null : _checkForUpdates,

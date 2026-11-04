@@ -565,6 +565,19 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get openingCard => '正在打开名片…';
+
+  @override
+  String get showQrOfflineLinkHint =>
+      '任何人都可以用手机相机扫描，查看并保存你的名片，无需安装 eBuCard。使用 eBuCard 扫描则无需网络。';
+
+  @override
+  String get fullVcardQr => '二维码放完整 vCard';
+
+  @override
+  String get fullVcardQrHint => '相机会直接打开手机的新建联系人界面，而不是网页名片。';
+
+  @override
+  String get offlineLinkHint => '可在任何聊天或邮件中发送此链接。名片内容就在链接里，之后修改名片不会改变已分享的链接。';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).
@@ -1128,6 +1141,19 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get openingCard => '正在打开名片…';
+
+  @override
+  String get showQrOfflineLinkHint =>
+      '任何人都可以用手机相机扫描，查看并保存你的名片，无需安装 eBuCard。使用 eBuCard 扫描则无需网络。';
+
+  @override
+  String get fullVcardQr => '二维码放完整 vCard';
+
+  @override
+  String get fullVcardQrHint => '相机会直接打开手机的新建联系人界面，而不是网页名片。';
+
+  @override
+  String get offlineLinkHint => '可在任何聊天或邮件中发送此链接。名片内容就在链接里，之后修改名片不会改变已分享的链接。';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -1691,4 +1717,17 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get openingCard => '正在開啟名片…';
+
+  @override
+  String get showQrOfflineLinkHint =>
+      '任何人都可以用手機相機掃描，查看並儲存你的名片，無需安裝 eBuCard。使用 eBuCard 掃描則無需網絡。';
+
+  @override
+  String get fullVcardQr => 'QR 碼放完整 vCard';
+
+  @override
+  String get fullVcardQrHint => '相機會直接開啟手機的新增聯絡人畫面，而不是網頁名片。';
+
+  @override
+  String get offlineLinkHint => '可在任何聊天或電郵中發送此連結。名片內容就在連結裡，之後修改名片不會改變已分享的連結。';
 }

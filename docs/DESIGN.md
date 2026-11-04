@@ -1,6 +1,6 @@
 # eBuCard: Design Document
 
-Status: **Living document** · Last updated with the app's new look (PR G)
+Status: **Living document** · Last updated with serverless mode (PR H)
 
 ## 1. Goal
 
@@ -15,8 +15,12 @@ eBuCard is an electronic business card service. Business people and anyone else 
 
 ## 2. Decisions taken
 
+> **Serverless mode (current default, PR H).** Until there is enough traffic to justify hosting, the app runs **without any server**. The cloud features below (accounts, sync, server card links, Check for updates, photos on other phones) stay in the code and tests but are **switched off** by the build setting `EBUCARD_CLOUD` (default off). Cards travel as **offline links** that carry the card itself (§4.5), opened by a static web page on GitHub Pages. No backup or sync for now: data lives on the phone. Turning the cloud back on = build with `--dart-define=EBUCARD_CLOUD=true` and deploy `server/`.
+
 | Topic | Decision |
 |---|---|
+| Serverless mode | Default. No account, sync or network use in the app; offline links + static web card (§4.5). Cloud features kept behind `EBUCARD_CLOUD` until traffic justifies a server |
+| Backup in serverless mode | None for now (data stays on the phone); comes back with sync |
 | Client | Flutter, one codebase for Android and iOS. Native Kotlin/Swift only where NFC requires it |
 | Exchange data | Hybrid: offline vCard **and** a hosted card link (web card for people without the app) |
 | iPhone as sender | Shows a QR code |
@@ -104,6 +108,19 @@ Capability matrix as implemented in `app/lib/src/core/exchange_capabilities.dart
 * *Full* vCard: all fields. The photo and logo are referenced by `http(s)` URL, never embedded. Local `file:` images (before sync) are left out.
 * *Compact* vCard: name, title, company, first phone, first email, card URL.
 * Implemented in `packages/ebucard_models/lib/src/vcard_encoder.dart` (tested).
+
+### 4.5 Offline card link (serverless mode, default)
+`https://etherious0712.github.io/eBuCard/c/#1<data>` (page: `web/c/` on GitHub Pages; build setting `EBUCARD_WEB_CARD_URL`).
+
+* `<data>` is the card as compact JSON (`n` name, `t` title, `o` company, `p`/`e` phones and emails as `[label, value]`, `w` websites, `a` addresses, `s` social links; empty fields left out), compressed with raw deflate and encoded as base64url without padding. `1` is the format version. No id, card name or images.
+* **Privacy:** everything after `#` stays in the browser; GitHub never receives the card. The page decodes and shows it, and builds the `.vcf` for "Save contact" in the browser.
+* **Limits:** a link can't be changed or revoked once shared (the card is inside it); no photos; more fields make denser QR codes (too big → "remove some fields", as for vCards).
+* **QR code:** the offline link by default; a "Full vCard in the code" switch shows the plain vCard instead (a camera then opens the new-contact screen directly). The QR screen also offers **Copy** for the link.
+* **NFC (Android):** URI record = offline link, then the vCard record. An iPhone without the app opens the web card in the background reader.
+* **Receiving in the app:** scanned or read offline links are decoded on the phone (no internet) and go through the usual duplicate check. Server links are ignored while the cloud features are off.
+* **"Open in eBuCard"** on the web card uses `ebucard://card/receive/<data>` (custom scheme: github.io pages can't host App Links / Universal Links files). The app opens, saves the card (`received_via = link`) and shows it.
+* **Download eBuCard (Android)** on the web card links to the latest GitHub release.
+* Code: `packages/ebucard_models/lib/src/offline_link.dart` (shared test vectors in `test/fixtures/offline_links.json`, also used by the web page tests), `app/lib/src/features/exchange/` (`show_qr_screen.dart`, `receive_card.dart`, `card_link_screen.dart`).
 
 ## 5. Architecture
 
@@ -196,8 +213,11 @@ ARB files in `app/lib/src/l10n/`. Devices often report Chinese without a script 
    * **PR E (done):** app: sign-in screens, sync engine, image upload, first-sign-in merge, account deletion.
 4. **Web card & app links:**
    * **PR F (done):** card links made on sync, replace / turn off, web card with `.vcf` download, link QR + Offline QR, NFC link record, receive by link with Check for updates, App Links / Universal Links files and app routes, new look for the server pages.
-   * **PR G (this one):** new look for the app: design-system theme (light/dark), bundled Poppins + Open Sans, photo/initials avatars, web-card-style card header, version 0.8.0.
-5. **Release:** store listings, privacy policy, account deletion, analytics/crash reporting (to be decided).
+   * **PR G (done):** new look for the app: design-system theme (light/dark), bundled Poppins + Open Sans, photo/initials avatars, web-card-style card header, version 0.8.0.
+5. **Serverless mode** (zero hosting cost until there is traffic):
+   * **PR H (this one):** `EBUCARD_CLOUD` switch (default off), offline card links in QR / NFC / receive, `ebucard://` app link, version 0.9.0.
+   * **PR I:** static web card (`web/c/`) on GitHub Pages: decode, Save contact, Open in eBuCard, Download for Android.
+6. **Later, once there is traffic:** turn the cloud features back on (accounts, sync, server links, photos for others), backup, then store release: store listings, privacy policy, analytics/crash reporting (to be decided).
 
 ### Manual device test matrix (NFC/QR cannot be tested in CI)
 
@@ -222,6 +242,9 @@ ARB files in `app/lib/src/l10n/`. Devices often report Chinese without a script 
 | 15 | Android (app, Share), link on | Android (app), no internet | NFC | Card saved from the tag's vCard |
 | 16 | owner turns the link off | anyone | Old link | "This card link is no longer active" |
 | 17 | Android / iPhone (app installed, app links configured) | — | Tap a card link in Messages / Mail | eBuCard opens and saves the card |
+| 18 | any (app, default build) | any (camera app, no app) | Offline link QR | Web card opens from GitHub Pages; Save contact adds the contact |
+| 19 | any (app, default build) | any (app), airplane mode | Offline link QR / NFC | Card saved to Inbox without internet |
+| 20 | web card on a phone with eBuCard | — | Tap "Open in eBuCard" | eBuCard opens and saves the card |
 
 ## 12. Open questions for the product owner
 

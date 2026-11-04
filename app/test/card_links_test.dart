@@ -1,7 +1,8 @@
-// Card links in the app (DESIGN.md §4.1): the QR code shows the link once
-// the card has synced, the owner can replace or turn off the link, links
-// from other people are opened online and remembered for "Check for
-// updates", and NFC falls back to the tag's vCard without internet.
+// Server card links in the app (cloud features on, DESIGN.md §4.1): the
+// QR code shows the link once the card has synced, the owner can replace
+// or turn off the link, links from other people are opened online and
+// remembered for "Check for updates", and NFC falls back to the tag's
+// vCard without internet.
 
 import 'package:ebucard/src/account/session_store.dart';
 import 'package:ebucard/src/data/app_database.dart';
@@ -92,6 +93,7 @@ void main() {
       sessions: sessions,
       scanner: scanner,
       nfc: nfc,
+      cloud: true,
     );
     await settle(tester);
     return me;

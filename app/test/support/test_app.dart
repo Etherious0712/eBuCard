@@ -9,6 +9,7 @@ import 'package:ebucard/src/account/account_providers.dart';
 import 'package:ebucard/src/account/identity_sign_in.dart';
 import 'package:ebucard/src/account/session_store.dart';
 import 'package:ebucard/src/app.dart';
+import 'package:ebucard/src/core/config.dart';
 import 'package:ebucard/src/data/app_database.dart';
 import 'package:ebucard/src/data/card_image_service.dart';
 import 'package:ebucard/src/data/contacts_service.dart';
@@ -188,6 +189,7 @@ Future<void> pumpApp(
   FakeServer? server,
   SessionStore? sessions,
   IdentitySignIn? identity,
+  bool cloud = false,
 }) async {
   tester.view.physicalSize = const Size(1080, 4000);
   tester.view.devicePixelRatio = 1;
@@ -196,6 +198,9 @@ Future<void> pumpApp(
     ProviderScope(
       overrides: [
         appDatabaseProvider.overrideWithValue(db),
+        // Off like in the default build; account, sync and server link
+        // tests pass `cloud: true`.
+        cloudEnabledProvider.overrideWithValue(cloud),
         cardImageServiceProvider.overrideWithValue(
           images ?? FakeCardImageService(),
         ),

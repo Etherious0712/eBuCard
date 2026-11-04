@@ -597,4 +597,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get openingCard => 'Opening card…';
+
+  @override
+  String get showQrOfflineLinkHint =>
+      'Anyone can scan this with their phone camera to see your card and save it, even without eBuCard. eBuCard users don\'t need internet.';
+
+  @override
+  String get fullVcardQr => 'Full vCard in the code';
+
+  @override
+  String get fullVcardQrHint =>
+      'The camera opens the phone\'s new-contact screen directly instead of a web card.';
+
+  @override
+  String get offlineLinkHint =>
+      'Send this link in any chat or email. Your card is inside the link itself, so later edits don\'t change links you\'ve already shared.';
 }
