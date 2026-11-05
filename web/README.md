@@ -7,7 +7,7 @@ the browser.
 
 | File | What |
 |---|---|
-| `c/index.html`, `c/card.js` | The page: card, Save contact (.vcf made in the browser), Open in eBuCard (`ebucard://`), Download for Android |
+| `c/index.html`, `c/card.js` | The page: card, Save contact (.vcf made in the browser), Open in eBuCard (`ebucard://`), Download for Android (the website's `/ebucard.apk`) |
 | `c/lib.js` | Decoding, vCard, language and safe-link rules; no DOM, tested in Node |
 | `c/card.css` | Styles, copied from the server's web card (`server/lib/src/http/html_page.dart`); keep in step |
 | `fonts/` | Poppins and Open Sans (Latin, OFL) |

@@ -119,7 +119,7 @@ Capability matrix as implemented in `app/lib/src/core/exchange_capabilities.dart
 * **NFC (Android):** URI record = offline link, then the vCard record. An iPhone without the app opens the web card in the background reader.
 * **Receiving in the app:** scanned or read offline links are decoded on the phone (no internet) and go through the usual duplicate check. Server links are ignored while the cloud features are off.
 * **"Open in eBuCard"** on the web card uses `ebucard://card/receive/<data>` (custom scheme: github.io pages can't host App Links / Universal Links files). The app opens, saves the card (`received_via = link`) and shows it.
-* **Download eBuCard (Android)** on the web card links to the latest GitHub release.
+* **Download eBuCard (Android)** on the web card downloads the APK from the owner's website (`/ebucard.apk`, rewritten to the newest release's APK), because GitHub's `releases/latest` skips pre-releases.
 * **Web card page:** `web/c/` (static HTML + JS, published by `.github/workflows/pages.yml`). No outside requests, cookies or analytics; strict Content-Security-Policy; card text shown with `textContent` only. Needs a browser with `DecompressionStream` (2023+); older ones see "Please update your browser".
 * Code: `packages/ebucard_models/lib/src/offline_link.dart` (shared test vectors in `test/fixtures/offline_links.json`, also used by the web page tests), `app/lib/src/features/exchange/` (`show_qr_screen.dart`, `receive_card.dart`, `card_link_screen.dart`).
 
